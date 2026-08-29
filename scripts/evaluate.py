@@ -26,17 +26,18 @@ def evaluate_target(target: str, repo_url: str = None):
     candidate_profile = profiles_base / target
     
     profile_data = None
+    import asyncio
     if candidate_profile.is_dir():
         profile_data = ProfileCollector.load_profile(candidate_profile)
     elif Path(target).is_dir():
         profile_data = ProfileCollector.load_profile(Path(target))
     elif target.startswith("http://") or target.startswith("https://") or "github.com" in target:
-        profile_data = GitHubCollector.collect_from_url(target)
+        gh = GitHubCollector()
+        profile_data = asyncio.run(gh.fetch_full_profile_from_repo(target))
     else:
         print(f"[!] Cible introuvable : {target}")
         sys.exit(1)
 
-    import asyncio
     quant_scores = QuantitativeScorer.score_all(profile_data)
     llm_judge = LLMQualitativeJudge()
     llm_insights = asyncio.run(llm_judge.analyze(profile_data))
