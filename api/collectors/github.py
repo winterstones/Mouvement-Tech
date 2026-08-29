@@ -136,6 +136,56 @@ class GitHubCollector:
             results.sort(key=lambda x: x.total_commits, reverse=True)
             return results
 
+    async def fetch_team_from_repo(self, repo_url: str) -> List[Any]:
+        """Synthesizes a list of individual EvaluationResult objects for each real contributor of the project."""
+        from api.scorer.algo import QuantitativeScorer
+        from api.scorer.fusion import EvaluationEngine
+
+        # 1. Base project profile (Harness, Parallelism, Context Files)
+        project_profile = await self.fetch_full_profile_from_repo(repo_url)
+        contributors = await self.analyze_repo_contributors(repo_url)
+
+        if not contributors:
+            # Fallback on the project as a single member
+            scores = QuantitativeScorer.score_all(project_profile)
+            return [EvaluationEngine.evaluate(project_profile, scores)]
+
+        members: List[Any] = []
+        for c in contributors:
+            # Clone git_activity and customize for contributor
+            dev_git_act = dict(project_profile.get("git_activity", {}))
+            dev_git_act["commits"] = {
+                "total": c.total_commits,
+                "ai_coauthored_ratio": c.ai_coauthored_ratio,
+            }
+
+            # If developer has high AI co-authorship, reflect higher volume
+            dev_prs = dict(dev_git_act.get("pull_requests", {}))
+            if c.ai_coauthored_ratio >= 0.50:
+                dev_prs["median_correction_commits_after_open"] = 0
+            dev_git_act["pull_requests"] = dev_prs
+
+            dev_profile_data = {
+                "profile_id": c.author,
+                "profile_info": {
+                    "role": f"Contributeur ({project_profile['profile_id']})",
+                    "stack": project_profile["profile_info"].get("stack", []),
+                    "experience_years": 3,
+                    "team_size": len(contributors),
+                },
+                "git_activity": dev_git_act,
+                "repo_context_files": project_profile.get("repo_context_files", {}),
+                "declaratif": f"Contributeur du projet {project_profile['profile_id']} avec {c.total_commits} commits ({int(c.ai_coauthored_ratio*100)}% assistés par IA).",
+                "session": None,
+                "available_sources": ["github-api-contributor", "github-contents"],
+            }
+
+            scores = QuantitativeScorer.score_all(dev_profile_data)
+            eval_res = EvaluationEngine.evaluate(dev_profile_data, scores)
+            members.append(eval_res)
+
+        return members
+
     async def fetch_full_profile_from_repo(self, repo_url: str) -> Dict[str, Any]:
         """Queries GitHub API to synthesize a complete profile_data dict for direct scoring."""
         parsed = self.parse_repo_url(repo_url)

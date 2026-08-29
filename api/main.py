@@ -73,9 +73,25 @@ async def get_levels():
 
 @app.get("/team", response_model=TeamEvaluationResult)
 async def evaluate_reference_team(
-    repo_url: Optional[str] = Query(None, description="URL d'un dépôt GitHub partagé pour extraire les contributeurs"),
+    repo_url: Optional[str] = Query(None, description="URL d'un dépôt GitHub partagé pour extraire l'équipe réelle"),
 ):
-    """Evaluates all reference developers simultaneously and returns a complete CTO Team Report."""
+    """Evaluates all developers of a project or the benchmark reference team, returning a complete CTO Team Report."""
+    if repo_url and "github.com" in repo_url:
+        gh = GitHubCollector()
+        try:
+            members_results = await gh.fetch_team_from_repo(repo_url)
+            contributors = await gh.analyze_repo_contributors(repo_url)
+            parsed = gh.parse_repo_url(repo_url)
+            team_title = f"Équipe Projet ({parsed[0]}/{parsed[1]})" if parsed else "Équipe Projet"
+            return TeamEngine.evaluate_team(
+                members=members_results,
+                team_name=team_title,
+                contributors_breakdown=contributors,
+            )
+        except Exception as e:
+            # If repo fails (e.g. rate limit), fallback gracefully
+            pass
+
     member_ids = ["perceval", "bohort", "leodagan", "arthur"]
     members_results: List[EvaluationResult] = []
 
@@ -85,15 +101,10 @@ async def evaluate_reference_team(
             res = await _run_evaluation(path)
             members_results.append(res)
 
-    contributors: Optional[List[ContributorMetrics]] = None
-    if repo_url and "github.com" in repo_url:
-        gh = GitHubCollector()
-        contributors = await gh.analyze_repo_contributors(repo_url)
-
     return TeamEngine.evaluate_team(
         members=members_results,
-        team_name="Équipe Kaamelott Tech",
-        contributors_breakdown=contributors,
+        team_name="Équipe Démonstration (4 Profils)",
+        contributors_breakdown=None,
     )
 
 
