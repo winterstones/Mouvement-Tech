@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mouvement-Tech — Évaluateur AIDD & Dashboard CTO</title>
+  <title>Mouvement-Tech — AI-Driven Development Assessment Platform</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
@@ -13,8 +13,9 @@
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen">
-  <!-- Top Navigation -->
-  <header class="border-b border-slate-800 bg-slate-900/70 backdrop-blur sticky top-0 z-50">
+  
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-emerald-400 flex items-center justify-center font-black text-xl shadow-lg shadow-indigo-500/20">
@@ -22,12 +23,15 @@
         </div>
         <div>
           <span class="font-bold text-lg text-white">Mouvement-Tech</span>
-          <span class="text-xs ml-2 px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium">AIDD Engine v1.2</span>
+          <span class="text-xs ml-2 px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium">AIDD Engine</span>
         </div>
       </div>
       <div class="flex items-center space-x-4">
-        <a href="http://127.0.0.1:8000/docs" target="_blank" class="text-xs font-semibold text-slate-400 hover:text-white px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
-          <i class="fa-solid fa-code mr-1.5 text-indigo-400"></i> API Swagger Docs
+        <span class="text-xs font-semibold text-slate-400 hidden sm:inline-flex items-center">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse"></span> Moteur Prêt
+        </span>
+        <a href="http://127.0.0.1:8000/docs" target="_blank" class="text-xs font-semibold text-slate-300 hover:text-white px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700 transition flex items-center">
+          <i class="fa-solid fa-code mr-1.5 text-indigo-400"></i> Swagger API
         </a>
       </div>
     </div>
@@ -35,287 +39,116 @@
 
   <!-- Main Container -->
   <main class="max-w-7xl mx-auto px-6 py-8">
-    <!-- Intro Banner -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-extrabold text-white tracking-tight">AI-Driven Development Assessment Platform</h1>
-      <p class="text-slate-400 mt-1.5 text-sm">Évaluation empirique des pratiques IA pour développeurs, équipes d'ingénierie et CTOs.</p>
-    </div>
-
-    <!-- Mode Selector Tabs -->
-    <div class="flex flex-wrap items-center gap-3 mb-6">
-      <button id="tabProfiles" onclick="switchMode('profiles')" class="px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
-        <i class="fa-solid fa-user"></i><span>Profils Individuels</span>
-      </button>
-      <button id="tabTeam" onclick="switchMode('team')" class="px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white">
-        <i class="fa-solid fa-user-group text-emerald-400"></i><span>👔 Dashboard Équipe & CTO</span>
-      </button>
-      <button id="tabGithub" onclick="switchMode('github')" class="px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white">
-        <i class="fa-brands fa-github text-slate-300"></i><span>Dépôt GitHub Live</span>
-      </button>
-    </div>
-
-    <!-- ==================== TAB 1: INDIVIDUAL PROFILES ==================== -->
-    <div id="viewProfiles" class="space-y-8">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Profile Quick Select -->
-        <div class="lg:col-span-8 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-            1. Sélectionner un développeur à évaluer
-          </label>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-            <button onclick="loadProfile('perceval')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-red-500/50 bg-slate-950/60 hover:bg-red-500/5 text-left transition flex flex-col justify-between" data-id="perceval">
-              <div class="flex items-center justify-between">
-                <span class="font-bold text-slate-200 group-hover:text-white text-sm">Perceval</span>
-                <span class="text-xs px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20 font-bold">Red</span>
-              </div>
-              <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Backend NestJS</span>
-            </button>
-            
-            <button onclick="loadProfile('bohort')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-blue-500/50 bg-slate-950/60 hover:bg-blue-500/5 text-left transition flex flex-col justify-between ring-2 ring-indigo-500 border-transparent" data-id="bohort">
-              <div class="flex items-center justify-between">
-                <span class="font-bold text-slate-200 group-hover:text-white text-sm">Bohort</span>
-                <span class="text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">Blue</span>
-              </div>
-              <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Fullstack Next.js</span>
-            </button>
-
-            <button onclick="loadProfile('leodagan')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-emerald-500/50 bg-slate-950/60 hover:bg-emerald-500/5 text-left transition flex flex-col justify-between" data-id="leodagan">
-              <div class="flex items-center justify-between">
-                <span class="font-bold text-slate-200 group-hover:text-white text-sm">Leodagan</span>
-                <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">Green</span>
-              </div>
-              <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Tech Lead Go/React</span>
-            </button>
-
-            <button onclick="loadProfile('arthur')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-amber-500/50 bg-slate-950/60 hover:bg-amber-500/5 text-left transition flex flex-col justify-between" data-id="arthur">
-              <div class="flex items-center justify-between">
-                <span class="font-bold text-slate-200 group-hover:text-white text-sm">Arthur</span>
-                <span class="text-xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold">Copper</span>
-              </div>
-              <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Solo Python/FastAPI</span>
-            </button>
-          </div>
-
-          <div class="flex items-center space-x-3 pt-2">
-            <input type="text" id="repoUrlInput" placeholder="URL GitHub/GitLab optionnelle pour enrichir l'évaluation" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-            <button onclick="evaluateSelected()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs px-5 py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/30 flex items-center">
-              <i class="fa-solid fa-play mr-2"></i> Lancer l'analyse
-            </button>
-          </div>
+    
+    <!-- Hero / Audit Center -->
+    <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 rounded-3xl p-8 shadow-2xl mb-8 relative overflow-hidden">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-semibold mb-3">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Plateforme d'Audit & Trajectoire AIDD pour Équipes & CTOs</span>
         </div>
-
-        <!-- Quick Summary Status -->
-        <div class="lg:col-span-4 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
-          <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Règle de décision</span>
-            <div class="mt-3 p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-300">
-              <p class="font-semibold text-indigo-400 mb-1"><i class="fa-solid fa-scale-balanced mr-1.5"></i> Règle du Minimum (MIN)</p>
-              <p class="text-slate-400 text-[11px] leading-relaxed">Un niveau n'est acquis que si <strong class="text-slate-200">tous ses 4 axes</strong> le sont. Le maillon le plus faible dicte le rang global.</p>
-            </div>
-          </div>
-          <div class="text-xs text-slate-500 mt-3 flex items-center justify-between">
-            <span>Backend API : <span class="text-emerald-400 font-medium">Connecté</span></span>
-            <span id="sourcesCount" class="text-slate-400">Prêt</span>
-          </div>
-        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+          Évaluez la maturité IA de votre équipe et de vos dépôts.
+        </h1>
+        <p class="text-slate-400 mt-2 text-sm leading-relaxed">
+          Analyse empirique des 4 axes (Taille, Harnais, Intervention, Parallèle), détection des goulots d'étranglement collectifs et génération des plans d'action individuels.
+        </p>
       </div>
 
-      <!-- Individual Results Section -->
-      <div id="resultsSection" class="hidden space-y-6">
-        <!-- Top Card: Profile Level & Summary -->
-        <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-            <div>
-              <div class="flex items-center space-x-3 mb-2">
-                <h2 id="resProfileId" class="text-2xl font-black text-white capitalize">Profil</h2>
-                <span id="resRole" class="text-xs font-medium px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">Role</span>
-              </div>
-              <div id="resStack" class="flex flex-wrap gap-1.5 mt-2"></div>
-            </div>
-
-            <div class="flex items-center space-x-6 bg-slate-950/80 px-6 py-4 rounded-2xl border border-slate-800">
-              <div class="text-right">
-                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Niveau AIDD</div>
-                <div id="resLevelLabel" class="text-2xl font-extrabold text-white mt-0.5">🔹 Blue</div>
-              </div>
-              <div id="resLevelBadge" class="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-2xl font-black text-blue-400 shadow-inner">
-                2
-              </div>
-            </div>
-          </div>
-
-          <!-- Warnings -->
-          <div id="resWarningsContainer" class="mt-6 space-y-2 hidden"></div>
+      <!-- Unified Audit Input Bar -->
+      <div class="mt-6 flex flex-col sm:flex-row items-center gap-3">
+        <div class="relative flex-1 w-full">
+          <i class="fa-brands fa-github absolute left-4 top-3.5 text-slate-500 text-base"></i>
+          <input type="text" id="targetInput" value="https://github.com/ai-driven-dev/laivel-up" placeholder="Entrez une URL GitHub (ex: https://github.com/org/repo)" class="w-full bg-slate-950 border border-slate-700/80 rounded-2xl pl-11 pr-4 py-3.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500 font-mono shadow-inner">
         </div>
+        <button onclick="runAudit()" id="btnAudit" class="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold text-xs px-6 py-3.5 rounded-2xl transition shadow-lg shadow-indigo-600/30 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-bolt mr-2"></i> Lancer l'Audit Global
+        </button>
+      </div>
 
-        <!-- 4 Axes Detailed Cards -->
-        <div>
-          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center">
-            <i class="fa-solid fa-cubes-stacked mr-2 text-indigo-400"></i> Détail des 4 Axes d'évaluation
-          </h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            
-            <!-- Axe 1: Taille -->
-            <div id="cardTaille" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-xs font-bold text-slate-300 flex items-center">
-                    <i class="fa-solid fa-maximize mr-2 text-indigo-400"></i> 1. Taille
-                  </span>
-                  <span id="badgeTaille" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">Rank</span>
-                </div>
-                <p id="evidenceTaille" class="text-xs text-slate-400 leading-relaxed min-h-[50px]"></p>
-              </div>
-              <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-                <span>Features livrées</span>
-                <span id="metricTaille" class="font-mono text-slate-300"></span>
-              </div>
-            </div>
-
-            <!-- Axe 2: Harness -->
-            <div id="cardHarness" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-xs font-bold text-slate-300 flex items-center">
-                    <i class="fa-solid fa-shield-halved mr-2 text-indigo-400"></i> 2. Harness
-                  </span>
-                  <span id="badgeHarness" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">Rank</span>
-                </div>
-                <p id="evidenceHarness" class="text-xs text-slate-400 leading-relaxed min-h-[50px]"></p>
-              </div>
-              <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-                <span>Contexte & Règles</span>
-                <span id="metricHarness" class="font-mono text-slate-300"></span>
-              </div>
-            </div>
-
-            <!-- Axe 3: Intervention -->
-            <div id="cardIntervention" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-xs font-bold text-slate-300 flex items-center">
-                    <i class="fa-solid fa-hand-holding-hand mr-2 text-indigo-400"></i> 3. Intervention
-                  </span>
-                  <span id="badgeIntervention" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">Rank</span>
-                </div>
-                <p id="evidenceIntervention" class="text-xs text-slate-400 leading-relaxed min-h-[50px]"></p>
-              </div>
-              <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-                <span>Corrections / PR</span>
-                <span id="metricIntervention" class="font-mono text-slate-300"></span>
-              </div>
-            </div>
-
-            <!-- Axe 4: Parallèle -->
-            <div id="cardParallele" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <span class="text-xs font-bold text-slate-300 flex items-center">
-                    <i class="fa-solid fa-code-branch mr-2 text-indigo-400"></i> 4. En Parallèle
-                  </span>
-                  <span id="badgeParallele" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">Rank</span>
-                </div>
-                <p id="evidenceParallele" class="text-xs text-slate-400 leading-relaxed min-h-[50px]"></p>
-              </div>
-              <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-                <span>Fils simultanés</span>
-                <span id="metricParallele" class="font-mono text-slate-300"></span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Progression Plan Card -->
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-7 shadow-xl">
-          <div class="flex items-center justify-between mb-5">
-            <div class="flex items-center space-x-3">
-              <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                <i class="fa-solid fa-arrow-trend-up"></i>
-              </div>
-              <div>
-                <h3 class="text-base font-bold text-white">Plan de progression vers <span id="resNextLevel" class="text-emerald-400">Niveau suivant</span></h3>
-                <p class="text-xs text-slate-400">Axe limitant identifié : <span id="resLimitingAxis" class="font-bold text-amber-400 capitalize">axe</span></p>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div>
-              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Étapes prioritaires</h4>
-              <div id="resSteps" class="space-y-2.5"></div>
-            </div>
-            <div>
-              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Bonnes pratiques d'accompagnement</h4>
-              <div id="resRecommendations" class="space-y-2.5"></div>
-            </div>
-          </div>
-        </div>
+      <!-- Quick presets shortcuts -->
+      <div class="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+        <span class="text-slate-500 font-semibold">Exemples :</span>
+        <button onclick="setAndRun('https://github.com/ai-driven-dev/laivel-up')" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition text-[11px] border border-slate-700/60">
+          <i class="fa-brands fa-github mr-1 text-slate-400"></i> Dépôt Hackathon
+        </button>
+        <button onclick="loadTeamDemo()" class="px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 transition text-[11px] border border-indigo-500/20 font-semibold">
+          <i class="fa-solid fa-users mr-1"></i> Équipe Complète (4 Devs)
+        </button>
       </div>
     </div>
 
-    <!-- ==================== TAB 2: CTO & TEAM DASHBOARD ==================== -->
-    <div id="viewTeam" class="hidden space-y-8">
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="hidden py-16 text-center">
+      <i class="fa-solid fa-circle-notch fa-spin text-4xl text-indigo-500 mb-3"></i>
+      <p class="text-base font-bold text-slate-200">Analyse empirique et audit en cours...</p>
+      <p class="text-xs text-slate-400 mt-1">Extraction des commits, pull requests, harnais de contexte et calcul de la règle du MIN</p>
+    </div>
+
+    <!-- ==================== MAIN DASHBOARD ==================== -->
+    <div id="mainDashboard" class="space-y-8">
       
-      <!-- Top Team KPI Bar -->
+      <!-- Team / CTO KPI Summary Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
           <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Membres Évalués</div>
-          <div class="text-3xl font-black text-white" id="teamKpiSize">4</div>
-          <div class="text-xs text-slate-500 mt-1">100% de l'équipe couverte</div>
+          <div class="text-3xl font-black text-white" id="kpiTeamSize">4</div>
+          <div class="text-xs text-slate-500 mt-1">Développeurs analysés</div>
         </div>
 
         <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
           <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Maturité Moyenne Équipe</div>
-          <div class="text-3xl font-black text-indigo-400" id="teamKpiAvgRank">2.5 / 6</div>
-          <div class="text-xs text-slate-400 mt-1" id="teamKpiAvgLabel">Niveau moyen : Blue / Green</div>
+          <div class="text-3xl font-black text-indigo-400" id="kpiAvgRank">2.5 / 6</div>
+          <div class="text-xs text-slate-400 mt-1" id="kpiAvgLabel">Niveau : Blue / Green</div>
         </div>
 
         <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Goulot d'Étranglement Équipe</div>
-          <div class="text-2xl font-black text-amber-400 capitalize" id="teamKpiBottleneck">Taille / Parallèle</div>
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Goulot d'Étranglement</div>
+          <div class="text-2xl font-black text-amber-400 capitalize" id="kpiBottleneck">Taille / Parallèle</div>
           <div class="text-xs text-slate-500 mt-1">Axe prioritaire de formation</div>
         </div>
 
         <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex items-center justify-between">
           <div>
-            <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Rapport CTO</div>
-            <button onclick="loadTeamReport()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-lg shadow-indigo-600/30 flex items-center mt-1">
-              <i class="fa-solid fa-arrows-rotate mr-2"></i> Actualiser
-            </button>
+            <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Règle de décision</div>
+            <div class="text-xs text-slate-300 font-semibold text-emerald-400">Règle du MIN (100%)</div>
+            <div class="text-[11px] text-slate-500 mt-1">4 axes obligatoires</div>
           </div>
-          <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xl">
-            👔
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl font-bold">
+            MIN
           </div>
         </div>
       </div>
 
-      <!-- Comparative Team Matrix Table -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl overflow-hidden">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-base font-bold text-white flex items-center">
-            <i class="fa-solid fa-table-columns mr-2 text-indigo-400"></i> Matrice de Compétences AIDD de l'Équipe
-          </h3>
-          <span class="text-xs text-slate-400">Vue consolidée pour le CTO</span>
+      <!-- Developers Competency Matrix Table -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center">
+              <i class="fa-solid fa-users-gear mr-2 text-indigo-400"></i> Matrice des Développeurs de l'Équipe
+            </h2>
+            <p class="text-xs text-slate-400">Cliquez sur un développeur pour afficher son diagnostic 4 axes et son plan de progression personnalisé.</p>
+          </div>
+          <span class="text-xs text-slate-500 font-mono" id="tableSubtitle">4 profils analysés</span>
         </div>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs text-slate-300">
-            <thead class="bg-slate-950/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
+            <thead class="bg-slate-950/90 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
               <tr>
                 <th class="p-3.5">Développeur</th>
-                <th class="p-3.5">Rôle</th>
-                <th class="p-3.5">Niveau Global</th>
+                <th class="p-3.5">Rôle / Stack</th>
+                <th class="p-3.5">Niveau AIDD</th>
                 <th class="p-3.5">1. Taille</th>
                 <th class="p-3.5">2. Harness</th>
                 <th class="p-3.5">3. Intervention</th>
                 <th class="p-3.5">4. Parallèle</th>
                 <th class="p-3.5">Axe Limitant</th>
-                <th class="p-3.5">Cible $N+1$</th>
+                <th class="p-3.5">Action</th>
               </tr>
             </thead>
-            <tbody id="teamMatrixBody" class="divide-y divide-slate-800/60 font-mono">
-              <!-- Rows inserted dynamically -->
+            <tbody id="teamTableBody" class="divide-y divide-slate-800/60 font-mono">
+              <!-- Rows injected dynamically -->
             </tbody>
           </table>
         </div>
@@ -329,12 +162,11 @@
           </div>
           <div>
             <h3 class="text-base font-bold text-white">Plan Stratégique & Actions CTO pour Vendredi</h3>
-            <p class="text-xs text-slate-400">Recommandations managériales et priorités de montée en compétences d'équipe</p>
+            <p class="text-xs text-slate-400">Recommandations managériales et priorités d'accompagnement de l'équipe</p>
           </div>
         </div>
-
-        <div id="teamRecsContainer" class="space-y-3 mt-4">
-          <!-- Populated dynamically -->
+        <div id="teamRecsList" class="space-y-3 mt-4">
+          <!-- Recommendations -->
         </div>
       </div>
 
@@ -343,15 +175,9 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div>
             <h3 class="text-base font-bold text-white flex items-center">
-              <i class="fa-solid fa-users-viewfinder mr-2 text-emerald-400"></i> Audit des Contributeurs & Traçabilité IA d'un Dépôt Partagé
+              <i class="fa-solid fa-users-viewfinder mr-2 text-emerald-400"></i> Audit de Traçabilité IA des Contributeurs Git
             </h3>
-            <p class="text-xs text-slate-400 mt-0.5">Scanne les commits récents d'un dépôt GitHub et mesure le ratio de co-authorship IA par développeur.</p>
-          </div>
-          <div class="flex items-center space-x-2 w-full sm:w-auto">
-            <input type="text" id="contribRepoInput" value="https://github.com/ai-driven-dev/laivel-up" placeholder="https://github.com/org/repo" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 w-full sm:w-72 font-mono">
-            <button onclick="analyzeContributors()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-lg shadow-emerald-600/30 shrink-0">
-              Auditer
-            </button>
+            <p class="text-xs text-slate-400 mt-0.5">Scanne les commits du dépôt et calcule le ratio de co-authorship IA par développeur.</p>
           </div>
         </div>
 
@@ -364,13 +190,11 @@
                 <th class="p-3">Commits Signés IA</th>
                 <th class="p-3">Ratio Adoption IA</th>
                 <th class="p-3">Niveau AIDD Estimé</th>
-                <th class="p-3">Exemple de Commit</th>
+                <th class="p-3">Dernier Commit</th>
               </tr>
             </thead>
-            <tbody id="contributorsTableBody" class="divide-y divide-slate-800/60 font-mono">
-              <tr>
-                <td colspan="6" class="p-4 text-center text-slate-500">Cliquez sur 'Auditer' pour scanner les contributeurs du dépôt GitHub.</td>
-              </tr>
+            <tbody id="contribTableBody" class="divide-y divide-slate-800/60 font-mono">
+              <!-- Injected dynamically -->
             </tbody>
           </table>
         </div>
@@ -378,65 +202,107 @@
 
     </div>
 
-    <!-- ==================== TAB 3: GITHUB LIVE ==================== -->
-    <div id="viewGithub" class="hidden space-y-6">
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
-        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-          Évaluer un Dépôt GitHub Public en direct
-        </label>
-        <p class="text-xs text-slate-400 mb-4">Collez l'URL de n'importe quel dépôt GitHub. Le moteur interroge l'API GitHub, analyse le harnais (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`), la taille des PRs, la CI et la traçabilité des commits.</p>
+    <!-- ==================== MODAL: INDIVIDUAL DIAGNOSTIC ==================== -->
+    <div id="devModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-7 shadow-2xl relative">
         
-        <div class="flex flex-col sm:flex-row items-center gap-3">
-          <div class="relative flex-1 w-full">
-            <i class="fa-brands fa-github absolute left-4 top-3.5 text-slate-500"></i>
-            <input type="text" id="liveGithubInput" value="https://github.com/ai-driven-dev/laivel-up" placeholder="https://github.com/owner/repository" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono">
+        <!-- Close Button -->
+        <button onclick="closeModal()" class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <!-- Top summary in modal -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800 pr-10">
+          <div>
+            <div class="flex items-center space-x-3">
+              <h2 id="modalName" class="text-2xl font-extrabold text-white capitalize">Développeur</h2>
+              <span id="modalRole" class="text-xs px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">Rôle</span>
+            </div>
+            <div id="modalStack" class="flex flex-wrap gap-1.5 mt-2"></div>
           </div>
-          <button onclick="evaluateLiveGithub()" id="btnLiveGh" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-6 py-3 rounded-xl transition shadow-lg shadow-emerald-600/30 flex items-center justify-center shrink-0">
-            <i class="fa-solid fa-bolt mr-2"></i> Analyser le Dépôt
-          </button>
+
+          <div class="flex items-center space-x-4 bg-slate-950 px-5 py-3 rounded-2xl border border-slate-800">
+            <div>
+              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Niveau AIDD</div>
+              <div id="modalLevelLabel" class="text-xl font-black text-white mt-0.5">🔹 Blue</div>
+            </div>
+            <div id="modalLevelBadge" class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-xl font-black text-blue-400">
+              2
+            </div>
+          </div>
         </div>
+
+        <!-- Warning alert in modal -->
+        <div id="modalWarning" class="mt-4 p-3.5 bg-amber-500/10 border border-amber-500/20 text-amber-300 rounded-xl text-xs flex items-center space-x-2 hidden"></div>
+
+        <!-- 4 Axes Detailed Cards in modal -->
+        <div class="mt-6">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Diagnostic Détaillé sur les 4 Axes</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            
+            <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-2xl">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-300 flex items-center"><i class="fa-solid fa-maximize mr-1.5 text-indigo-400"></i> 1. Taille</span>
+                <span id="modalAxisTaille" class="text-[11px] font-bold px-2 py-0.5 rounded border">Rank</span>
+              </div>
+              <p id="modalEvidenceTaille" class="text-xs text-slate-400 leading-relaxed"></p>
+            </div>
+
+            <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-2xl">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-300 flex items-center"><i class="fa-solid fa-shield-halved mr-1.5 text-indigo-400"></i> 2. Harness</span>
+                <span id="modalAxisHarness" class="text-[11px] font-bold px-2 py-0.5 rounded border">Rank</span>
+              </div>
+              <p id="modalEvidenceHarness" class="text-xs text-slate-400 leading-relaxed"></p>
+            </div>
+
+            <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-2xl">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-300 flex items-center"><i class="fa-solid fa-hand-holding-hand mr-1.5 text-indigo-400"></i> 3. Intervention</span>
+                <span id="modalAxisIntervention" class="text-[11px] font-bold px-2 py-0.5 rounded border">Rank</span>
+              </div>
+              <p id="modalEvidenceIntervention" class="text-xs text-slate-400 leading-relaxed"></p>
+            </div>
+
+            <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-2xl">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-300 flex items-center"><i class="fa-solid fa-code-branch mr-1.5 text-indigo-400"></i> 4. Parallèle</span>
+                <span id="modalAxisParallele" class="text-[11px] font-bold px-2 py-0.5 rounded border">Rank</span>
+              </div>
+              <p id="modalEvidenceParallele" class="text-xs text-slate-400 leading-relaxed"></p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Progression Plan in modal -->
+        <div class="mt-6 pt-6 border-t border-slate-800">
+          <div class="flex items-center space-x-2 mb-4">
+            <i class="fa-solid fa-arrow-trend-up text-emerald-400"></i>
+            <h4 class="text-sm font-bold text-white">Plan de Progression Personnalisé vers <span id="modalNextLevel" class="text-emerald-400">Niveau suivant</span></h4>
+            <span class="text-xs text-slate-400">(Axe limitant : <span id="modalBottleneck" class="text-amber-400 font-bold capitalize">axe</span>)</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Actions Prioritaires</h5>
+              <div id="modalSteps" class="space-y-2"></div>
+            </div>
+            <div>
+              <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Bonnes Pratiques</h5>
+              <div id="modalRecommendations" class="space-y-2"></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="hidden py-12 text-center">
-      <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500 mb-3"></i>
-      <p class="text-sm font-semibold text-slate-300">Analyse empirique en cours...</p>
-      <p class="text-xs text-slate-500">Collecte des métriques Git, du harnais et évaluation des 4 axes</p>
-    </div>
   </main>
 
   <script>
     const API_BASE = "http://127.0.0.1:8000";
-    let selectedProfileId = "bohort";
-
-    function switchMode(mode) {
-      const tabProfiles = document.getElementById('tabProfiles');
-      const tabTeam = document.getElementById('tabTeam');
-      const tabGithub = document.getElementById('tabGithub');
-
-      const viewProfiles = document.getElementById('viewProfiles');
-      const viewTeam = document.getElementById('viewTeam');
-      const viewGithub = document.getElementById('viewGithub');
-
-      // Reset tabs
-      [tabProfiles, tabTeam, tabGithub].forEach(t => {
-        t.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white";
-      });
-      [viewProfiles, viewTeam, viewGithub].forEach(v => v.classList.add('hidden'));
-
-      if (mode === 'profiles') {
-        tabProfiles.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
-        viewProfiles.classList.remove('hidden');
-      } else if (mode === 'team') {
-        tabTeam.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-emerald-600 text-white shadow-lg shadow-emerald-600/30";
-        viewTeam.classList.remove('hidden');
-        loadTeamReport();
-      } else if (mode === 'github') {
-        tabGithub.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
-        viewGithub.classList.remove('hidden');
-      }
-    }
+    let teamDataCache = null;
 
     function getLevelBadgeStyle(levelId) {
       switch(levelId) {
@@ -451,73 +317,13 @@
       }
     }
 
-    function loadProfile(id) {
-      selectedProfileId = id;
-      document.querySelectorAll('.profile-btn').forEach(btn => {
-        if (btn.dataset.id === id) {
-          btn.classList.add('ring-2', 'ring-indigo-500', 'border-transparent');
-        } else {
-          btn.classList.remove('ring-2', 'ring-indigo-500', 'border-transparent');
-        }
-      });
-      evaluateSelected();
-    }
-
-    async function evaluateSelected() {
-      const repoUrl = document.getElementById('repoUrlInput').value.trim();
-      let url = `${API_BASE}/evaluate/${selectedProfileId}`;
-      if (repoUrl) {
-        url += `?repo_url=${encodeURIComponent(repoUrl)}`;
-      }
-
+    async function loadTeamDemo() {
       showLoading(true);
       try {
-        const res = await fetch(url);
-        if (!res.ok) {
-          throw new Error(`Erreur API (${res.status}) : ${await res.text()}`);
-        }
-        const data = await res.json();
-        renderResults(data);
-      } catch (err) {
-        alert("Impossible de joindre l'API : " + err.message + "\nAssurez-vous que le serveur FastAPI tourne sur le port 8000.");
-      } finally {
-        showLoading(false);
-      }
-    }
-
-    async function evaluateLiveGithub() {
-      const liveUrl = document.getElementById('liveGithubInput').value.trim();
-      if (!liveUrl) {
-        alert("Veuillez saisir une URL GitHub valide.");
-        return;
-      }
-
-      const url = `${API_BASE}/evaluate/live?repo_url=${encodeURIComponent(liveUrl)}`;
-      showLoading(true);
-      try {
-        const res = await fetch(url);
-        if (!res.ok) {
-          const errData = await res.json();
-          throw new Error(errData.detail || `Erreur HTTP ${res.status}`);
-        }
-        const data = await res.json();
-        // Switch to profile view to render
-        switchMode('profiles');
-        renderResults(data);
-      } catch (err) {
-        alert("Erreur d'analyse GitHub : " + err.message);
-      } finally {
-        showLoading(false);
-      }
-    }
-
-    async function loadTeamReport() {
-      showLoading(true);
-      try {
-        const res = await fetch(`${API_BASE}/team`);
+        const res = await fetch(`${API_BASE}/team?repo_url=https://github.com/ai-driven-dev/laivel-up`);
         if (!res.ok) throw new Error(await res.text());
-        const data = await res.json();
-        renderTeamReport(data);
+        teamDataCache = await res.json();
+        renderTeamData(teamDataCache);
       } catch (err) {
         alert("Erreur chargement équipe : " + err.message);
       } finally {
@@ -525,20 +331,61 @@
       }
     }
 
-    function renderTeamReport(data) {
-      document.getElementById('teamKpiSize').textContent = data.team_size;
-      document.getElementById('teamKpiAvgRank').textContent = `${data.average_rank} / 6`;
-      document.getElementById('teamKpiAvgLabel').textContent = `Niveau global moyen : ${data.average_level_label}`;
-      document.getElementById('teamKpiBottleneck').textContent = data.team_bottleneck_axis;
+    function setAndRun(url) {
+      document.getElementById('targetInput').value = url;
+      runAudit();
+    }
+
+    async function runAudit() {
+      const input = document.getElementById('targetInput').value.trim();
+      if (!input) {
+        alert("Veuillez saisir une URL GitHub.");
+        return;
+      }
+
+      showLoading(true);
+      try {
+        // Evaluate live repo and its team contributors
+        const [liveRes, teamRes, contribRes] = await Promise.all([
+          fetch(`${API_BASE}/evaluate/live?repo_url=${encodeURIComponent(input)}`),
+          fetch(`${API_BASE}/team?repo_url=${encodeURIComponent(input)}`),
+          fetch(`${API_BASE}/team/contributors?repo_url=${encodeURIComponent(input)}`)
+        ]);
+
+        if (teamRes.ok) {
+          teamDataCache = await teamRes.json();
+          renderTeamData(teamDataCache);
+        }
+
+        if (contribRes.ok) {
+          const contribs = await contribRes.json();
+          renderContributors(contribs);
+        }
+      } catch (err) {
+        alert("Erreur d'audit : " + err.message);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function renderTeamData(data) {
+      document.getElementById('kpiTeamSize').textContent = data.team_size;
+      document.getElementById('kpiAvgRank').textContent = `${data.average_rank} / 6`;
+      document.getElementById('kpiAvgLabel').textContent = `Niveau : ${data.average_level_label}`;
+      document.getElementById('kpiBottleneck').textContent = data.team_bottleneck_axis;
 
       // Table Matrix
-      const tbody = document.getElementById('teamMatrixBody');
+      const tbody = document.getElementById('teamTableBody');
       tbody.innerHTML = '';
-      data.members.forEach(m => {
+      data.members.forEach((m, idx) => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-800/40 transition";
+        tr.className = "hover:bg-slate-800/40 transition cursor-pointer";
+        tr.onclick = () => openDeveloperModal(idx);
         tr.innerHTML = `
-          <td class="p-3.5 font-bold text-white capitalize">${m.profile_id}</td>
+          <td class="p-3.5 font-bold text-white capitalize flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full ${m.level.rank >= 3 ? 'bg-emerald-400' : 'bg-blue-400'}"></span>
+            <span>${m.profile_id}</span>
+          </td>
           <td class="p-3.5 text-slate-400">${m.role || '-'}</td>
           <td class="p-3.5"><span class="px-2.5 py-1 rounded text-xs font-bold border ${getLevelBadgeStyle(m.level.id)}">${m.level.label}</span></td>
           <td class="p-3.5">${m.axes.taille.level} (${m.axes.taille.rank})</td>
@@ -546,13 +393,17 @@
           <td class="p-3.5">${m.axes.intervention.level} (${m.axes.intervention.rank})</td>
           <td class="p-3.5">${m.axes.parallele.level} (${m.axes.parallele.rank})</td>
           <td class="p-3.5 font-bold text-amber-400 capitalize">${m.limiting_axis}</td>
-          <td class="p-3.5 text-emerald-400 font-bold">${m.progression.next_level ? m.progression.next_level.label : 'Max'}</td>
+          <td class="p-3.5">
+            <button class="px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[11px] font-semibold transition">
+              <i class="fa-solid fa-eye mr-1"></i> Fiche
+            </button>
+          </td>
         `;
         tbody.appendChild(tr);
       });
 
-      // Recommendations
-      const recDiv = document.getElementById('teamRecsContainer');
+      // Recommendations for CTO
+      const recDiv = document.getElementById('teamRecsList');
       recDiv.innerHTML = '';
       data.team_recommendations.forEach((rec, idx) => {
         const item = document.createElement('div');
@@ -560,140 +411,124 @@
         item.innerHTML = `<span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-[11px] shrink-0">${idx+1}</span><span>${rec}</span>`;
         recDiv.appendChild(item);
       });
+
+      if (data.contributors_breakdown) {
+        renderContributors(data.contributors_breakdown);
+      }
     }
 
-    async function analyzeContributors() {
-      const repoUrl = document.getElementById('contribRepoInput').value.trim();
-      if (!repoUrl) return;
-
-      const tbody = document.getElementById('contributorsTableBody');
-      tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Analyse des contributeurs en cours...</td></tr>`;
-
-      try {
-        const res = await fetch(`${API_BASE}/team/contributors?repo_url=${encodeURIComponent(repoUrl)}`);
-        if (!res.ok) throw new Error(await res.text());
-        const list = await res.json();
-
-        tbody.innerHTML = '';
-        if (list.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">Aucun contributeur trouvé ou limite de requêtes atteinte.</td></tr>`;
-          return;
-        }
-
-        list.forEach(c => {
-          const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-800/40 transition";
-          const ratioPercent = Math.round(c.ai_coauthored_ratio * 100);
-          tr.innerHTML = `
-            <td class="p-3 font-bold text-white">${c.author}</td>
-            <td class="p-3">${c.total_commits}</td>
-            <td class="p-3 text-indigo-400 font-bold">${c.ai_coauthored_commits}</td>
-            <td class="p-3 font-bold ${ratioPercent > 50 ? 'text-emerald-400' : (ratioPercent > 10 ? 'text-blue-400' : 'text-slate-400')}">${ratioPercent}%</td>
-            <td class="p-3"><span class="px-2 py-0.5 rounded text-xs border ${getLevelBadgeStyle(c.estimated_level.id)}">${c.estimated_level.label}</span></td>
-            <td class="p-3 text-[11px] text-slate-500 line-clamp-1 max-w-xs">${c.sample_messages[0] || '-'}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-      } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-400">Erreur : ${err.message}</td></tr>`;
+    function renderContributors(list) {
+      const tbody = document.getElementById('contribTableBody');
+      tbody.innerHTML = '';
+      if (!list || list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">Aucun contributeur extrait du dépôt.</td></tr>`;
+        return;
       }
+
+      list.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/40 transition";
+        const ratioPercent = Math.round(c.ai_coauthored_ratio * 100);
+        tr.innerHTML = `
+          <td class="p-3 font-bold text-white">${c.author}</td>
+          <td class="p-3">${c.total_commits}</td>
+          <td class="p-3 text-indigo-400 font-bold">${c.ai_coauthored_commits}</td>
+          <td class="p-3 font-bold ${ratioPercent > 50 ? 'text-emerald-400' : (ratioPercent > 10 ? 'text-blue-400' : 'text-slate-400')}">${ratioPercent}%</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded text-xs border ${getLevelBadgeStyle(c.estimated_level.id)}">${c.estimated_level.label}</span></td>
+          <td class="p-3 text-[11px] text-slate-500 line-clamp-1 max-w-xs">${c.sample_messages[0] || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openDeveloperModal(index) {
+      if (!teamDataCache || !teamDataCache.members[index]) return;
+      const m = teamDataCache.members[index];
+
+      document.getElementById('modalName').textContent = m.profile_id;
+      document.getElementById('modalRole').textContent = m.role || 'Développeur';
+
+      const stackDiv = document.getElementById('modalStack');
+      stackDiv.innerHTML = '';
+      (m.stack || []).forEach(st => {
+        const s = document.createElement('span');
+        s.className = "text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700";
+        s.textContent = st;
+        stackDiv.appendChild(s);
+      });
+
+      document.getElementById('modalLevelLabel').textContent = m.level.label;
+      const badge = document.getElementById('modalLevelBadge');
+      badge.textContent = m.level.rank;
+      badge.className = `w-12 h-12 rounded-xl border flex items-center justify-center text-xl font-black ${getLevelBadgeStyle(m.level.id)}`;
+
+      // Warning
+      const warnDiv = document.getElementById('modalWarning');
+      if (m.warnings && m.warnings.length > 0) {
+        warnDiv.classList.remove('hidden');
+        warnDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400 mr-2"></i><span>${m.warnings[0]}</span>`;
+      } else {
+        warnDiv.classList.add('hidden');
+      }
+
+      // 4 axes
+      renderModalAxis('Taille', m.axes.taille, 'modalAxisTaille', 'modalEvidenceTaille');
+      renderModalAxis('Harness', m.axes.harness, 'modalAxisHarness', 'modalEvidenceHarness');
+      renderModalAxis('Intervention', m.axes.intervention, 'modalAxisIntervention', 'modalEvidenceIntervention');
+      renderModalAxis('Parallele', m.axes.parallele, 'modalAxisParallele', 'modalEvidenceParallele');
+
+      // Progression
+      const prog = m.progression;
+      document.getElementById('modalNextLevel').textContent = prog.next_level ? prog.next_level.label : 'Niveau maximal';
+      document.getElementById('modalBottleneck').textContent = prog.limiting_axis;
+
+      const stepsDiv = document.getElementById('modalSteps');
+      stepsDiv.innerHTML = '';
+      prog.steps.forEach((st, idx) => {
+        const d = document.createElement('div');
+        d.className = "p-2.5 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-300 flex items-start space-x-2";
+        d.innerHTML = `<span class="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">${idx+1}</span><span>${st}</span>`;
+        stepsDiv.appendChild(d);
+      });
+
+      const recDiv = document.getElementById('modalRecommendations');
+      recDiv.innerHTML = '';
+      prog.recommendations.forEach(rec => {
+        const d = document.createElement('div');
+        d.className = "p-2.5 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-400 flex items-start space-x-2";
+        d.innerHTML = `<i class="fa-solid fa-lightbulb text-amber-400/80 mt-0.5 shrink-0"></i><span>${rec}</span>`;
+        recDiv.appendChild(d);
+      });
+
+      document.getElementById('devModal').classList.remove('hidden');
+    }
+
+    function renderModalAxis(name, axisData, badgeId, evidenceId) {
+      const b = document.getElementById(badgeId);
+      b.textContent = `${axisData.level} (${axisData.rank})`;
+      b.className = `text-[11px] font-bold px-2 py-0.5 rounded border ${getLevelBadgeStyle(axisData.level)}`;
+      document.getElementById(evidenceId).textContent = axisData.evidence;
+    }
+
+    function closeModal() {
+      document.getElementById('devModal').classList.add('hidden');
     }
 
     function showLoading(isLoading) {
       const spinner = document.getElementById('loadingSpinner');
+      const dash = document.getElementById('mainDashboard');
       if (isLoading) {
         spinner.classList.remove('hidden');
+        dash.classList.add('opacity-50', 'pointer-events-none');
       } else {
         spinner.classList.add('hidden');
+        dash.classList.remove('opacity-50', 'pointer-events-none');
       }
     }
 
-    function renderResults(data) {
-      document.getElementById('resultsSection').classList.remove('hidden');
-
-      // Top info
-      document.getElementById('resProfileId').textContent = data.profile_id;
-      document.getElementById('resRole').textContent = data.role || 'Développeur';
-      
-      // Stack badges
-      const stackDiv = document.getElementById('resStack');
-      stackDiv.innerHTML = '';
-      (data.stack || []).forEach(st => {
-        const span = document.createElement('span');
-        span.className = 'text-[11px] px-2.5 py-0.5 rounded-lg bg-slate-800/80 text-slate-300 border border-slate-700/50';
-        span.textContent = st;
-        stackDiv.appendChild(span);
-      });
-
-      // Level
-      document.getElementById('resLevelLabel').textContent = data.level.label;
-      const levelBadge = document.getElementById('resLevelBadge');
-      levelBadge.textContent = data.level.rank;
-      levelBadge.className = `w-14 h-14 rounded-2xl border flex items-center justify-center text-2xl font-black shadow-inner ${getLevelBadgeStyle(data.level.id)}`;
-
-      // Warnings
-      const warnContainer = document.getElementById('resWarningsContainer');
-      warnContainer.innerHTML = '';
-      if (data.warnings && data.warnings.length > 0) {
-        warnContainer.classList.remove('hidden');
-        data.warnings.forEach(w => {
-          const wDiv = document.createElement('div');
-          wDiv.className = 'p-3 bg-amber-500/10 border border-amber-500/20 text-amber-300 rounded-xl text-xs flex items-center space-x-2';
-          wDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i><span>${w}</span>`;
-          warnContainer.appendChild(wDiv);
-        });
-      } else {
-        warnContainer.classList.add('hidden');
-      }
-
-      // Render 4 axes
-      renderAxis('Taille', data.axes.taille, 'cardTaille', 'badgeTaille', 'evidenceTaille', 'metricTaille', 
-                 `${data.axes.taille.details?.median_lines || 0} lignes méd.`);
-      renderAxis('Harness', data.axes.harness, 'cardHarness', 'badgeHarness', 'evidenceHarness', 'metricHarness', 
-                 `agents_md: ${data.axes.harness.details?.agents_md ? 'oui' : 'non'}`);
-      renderAxis('Intervention', data.axes.intervention, 'cardIntervention', 'badgeIntervention', 'evidenceIntervention', 'metricIntervention', 
-                 `${data.axes.intervention.details?.median_correction_commits || 0} corr. méd.`);
-      renderAxis('Parallele', data.axes.parallele, 'cardParallele', 'badgeParallele', 'evidenceParallele', 'metricParallele', 
-                 `${data.axes.parallele.details?.median_concurrent_branches || 1} fil(s) méd.`);
-
-      // Progression
-      const prog = data.progression;
-      document.getElementById('resNextLevel').textContent = prog.next_level ? prog.next_level.label : 'Niveau maximal atteint';
-      document.getElementById('resLimitingAxis').textContent = prog.limiting_axis;
-
-      const stepsDiv = document.getElementById('resSteps');
-      stepsDiv.innerHTML = '';
-      prog.steps.forEach((st, idx) => {
-        const sDiv = document.createElement('div');
-        sDiv.className = 'p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-300 flex items-start space-x-3';
-        sDiv.innerHTML = `<span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold text-[11px] shrink-0">${idx+1}</span><span>${st}</span>`;
-        stepsDiv.appendChild(sDiv);
-      });
-
-      const recDiv = document.getElementById('resRecommendations');
-      recDiv.innerHTML = '';
-      prog.recommendations.forEach(rec => {
-        const rDiv = document.createElement('div');
-        rDiv.className = 'p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-400 flex items-start space-x-3';
-        rDiv.innerHTML = `<i class="fa-solid fa-lightbulb text-amber-400/80 mt-0.5 shrink-0"></i><span>${rec}</span>`;
-        recDiv.appendChild(rDiv);
-      });
-
-      document.getElementById('sourcesCount').textContent = `${data.data_sources.length} sources analysées`;
-    }
-
-    function renderAxis(name, axisData, cardId, badgeId, evidenceId, metricId, metricText) {
-      const badge = document.getElementById(badgeId);
-      badge.textContent = `Rank ${axisData.rank} (${axisData.level})`;
-      badge.className = `text-[11px] font-bold px-2 py-0.5 rounded border ${getLevelBadgeStyle(axisData.level)}`;
-
-      document.getElementById(evidenceId).textContent = axisData.evidence;
-      document.getElementById(metricId).textContent = metricText;
-    }
-
-    // Auto-load bohort by default
+    // Auto-load on launch
     window.addEventListener('DOMContentLoaded', () => {
-      loadProfile('bohort');
+      loadTeamDemo();
     });
   </script>
 </body>
