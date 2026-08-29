@@ -41,53 +41,87 @@
       <p class="text-slate-400 mt-1.5 text-sm">Évaluation empirique sur les 4 axes AIDD, détection des maillons faibles et plan d'action personnalisé.</p>
     </div>
 
+    <!-- Mode Selector Tabs -->
+    <div class="flex items-center space-x-3 mb-6">
+      <button id="tabProfiles" onclick="switchMode('profiles')" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+        <i class="fa-solid fa-users"></i><span>Profils du Hackathon</span>
+      </button>
+      <button id="tabGithub" onclick="switchMode('github')" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white">
+        <i class="fa-brands fa-github"></i><span>Dépôt GitHub Live</span>
+      </button>
+    </div>
+
     <!-- Controls & Selection -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-      <!-- Profile Quick Select -->
+      
+      <!-- Box Left (Profile Mode or GitHub Mode) -->
       <div class="lg:col-span-8 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
-        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-          1. Sélectionner un profil de référence
-        </label>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-          <button onclick="loadProfile('perceval')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-red-500/50 bg-slate-950/60 hover:bg-red-500/5 text-left transition flex flex-col justify-between" data-id="perceval">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-200 group-hover:text-white text-sm">Perceval</span>
-              <span class="text-xs px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20 font-bold">Red</span>
-            </div>
-            <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Backend NestJS</span>
-          </button>
+        
+        <!-- Profile Mode Container -->
+        <div id="modeProfilesContainer">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+            1. Sélectionner un profil de référence
+          </label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+            <button onclick="loadProfile('perceval')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-red-500/50 bg-slate-950/60 hover:bg-red-500/5 text-left transition flex flex-col justify-between" data-id="perceval">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-200 group-hover:text-white text-sm">Perceval</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20 font-bold">Red</span>
+              </div>
+              <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Backend NestJS</span>
+            </button>
+            
+            <button onclick="loadProfile('bohort')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-blue-500/50 bg-slate-950/60 hover:bg-blue-500/5 text-left transition flex flex-col justify-between" data-id="bohort">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-200 group-hover:text-white text-sm">Bohort</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">Blue</span>
+              </div>
+              <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Fullstack Next.js</span>
+            </button>
+
+            <button onclick="loadProfile('leodagan')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-emerald-500/50 bg-slate-950/60 hover:bg-emerald-500/5 text-left transition flex flex-col justify-between" data-id="leodagan">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-200 group-hover:text-white text-sm">Leodagan</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">Green</span>
+              </div>
+              <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Tech Lead Go/React</span>
+            </button>
+
+            <button onclick="loadProfile('arthur')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-amber-500/50 bg-slate-950/60 hover:bg-amber-500/5 text-left transition flex flex-col justify-between" data-id="arthur">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-200 group-hover:text-white text-sm">Arthur</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold">Copper</span>
+              </div>
+              <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Solo Python/FastAPI</span>
+            </button>
+          </div>
+
+          <div class="flex items-center space-x-3 pt-2">
+            <input type="text" id="repoUrlInput" placeholder="URL GitHub/GitLab optionnelle pour enrichir l'évaluation" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+            <button onclick="evaluateSelected()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs px-5 py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/30 flex items-center">
+              <i class="fa-solid fa-play mr-2"></i> Lancer l'analyse
+            </button>
+          </div>
+        </div>
+
+        <!-- GitHub Live Mode Container -->
+        <div id="modeGithubContainer" class="hidden">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+            Évaluer un Dépôt GitHub Public en direct
+          </label>
+          <p class="text-xs text-slate-400 mb-4">Collez l'URL de n'importe quel dépôt GitHub. Le moteur interroge l'API GitHub, analyse le harnais (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`), la taille des PRs, la CI et la traçabilité des commits.</p>
           
-          <button onclick="loadProfile('bohort')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-blue-500/50 bg-slate-950/60 hover:bg-blue-500/5 text-left transition flex flex-col justify-between" data-id="bohort">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-200 group-hover:text-white text-sm">Bohort</span>
-              <span class="text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">Blue</span>
+          <div class="flex flex-col sm:flex-row items-center gap-3">
+            <div class="relative flex-1 w-full">
+              <i class="fa-brands fa-github absolute left-4 top-3.5 text-slate-500"></i>
+              <input type="text" id="liveGithubInput" value="https://github.com/ai-driven-dev/laivel-up" placeholder="https://github.com/owner/repository" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono">
             </div>
-            <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Fullstack Next.js</span>
-          </button>
-
-          <button onclick="loadProfile('leodagan')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-emerald-500/50 bg-slate-950/60 hover:bg-emerald-500/5 text-left transition flex flex-col justify-between" data-id="leodagan">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-200 group-hover:text-white text-sm">Leodagan</span>
-              <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">Green</span>
-            </div>
-            <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Tech Lead Go/React</span>
-          </button>
-
-          <button onclick="loadProfile('arthur')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-amber-500/50 bg-slate-950/60 hover:bg-amber-500/5 text-left transition flex flex-col justify-between" data-id="arthur">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-200 group-hover:text-white text-sm">Arthur</span>
-              <span class="text-xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold">Copper</span>
-            </div>
-            <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Solo Python/FastAPI</span>
-          </button>
+            <button onclick="evaluateLiveGithub()" id="btnLiveGh" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-6 py-3 rounded-xl transition shadow-lg shadow-emerald-600/30 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-bolt mr-2"></i> Analyser le Dépôt
+            </button>
+          </div>
         </div>
 
-        <div class="flex items-center space-x-3 pt-2">
-          <input type="text" id="repoUrlInput" placeholder="URL GitHub/GitLab optionnelle (ex: https://github.com/org/repo)" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-          <button onclick="evaluateSelected()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs px-5 py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/30 flex items-center">
-            <i class="fa-solid fa-play mr-2"></i> Lancer l'analyse
-          </button>
-        </div>
       </div>
 
       <!-- Quick Summary Status -->
@@ -104,6 +138,13 @@
           <span id="sourcesCount" class="text-slate-400">Prêt</span>
         </div>
       </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="hidden py-12 text-center">
+      <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-500 mb-3"></i>
+      <p class="text-sm font-semibold text-slate-300">Analyse empirique en cours...</p>
+      <p class="text-xs text-slate-500">Collecte des métriques Git, du harnais et évaluation des 4 axes</p>
     </div>
 
     <!-- Results Section (Hidden until loaded) -->
@@ -256,6 +297,27 @@
   <script>
     const API_BASE = "http://127.0.0.1:8000";
     let selectedProfileId = "bohort";
+    let currentMode = "profiles";
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const tabProfiles = document.getElementById('tabProfiles');
+      const tabGithub = document.getElementById('tabGithub');
+      const modeProfilesContainer = document.getElementById('modeProfilesContainer');
+      const modeGithubContainer = document.getElementById('modeGithubContainer');
+
+      if (mode === 'profiles') {
+        tabProfiles.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
+        tabGithub.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white";
+        modeProfilesContainer.classList.remove('hidden');
+        modeGithubContainer.classList.add('hidden');
+      } else {
+        tabGithub.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-emerald-600 text-white shadow-lg shadow-emerald-600/30";
+        tabProfiles.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white";
+        modeProfilesContainer.classList.add('hidden');
+        modeGithubContainer.classList.remove('hidden');
+      }
+    }
 
     function getLevelBadgeStyle(levelId) {
       switch(levelId) {
@@ -289,6 +351,7 @@
         url += `?repo_url=${encodeURIComponent(repoUrl)}`;
       }
 
+      showLoading(true);
       try {
         const res = await fetch(url);
         if (!res.ok) {
@@ -298,6 +361,43 @@
         renderResults(data);
       } catch (err) {
         alert("Impossible de joindre l'API : " + err.message + "\nAssurez-vous que le serveur FastAPI tourne sur le port 8000.");
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function evaluateLiveGithub() {
+      const liveUrl = document.getElementById('liveGithubInput').value.trim();
+      if (!liveUrl) {
+        alert("Veuillez saisir une URL GitHub valide.");
+        return;
+      }
+
+      const url = `${API_BASE}/evaluate/live?repo_url=${encodeURIComponent(liveUrl)}`;
+      showLoading(true);
+      try {
+        const res = await fetch(url);
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.detail || `Erreur HTTP ${res.status}`);
+        }
+        const data = await res.json();
+        renderResults(data);
+      } catch (err) {
+        alert("Erreur d'analyse GitHub : " + err.message);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function showLoading(isLoading) {
+      const spinner = document.getElementById('loadingSpinner');
+      const results = document.getElementById('resultsSection');
+      if (isLoading) {
+        spinner.classList.remove('hidden');
+        results.classList.add('hidden');
+      } else {
+        spinner.classList.add('hidden');
       }
     }
 

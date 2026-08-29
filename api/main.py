@@ -47,7 +47,8 @@ async def root():
         "description": "Moteur d'évaluation AIDD (AI-Driven Development)",
         "version": "1.0.0",
         "endpoints": {
-            "evaluate_custom": "POST /evaluate",
+            "evaluate_custom": "POST /evaluate (avec profile_path et/ou repo_url)",
+            "evaluate_repo_live": "GET /evaluate/live?repo_url=https://github.com/...",
             "evaluate_reference": "GET /evaluate/{profile_id} (ex: perceval, bohort, leodagan, arthur)",
             "levels_grid": "GET /levels",
             "docs": "/docs",
@@ -64,10 +65,36 @@ async def get_levels():
     }
 
 
+@app.get("/evaluate/live", response_model=EvaluationResult)
+async def evaluate_live_repo(
+    repo_url: str = Query(..., description="URL publique d'un dépôt GitHub à évaluer en direct"),
+):
+    """Evaluates a live public GitHub repository directly from GitHub API."""
+    if "github.com" not in repo_url:
+        raise HTTPException(
+            status_code=400,
+            detail="Seuls les dépôts GitHub (https://github.com/owner/repo) sont pris en charge pour l'évaluation en direct.",
+        )
+
+    try:
+        gh = GitHubCollector()
+        profile_data = await gh.fetch_full_profile_from_repo(repo_url)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de l'analyse GitHub : {str(e)}")
+
+    quantitative_scores = QuantitativeScorer.score_all(profile_data)
+    llm_judge = LLMQualitativeJudge()
+    llm_insights = await llm_judge.analyze(profile_data)
+    result = EvaluationEngine.evaluate(profile_data, quantitative_scores, llm_insights)
+    return result
+
+
 @app.get("/evaluate/{profile_id}", response_model=EvaluationResult)
 async def evaluate_reference_profile(
     profile_id: str,
-    repo_url: Optional[str] = Query(None, description="URL GitHub ou GitLab optionnelle"),
+    repo_url: Optional[str] = Query(None, description="URL GitHub ou GitLab optionnelle pour enrichissement"),
 ):
     """Evaluates a reference profile by its ID (perceval, bohort, leodagan, arthur)."""
     profile_path = SUJET_PROFILES_DIR / profile_id
@@ -82,12 +109,16 @@ async def evaluate_reference_profile(
 
 @app.post("/evaluate", response_model=EvaluationResult)
 async def evaluate_profile(request: EvaluationRequest):
-    """Evaluates a profile given its local folder path or repo metadata."""
-    if not request.profile_path:
+    """Evaluates a profile given its local folder path and/or public repository URL."""
+    if not request.profile_path and not request.repo_url:
         raise HTTPException(
             status_code=400,
-            detail="Le paramètre 'profile_path' est requis pour évaluer un profil.",
+            detail="Au moins un paramètre ('profile_path' ou 'repo_url') est requis pour lancer une évaluation.",
         )
+
+    # If only repo_url is supplied, evaluate directly via live GitHub collector
+    if request.repo_url and not request.profile_path:
+        return await evaluate_live_repo(request.repo_url)
 
     profile_path = Path(request.profile_path)
     if not profile_path.exists() or not profile_path.is_dir():
