@@ -38,6 +38,10 @@ class EvaluationEngine:
 
         # Generate warnings / inconsistency checks
         warnings = cls._detect_inconsistencies(profile_data, final_level, axes)
+        if "warnings" in profile_data and isinstance(profile_data["warnings"], list):
+            for w in profile_data["warnings"]:
+                if w not in warnings:
+                    warnings.append(w)
 
         # Generate progression steps to reach final_rank + 1
         progression = cls._build_progression_plan(final_rank, limiting_axis, axes, profile_data)
@@ -119,13 +123,13 @@ class EvaluationEngine:
             ]
         elif current_rank == 1:  # Red -> Blue
             steps = [
-                "Créer un fichier `AGENTS.md` ou `CLAUDE.md` à la racine de chaque dépôt avec l'architecture, les conventions et la stack.",
+                "Créer un fichier `AGENTS.md` ou `CLAUDE.md` à la racine de chaque dépôt avec l'architecture, les conventions et la stack (Context Engineering / Mémoire projet).",
                 "Cadrer explicitement le contexte avant de lancer la génération pour faire passer la taille des PRs de S à M.",
                 "Réduire les reprises post-génération en donnant les fichiers pertinents dès le premier prompt.",
             ]
             recommendations = [
                 "Mettre à jour le fichier de contexte dès qu'une erreur se produit deux fois sur la même convention.",
-                "Installer un plugin d'éditeur plutôt que de copier-coller dans une interface web.",
+                "Installer un plugin d'éditeur plutôt que de copier-coller dans une interface web afin de préserver l'historique et le contexte.",
             ]
         elif current_rank == 2:  # Blue -> Green
             steps = [
@@ -135,7 +139,7 @@ class EvaluationEngine:
             ]
             recommendations = [
                 "Créer des agents spécialisés pour les tâches récurrentes (migration, endpoints, refactoring).",
-                "Imposer l'écriture préalable des tests et vérifier qu'ils échouent avant implémentation.",
+                "Imposer l'écriture préalable des tests et vérifier qu'ils échouent avant implémentation (TDD guidé par l'IA).",
             ]
         elif current_rank == 3:  # Green -> Copper
             steps = [
@@ -145,15 +149,17 @@ class EvaluationEngine:
             ]
             recommendations = [
                 "Ne lancer en parallèle que des chantiers dont les dépendances croisées sont explicitement cartographiées dans les specs.",
+                "Exploiter les subagents / agents d'arrière-plan pour paralléliser l'exploration de code et l'écriture de tests.",
             ]
         elif current_rank == 4:  # Copper -> Silver
             steps = [
-                "Mettre en place des boucles d'auto-correction (scripts qui relancent l'IA avec la sortie d'erreur tant que les tests ou linters échouent).",
+                "Mettre en place des boucles d'auto-correction fermées (scripts relançant l'IA avec la sortie stderr tant que les tests ou linters échouent).",
                 "Déléguer la phase d'implémentation complète sans aucune intervention humaine après le cadrage initial.",
-                "Configurer la CI pour alimenter l'assistant en feedback automatique d'échec de build.",
+                "Configurer la CI/CD (GitHub Actions / GitLab CI) pour alimenter l'assistant en feedback automatique d'échec de build.",
             ]
             recommendations = [
                 "Tester les boucles de relance automatique d'abord sur les migrations d'API et les suites de tests unitaires.",
+                "Intégrer des agents de test prédictif pour cibler automatiquement les tests d'impact.",
             ]
         elif current_rank == 5:  # Silver -> Gold
             steps = [

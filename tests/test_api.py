@@ -29,3 +29,14 @@ async def test_api_evaluate_bohort():
         assert data["level"]["id"] == "blue"
         assert data["profile_id"] == "bohort"
         assert "progression" in data
+
+
+@pytest.mark.anyio
+async def test_api_evaluate_bohort_with_github_repo():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        res = await client.get("/evaluate/bohort?repo_url=https://github.com/winterstones/-new-GSB")
+        assert res.status_code == 200
+        data = res.json()
+        assert data["level"]["id"] == "blue"
+        assert data["profile_id"] == "bohort"
+        assert "github-api" in data["data_sources"]

@@ -141,16 +141,31 @@ async def _run_evaluation(profile_path: Path, repo_url: Optional[str] = None) ->
 
     # 2. Optional online repository enrichment
     if repo_url:
-        if "github.com" in repo_url:
-            gh = GitHubCollector()
-            enrichment = await gh.enrich_profile(repo_url)
-            profile_data["github_enrichment"] = enrichment
-            profile_data["available_sources"].append("github-api")
-        elif "gitlab.com" in repo_url:
-            gl = GitLabCollector()
-            enrichment = await gl.enrich_profile(repo_url)
-            profile_data["gitlab_enrichment"] = enrichment
-            profile_data["available_sources"].append("gitlab-api")
+        try:
+            if "github.com" in repo_url:
+                gh = GitHubCollector()
+                enrichment = await gh.enrich_profile(repo_url)
+                profile_data["github_enrichment"] = enrichment
+                profile_data["available_sources"].append("github-api")
+                if enrichment.get("context_files"):
+                    for fname, content in enrichment["context_files"].items():
+                        if fname not in profile_data.get("repo_context_files", {}):
+                            profile_data.setdefault("repo_context_files", {})[fname] = content
+                if enrichment.get("error"):
+                    profile_data.setdefault("warnings", []).append(f"Alerte enrichissement GitHub : {enrichment['error']}")
+            elif "gitlab.com" in repo_url:
+                gl = GitLabCollector()
+                enrichment = await gl.enrich_profile(repo_url)
+                profile_data["gitlab_enrichment"] = enrichment
+                profile_data["available_sources"].append("gitlab-api")
+                if enrichment.get("context_files"):
+                    for fname, content in enrichment["context_files"].items():
+                        if fname not in profile_data.get("repo_context_files", {}):
+                            profile_data.setdefault("repo_context_files", {})[fname] = content
+                if enrichment.get("error"):
+                    profile_data.setdefault("warnings", []).append(f"Alerte enrichissement GitLab : {enrichment['error']}")
+        except Exception as e:
+            profile_data.setdefault("warnings", []).append(f"Alerte enrichissement ({repo_url}) : {str(e)}")
 
     # 3. Compute quantitative axis scores
     quantitative_scores = QuantitativeScorer.score_all(profile_data)

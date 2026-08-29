@@ -121,8 +121,8 @@ class QuantitativeScorer:
 
         total_behavior_items = rules_count + skills_count + hooks_count + agents_count
 
-        # Check if loops are configured (e.g. in AGENTS.md or CI)
-        has_auto_loops = False
+        # Check if loops are configured (e.g. in ctx, AGENTS.md or CI)
+        has_auto_loops = ctx.get("has_auto_loops", False)
         agents_md_text = repo_files.get("AGENTS.md", "")
         if "Nothing relaunches a failed task" in agents_md_text:
             has_auto_loops = False

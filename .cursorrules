@@ -1,0 +1,8 @@
+# .cursorrules — Mouvement-Tech Engine
+
+- Toujours respecter la règle du MIN strict pour le calcul du niveau global AIDD.
+- Le moteur doit pouvoir tourner à 100% en local et de manière déterministe sans nécessiter de clé API externe.
+- Si une clé Gemini Flash est disponible, l'analyse qualitative s'active pour enrichir l'évaluation sémantique.
+- Chaque nouvelle fonctionnalité doit être accompagnée de ses tests pytest unitaires et d'intégration.
+- Utiliser le format Conventional Commits avec signature Co-authored-by: Antigravity <antigravity@google.com>.
+- Maintenir la base de connaissances à jour dans docs/knowledge/.

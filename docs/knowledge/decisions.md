@@ -32,3 +32,13 @@ Ce document consigne les choix clés et arbitrages d'ingénierie pris sur le pro
 - **Contexte :** La collaboration avec les assistants IA doit être auditable et mesurable.
 - **Décision :** Tous les commits produits avec l'aide de l'IA intègrent la signature standard `Co-authored-by: <Assistant> <email>`.
 - **Bénéfice :** Garantit la transparence et alimente fidèlement le ratio `ai_coauthored_ratio` du projet.
+
+---
+
+### ADR 05 — Modèle de Maturité en 3 Paliers : Stateless, Context Memory, Agentic Loops
+- **Contexte :** L'évaluation de l'axe Harness et des recommandations doit s'appuyer sur une taxonomie claire et reconnue de l'industrie (cf. Google DORA, McKinsey & guides de Dev Workflow Automation).
+- **Décision :** Classifier le harnais selon 3 stades qualitatifs :
+  1. *Stateless (One-shot, Red)* : Requêtes isolées sans mémoire projet.
+  2. *Context Memory (Blue/Green/Copper)* : Mémoire persistante du projet (`AGENTS.md`, conventions, règles de comportement).
+  3. *Agentic Loops (Silver/Gold)* : Boucles de rétroaction fermées avec auto-correction sur échec de test ou de build.
+- **Bénéfice :** Offre une explication limpide de l'écart entre le niveau Red (Perceval) et les niveaux avancés, tout en structurant les plans d'action générés.

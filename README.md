@@ -88,3 +88,13 @@ pip install -r requirements.txt
 2. **Plan d'Action Actionnable** : Génère les étapes concrètes adaptées au niveau cible $N+1$ et à l'axe limitant précis.
 3. **Enrichissement Multi-Plateformes** : Collecteurs intégrés pour GitHub API et GitLab API.
 4. **Hybridation LLM / Algo** : Analyse quantitative déterministe combinée à l'analyse sémantique des sessions et déclaratifs (Gemini Flash).
+5. **Fondements Méthodologiques Solides** : Appuyé sur les standards de l'industrie (*Google DORA Metrics*, *McKinsey State of AI*, distinction fondamentale *Stateless $\rightarrow$ Context Memory $\rightarrow$ Agentic Loops*).
+
+---
+
+## 📚 Documentation & Livrables
+
+- 📄 **[Méthode en 1 Page (Livrable CTO)](docs/methode.md)** : Ce que nous mesurons, comment et pourquoi.
+- 🏗️ **[Architecture Technique](docs/knowledge/architecture.md)** : Structure des collecteurs, moteurs et flux de données.
+- 📊 **[Critères AIDD](docs/knowledge/criteres-aidd.md)** : Formalisation des seuils quantitatifs et heuristiques.
+- 📜 **[Décisions d'Architecture (ADR)](docs/knowledge/decisions.md)** : Choix techniques clés et arbitrages d'ingénierie.
