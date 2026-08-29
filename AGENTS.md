@@ -6,12 +6,15 @@ Ce fichier constitue le point d'entrée principal pour tout agent ou assistant I
 
 ---
 
-## 📚 Base de Connaissances (`docs/knowledge/`)
+## 📚 Base de Connaissances & Stratégie (`docs/knowledge/`)
 
-Toute la documentation de référence et les décisions d'architecture sont versionnées dans `docs/knowledge/` :
+Toute la documentation de référence, les décisions d'architecture et la stratégie métier sont versionnées dans `docs/knowledge/` :
 - [`docs/knowledge/criteres-aidd.md`](./docs/knowledge/criteres-aidd.md) : Définition formelle des 7 niveaux, des 4 axes de mesure et des formules mathématiques d'inférence.
 - [`docs/knowledge/architecture.md`](./docs/knowledge/architecture.md) : Diagramme des composants, flux de données et rôles de chaque module (`collectors`, `scorer`, `api`, `web`).
 - [`docs/knowledge/decisions.md`](./docs/knowledge/decisions.md) : Registre des décisions d'architecture (ADRs) et arbitrages techniques.
+- [`docs/knowledge/vision-cibles.md`](./docs/knowledge/vision-cibles.md) : Vision stratégique, personas cibles (CTO, Lead, Dev, ESN) et proposition de valeur unique.
+- [`docs/knowledge/plan-utilisation.md`](./docs/knowledge/plan-utilisation.md) : Guide d'utilisation opérationnel, scénarios métiers pas-à-pas et matrice RACI.
+- [`docs/knowledge/pestel.md`](./docs/knowledge/pestel.md) : Analyse macro-environnementale PESTEL (Politique, Économique, Social, Technologique, Écologique, Légal).
 - [`levels/aidd.md`](./levels/aidd.md) : Référentiel officiel du hackathon Laivel Up.
 
 ---

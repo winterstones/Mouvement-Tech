@@ -92,9 +92,12 @@ pip install -r requirements.txt
 
 ---
 
-## 📚 Documentation & Livrables
+## 📚 Documentation & Livrables Stratégiques
 
 - 📄 **[Méthode en 1 Page (Livrable CTO)](docs/methode.md)** : Ce que nous mesurons, comment et pourquoi.
+- 🎯 **[Vision, Cibles & Proposition de Valeur](docs/knowledge/vision-cibles.md)** : Personas cibles (CTO, Lead, Dev, ESN) et ROI.
+- 📖 **[Plan d'Utilisation & Scénarios Métiers](docs/knowledge/plan-utilisation.md)** : Parcours opérationnels pas-à-pas et matrice RACI.
+- 🌍 **[Analyse Stratégique PESTEL](docs/knowledge/pestel.md)** : Facteurs Politiques, Économiques, Sociaux, Technologiques, Écologiques et Légaux.
 - 🏗️ **[Architecture Technique](docs/knowledge/architecture.md)** : Structure des collecteurs, moteurs et flux de données.
 - 📊 **[Critères AIDD](docs/knowledge/criteres-aidd.md)** : Formalisation des seuils quantitatifs et heuristiques.
 - 📜 **[Décisions d'Architecture (ADR)](docs/knowledge/decisions.md)** : Choix techniques clés et arbitrages d'ingénierie.
