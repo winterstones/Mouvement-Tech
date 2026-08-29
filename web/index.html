@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mouvement-Tech — Évaluateur AIDD</title>
+  <title>Mouvement-Tech — Évaluateur AIDD & Dashboard CTO</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
@@ -22,7 +22,7 @@
         </div>
         <div>
           <span class="font-bold text-lg text-white">Mouvement-Tech</span>
-          <span class="text-xs ml-2 px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium">AIDD Engine v1.0</span>
+          <span class="text-xs ml-2 px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium">AIDD Engine v1.2</span>
         </div>
       </div>
       <div class="flex items-center space-x-4">
@@ -37,30 +37,30 @@
   <main class="max-w-7xl mx-auto px-6 py-8">
     <!-- Intro Banner -->
     <div class="mb-8">
-      <h1 class="text-3xl font-extrabold text-white tracking-tight">Positionnement AI-Driven Development</h1>
-      <p class="text-slate-400 mt-1.5 text-sm">Évaluation empirique sur les 4 axes AIDD, détection des maillons faibles et plan d'action personnalisé.</p>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight">AI-Driven Development Assessment Platform</h1>
+      <p class="text-slate-400 mt-1.5 text-sm">Évaluation empirique des pratiques IA pour développeurs, équipes d'ingénierie et CTOs.</p>
     </div>
 
     <!-- Mode Selector Tabs -->
-    <div class="flex items-center space-x-3 mb-6">
-      <button id="tabProfiles" onclick="switchMode('profiles')" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
-        <i class="fa-solid fa-users"></i><span>Profils du Hackathon</span>
+    <div class="flex flex-wrap items-center gap-3 mb-6">
+      <button id="tabProfiles" onclick="switchMode('profiles')" class="px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+        <i class="fa-solid fa-user"></i><span>Profils Individuels</span>
       </button>
-      <button id="tabGithub" onclick="switchMode('github')" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white">
-        <i class="fa-brands fa-github"></i><span>Dépôt GitHub Live</span>
+      <button id="tabTeam" onclick="switchMode('team')" class="px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-user-group text-emerald-400"></i><span>👔 Dashboard Équipe & CTO</span>
+      </button>
+      <button id="tabGithub" onclick="switchMode('github')" class="px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white">
+        <i class="fa-brands fa-github text-slate-300"></i><span>Dépôt GitHub Live</span>
       </button>
     </div>
 
-    <!-- Controls & Selection -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-      
-      <!-- Box Left (Profile Mode or GitHub Mode) -->
-      <div class="lg:col-span-8 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
-        
-        <!-- Profile Mode Container -->
-        <div id="modeProfilesContainer">
+    <!-- ==================== TAB 1: INDIVIDUAL PROFILES ==================== -->
+    <div id="viewProfiles" class="space-y-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Profile Quick Select -->
+        <div class="lg:col-span-8 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-            1. Sélectionner un profil de référence
+            1. Sélectionner un développeur à évaluer
           </label>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
             <button onclick="loadProfile('perceval')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-red-500/50 bg-slate-950/60 hover:bg-red-500/5 text-left transition flex flex-col justify-between" data-id="perceval">
@@ -71,7 +71,7 @@
               <span class="text-[11px] text-slate-500 mt-2 line-clamp-1">Backend NestJS</span>
             </button>
             
-            <button onclick="loadProfile('bohort')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-blue-500/50 bg-slate-950/60 hover:bg-blue-500/5 text-left transition flex flex-col justify-between" data-id="bohort">
+            <button onclick="loadProfile('bohort')" class="profile-btn group p-3.5 rounded-xl border border-slate-800 hover:border-blue-500/50 bg-slate-950/60 hover:bg-blue-500/5 text-left transition flex flex-col justify-between ring-2 ring-indigo-500 border-transparent" data-id="bohort">
               <div class="flex items-center justify-between">
                 <span class="font-bold text-slate-200 group-hover:text-white text-sm">Bohort</span>
                 <span class="text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">Blue</span>
@@ -104,38 +104,296 @@
           </div>
         </div>
 
-        <!-- GitHub Live Mode Container -->
-        <div id="modeGithubContainer" class="hidden">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-            Évaluer un Dépôt GitHub Public en direct
-          </label>
-          <p class="text-xs text-slate-400 mb-4">Collez l'URL de n'importe quel dépôt GitHub. Le moteur interroge l'API GitHub, analyse le harnais (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`), la taille des PRs, la CI et la traçabilité des commits.</p>
-          
-          <div class="flex flex-col sm:flex-row items-center gap-3">
-            <div class="relative flex-1 w-full">
-              <i class="fa-brands fa-github absolute left-4 top-3.5 text-slate-500"></i>
-              <input type="text" id="liveGithubInput" value="https://github.com/ai-driven-dev/laivel-up" placeholder="https://github.com/owner/repository" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono">
+        <!-- Quick Summary Status -->
+        <div class="lg:col-span-4 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Règle de décision</span>
+            <div class="mt-3 p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-300">
+              <p class="font-semibold text-indigo-400 mb-1"><i class="fa-solid fa-scale-balanced mr-1.5"></i> Règle du Minimum (MIN)</p>
+              <p class="text-slate-400 text-[11px] leading-relaxed">Un niveau n'est acquis que si <strong class="text-slate-200">tous ses 4 axes</strong> le sont. Le maillon le plus faible dicte le rang global.</p>
             </div>
-            <button onclick="evaluateLiveGithub()" id="btnLiveGh" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-6 py-3 rounded-xl transition shadow-lg shadow-emerald-600/30 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-bolt mr-2"></i> Analyser le Dépôt
+          </div>
+          <div class="text-xs text-slate-500 mt-3 flex items-center justify-between">
+            <span>Backend API : <span class="text-emerald-400 font-medium">Connecté</span></span>
+            <span id="sourcesCount" class="text-slate-400">Prêt</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Individual Results Section -->
+      <div id="resultsSection" class="hidden space-y-6">
+        <!-- Top Card: Profile Level & Summary -->
+        <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div>
+              <div class="flex items-center space-x-3 mb-2">
+                <h2 id="resProfileId" class="text-2xl font-black text-white capitalize">Profil</h2>
+                <span id="resRole" class="text-xs font-medium px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">Role</span>
+              </div>
+              <div id="resStack" class="flex flex-wrap gap-1.5 mt-2"></div>
+            </div>
+
+            <div class="flex items-center space-x-6 bg-slate-950/80 px-6 py-4 rounded-2xl border border-slate-800">
+              <div class="text-right">
+                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Niveau AIDD</div>
+                <div id="resLevelLabel" class="text-2xl font-extrabold text-white mt-0.5">🔹 Blue</div>
+              </div>
+              <div id="resLevelBadge" class="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-2xl font-black text-blue-400 shadow-inner">
+                2
+              </div>
+            </div>
+          </div>
+
+          <!-- Warnings -->
+          <div id="resWarningsContainer" class="mt-6 space-y-2 hidden"></div>
+        </div>
+
+        <!-- 4 Axes Detailed Cards -->
+        <div>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center">
+            <i class="fa-solid fa-cubes-stacked mr-2 text-indigo-400"></i> Détail des 4 Axes d'évaluation
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- Axe 1: Taille -->
+            <div id="cardTaille" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-bold text-slate-300 flex items-center">
+                    <i class="fa-solid fa-maximize mr-2 text-indigo-400"></i> 1. Taille
+                  </span>
+                  <span id="badgeTaille" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">Rank</span>
+                </div>
+                <p id="evidenceTaille" class="text-xs text-slate-400 leading-relaxed min-h-[50px]"></p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Features livrées</span>
+                <span id="metricTaille" class="font-mono text-slate-300"></span>
+              </div>
+            </div>
+
+            <!-- Axe 2: Harness -->
+            <div id="cardHarness" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-bold text-slate-300 flex items-center">
+                    <i class="fa-solid fa-shield-halved mr-2 text-indigo-400"></i> 2. Harness
+                  </span>
+                  <span id="badgeHarness" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">Rank</span>
+                </div>
+                <p id="evidenceHarness" class="text-xs text-slate-400 leading-relaxed min-h-[50px]"></p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Contexte & Règles</span>
+                <span id="metricHarness" class="font-mono text-slate-300"></span>
+              </div>
+            </div>
+
+            <!-- Axe 3: Intervention -->
+            <div id="cardIntervention" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-bold text-slate-300 flex items-center">
+                    <i class="fa-solid fa-hand-holding-hand mr-2 text-indigo-400"></i> 3. Intervention
+                  </span>
+                  <span id="badgeIntervention" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">Rank</span>
+                </div>
+                <p id="evidenceIntervention" class="text-xs text-slate-400 leading-relaxed min-h-[50px]"></p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Corrections / PR</span>
+                <span id="metricIntervention" class="font-mono text-slate-300"></span>
+              </div>
+            </div>
+
+            <!-- Axe 4: Parallèle -->
+            <div id="cardParallele" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-bold text-slate-300 flex items-center">
+                    <i class="fa-solid fa-code-branch mr-2 text-indigo-400"></i> 4. En Parallèle
+                  </span>
+                  <span id="badgeParallele" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">Rank</span>
+                </div>
+                <p id="evidenceParallele" class="text-xs text-slate-400 leading-relaxed min-h-[50px]"></p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Fils simultanés</span>
+                <span id="metricParallele" class="font-mono text-slate-300"></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Progression Plan Card -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-7 shadow-xl">
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <i class="fa-solid fa-arrow-trend-up"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-white">Plan de progression vers <span id="resNextLevel" class="text-emerald-400">Niveau suivant</span></h3>
+                <p class="text-xs text-slate-400">Axe limitant identifié : <span id="resLimitingAxis" class="font-bold text-amber-400 capitalize">axe</span></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Étapes prioritaires</h4>
+              <div id="resSteps" class="space-y-2.5"></div>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Bonnes pratiques d'accompagnement</h4>
+              <div id="resRecommendations" class="space-y-2.5"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 2: CTO & TEAM DASHBOARD ==================== -->
+    <div id="viewTeam" class="hidden space-y-8">
+      
+      <!-- Top Team KPI Bar -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Membres Évalués</div>
+          <div class="text-3xl font-black text-white" id="teamKpiSize">4</div>
+          <div class="text-xs text-slate-500 mt-1">100% de l'équipe couverte</div>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Maturité Moyenne Équipe</div>
+          <div class="text-3xl font-black text-indigo-400" id="teamKpiAvgRank">2.5 / 6</div>
+          <div class="text-xs text-slate-400 mt-1" id="teamKpiAvgLabel">Niveau moyen : Blue / Green</div>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Goulot d'Étranglement Équipe</div>
+          <div class="text-2xl font-black text-amber-400 capitalize" id="teamKpiBottleneck">Taille / Parallèle</div>
+          <div class="text-xs text-slate-500 mt-1">Axe prioritaire de formation</div>
+        </div>
+
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex items-center justify-between">
+          <div>
+            <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Rapport CTO</div>
+            <button onclick="loadTeamReport()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-lg shadow-indigo-600/30 flex items-center mt-1">
+              <i class="fa-solid fa-arrows-rotate mr-2"></i> Actualiser
+            </button>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xl">
+            👔
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparative Team Matrix Table -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl overflow-hidden">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-base font-bold text-white flex items-center">
+            <i class="fa-solid fa-table-columns mr-2 text-indigo-400"></i> Matrice de Compétences AIDD de l'Équipe
+          </h3>
+          <span class="text-xs text-slate-400">Vue consolidée pour le CTO</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="p-3.5">Développeur</th>
+                <th class="p-3.5">Rôle</th>
+                <th class="p-3.5">Niveau Global</th>
+                <th class="p-3.5">1. Taille</th>
+                <th class="p-3.5">2. Harness</th>
+                <th class="p-3.5">3. Intervention</th>
+                <th class="p-3.5">4. Parallèle</th>
+                <th class="p-3.5">Axe Limitant</th>
+                <th class="p-3.5">Cible $N+1$</th>
+              </tr>
+            </thead>
+            <tbody id="teamMatrixBody" class="divide-y divide-slate-800/60 font-mono">
+              <!-- Rows inserted dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Strategic Recommendations for CTO -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-7 shadow-xl">
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <i class="fa-solid fa-clipboard-check"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Plan Stratégique & Actions CTO pour Vendredi</h3>
+            <p class="text-xs text-slate-400">Recommandations managériales et priorités de montée en compétences d'équipe</p>
+          </div>
+        </div>
+
+        <div id="teamRecsContainer" class="space-y-3 mt-4">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Live Repository Contributor Analysis -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center">
+              <i class="fa-solid fa-users-viewfinder mr-2 text-emerald-400"></i> Audit des Contributeurs & Traçabilité IA d'un Dépôt Partagé
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Scanne les commits récents d'un dépôt GitHub et mesure le ratio de co-authorship IA par développeur.</p>
+          </div>
+          <div class="flex items-center space-x-2 w-full sm:w-auto">
+            <input type="text" id="contribRepoInput" value="https://github.com/ai-driven-dev/laivel-up" placeholder="https://github.com/org/repo" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 w-full sm:w-72 font-mono">
+            <button onclick="analyzeContributors()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-lg shadow-emerald-600/30 shrink-0">
+              Auditer
             </button>
           </div>
         </div>
 
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
+              <tr>
+                <th class="p-3">Contributeur / Auteur</th>
+                <th class="p-3">Total Commits</th>
+                <th class="p-3">Commits Signés IA</th>
+                <th class="p-3">Ratio Adoption IA</th>
+                <th class="p-3">Niveau AIDD Estimé</th>
+                <th class="p-3">Exemple de Commit</th>
+              </tr>
+            </thead>
+            <tbody id="contributorsTableBody" class="divide-y divide-slate-800/60 font-mono">
+              <tr>
+                <td colspan="6" class="p-4 text-center text-slate-500">Cliquez sur 'Auditer' pour scanner les contributeurs du dépôt GitHub.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <!-- Quick Summary Status -->
-      <div class="lg:col-span-4 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
-        <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Règle de décision</span>
-          <div class="mt-3 p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-300">
-            <p class="font-semibold text-indigo-400 mb-1"><i class="fa-solid fa-scale-balanced mr-1.5"></i> Règle du Minimum (MIN)</p>
-            <p class="text-slate-400 text-[11px] leading-relaxed">Un niveau n'est acquis que si <strong class="text-slate-200">tous ses 4 axes</strong> le sont. Le maillon le plus faible dicte le rang global.</p>
+    </div>
+
+    <!-- ==================== TAB 3: GITHUB LIVE ==================== -->
+    <div id="viewGithub" class="hidden space-y-6">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+          Évaluer un Dépôt GitHub Public en direct
+        </label>
+        <p class="text-xs text-slate-400 mb-4">Collez l'URL de n'importe quel dépôt GitHub. Le moteur interroge l'API GitHub, analyse le harnais (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`), la taille des PRs, la CI et la traçabilité des commits.</p>
+        
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+          <div class="relative flex-1 w-full">
+            <i class="fa-brands fa-github absolute left-4 top-3.5 text-slate-500"></i>
+            <input type="text" id="liveGithubInput" value="https://github.com/ai-driven-dev/laivel-up" placeholder="https://github.com/owner/repository" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono">
           </div>
-        </div>
-        <div id="quickInfo" class="text-xs text-slate-500 mt-3 flex items-center justify-between">
-          <span>Backend API : <span id="apiStatus" class="text-emerald-400 font-medium">Connecté</span></span>
-          <span id="sourcesCount" class="text-slate-400">Prêt</span>
+          <button onclick="evaluateLiveGithub()" id="btnLiveGh" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-6 py-3 rounded-xl transition shadow-lg shadow-emerald-600/30 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-bolt mr-2"></i> Analyser le Dépôt
+          </button>
         </div>
       </div>
     </div>
@@ -146,176 +404,37 @@
       <p class="text-sm font-semibold text-slate-300">Analyse empirique en cours...</p>
       <p class="text-xs text-slate-500">Collecte des métriques Git, du harnais et évaluation des 4 axes</p>
     </div>
-
-    <!-- Results Section (Hidden until loaded) -->
-    <div id="resultsSection" class="hidden space-y-6">
-      
-      <!-- Top Card: Profile Level & Summary -->
-      <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-          <div>
-            <div class="flex items-center space-x-3 mb-2">
-              <h2 id="resProfileId" class="text-2xl font-black text-white capitalize">Profil</h2>
-              <span id="resRole" class="text-xs font-medium px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">Role</span>
-            </div>
-            <div id="resStack" class="flex flex-wrap gap-1.5 mt-2">
-              <!-- Badges stack -->
-            </div>
-          </div>
-
-          <div class="flex items-center space-x-6 bg-slate-950/80 px-6 py-4 rounded-2xl border border-slate-800">
-            <div class="text-right">
-              <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Niveau AIDD</div>
-              <div id="resLevelLabel" class="text-2xl font-extrabold text-white mt-0.5">🔹 Blue</div>
-            </div>
-            <div id="resLevelBadge" class="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-2xl font-black text-blue-400 shadow-inner">
-              2
-            </div>
-          </div>
-        </div>
-
-        <!-- Warning banner if any -->
-        <div id="resWarningsContainer" class="mt-6 space-y-2 hidden">
-          <!-- Warnings populated dynamically -->
-        </div>
-      </div>
-
-      <!-- 4 Axes Detailed Cards -->
-      <div>
-        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center">
-          <i class="fa-solid fa-cubes-stacked mr-2 text-indigo-400"></i> Détail des 4 Axes d'évaluation
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          
-          <!-- Axe 1: Taille -->
-          <div id="cardTaille" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold text-slate-300 flex items-center">
-                  <i class="fa-solid fa-maximize mr-2 text-indigo-400"></i> 1. Taille
-                </span>
-                <span id="badgeTaille" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">Rank</span>
-              </div>
-              <p id="evidenceTaille" class="text-xs text-slate-400 leading-relaxed min-h-[50px]"></p>
-            </div>
-            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Features livrées</span>
-              <span id="metricTaille" class="font-mono text-slate-300"></span>
-            </div>
-          </div>
-
-          <!-- Axe 2: Harness -->
-          <div id="cardHarness" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold text-slate-300 flex items-center">
-                  <i class="fa-solid fa-shield-halved mr-2 text-indigo-400"></i> 2. Harness
-                </span>
-                <span id="badgeHarness" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">Rank</span>
-              </div>
-              <p id="evidenceHarness" class="text-xs text-slate-400 leading-relaxed min-h-[50px]"></p>
-            </div>
-            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Contexte & Règles</span>
-              <span id="metricHarness" class="font-mono text-slate-300"></span>
-            </div>
-          </div>
-
-          <!-- Axe 3: Intervention -->
-          <div id="cardIntervention" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold text-slate-300 flex items-center">
-                  <i class="fa-solid fa-hand-holding-hand mr-2 text-indigo-400"></i> 3. Intervention
-                </span>
-                <span id="badgeIntervention" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">Rank</span>
-              </div>
-              <p id="evidenceIntervention" class="text-xs text-slate-400 leading-relaxed min-h-[50px]"></p>
-            </div>
-            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Corrections / PR</span>
-              <span id="metricIntervention" class="font-mono text-slate-300"></span>
-            </div>
-          </div>
-
-          <!-- Axe 4: Parallèle -->
-          <div id="cardParallele" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold text-slate-300 flex items-center">
-                  <i class="fa-solid fa-code-branch mr-2 text-indigo-400"></i> 4. En Parallèle
-                </span>
-                <span id="badgeParallele" class="text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">Rank</span>
-              </div>
-              <p id="evidenceParallele" class="text-xs text-slate-400 leading-relaxed min-h-[50px]"></p>
-            </div>
-            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Fils simultanés</span>
-              <span id="metricParallele" class="font-mono text-slate-300"></span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Progression Plan Card -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-7 shadow-xl">
-        <div class="flex items-center justify-between mb-5">
-          <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <i class="fa-solid fa-arrow-trend-up"></i>
-            </div>
-            <div>
-              <h3 class="text-base font-bold text-white">Plan de progression vers <span id="resNextLevel" class="text-emerald-400">Niveau suivant</span></h3>
-              <p class="text-xs text-slate-400">Axe limitant identifié : <span id="resLimitingAxis" class="font-bold text-amber-400 capitalize">axe</span></p>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Action steps -->
-          <div>
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Étapes prioritaires</h4>
-            <div id="resSteps" class="space-y-2.5">
-              <!-- Steps -->
-            </div>
-          </div>
-
-          <!-- Recommendations -->
-          <div>
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Bonnes pratiques d'accompagnement</h4>
-            <div id="resRecommendations" class="space-y-2.5">
-              <!-- Recommendations -->
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
   </main>
 
   <script>
     const API_BASE = "http://127.0.0.1:8000";
     let selectedProfileId = "bohort";
-    let currentMode = "profiles";
 
     function switchMode(mode) {
-      currentMode = mode;
       const tabProfiles = document.getElementById('tabProfiles');
+      const tabTeam = document.getElementById('tabTeam');
       const tabGithub = document.getElementById('tabGithub');
-      const modeProfilesContainer = document.getElementById('modeProfilesContainer');
-      const modeGithubContainer = document.getElementById('modeGithubContainer');
+
+      const viewProfiles = document.getElementById('viewProfiles');
+      const viewTeam = document.getElementById('viewTeam');
+      const viewGithub = document.getElementById('viewGithub');
+
+      // Reset tabs
+      [tabProfiles, tabTeam, tabGithub].forEach(t => {
+        t.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white";
+      });
+      [viewProfiles, viewTeam, viewGithub].forEach(v => v.classList.add('hidden'));
 
       if (mode === 'profiles') {
-        tabProfiles.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
-        tabGithub.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white";
-        modeProfilesContainer.classList.remove('hidden');
-        modeGithubContainer.classList.add('hidden');
-      } else {
-        tabGithub.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-emerald-600 text-white shadow-lg shadow-emerald-600/30";
-        tabProfiles.className = "px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white";
-        modeProfilesContainer.classList.add('hidden');
-        modeGithubContainer.classList.remove('hidden');
+        tabProfiles.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
+        viewProfiles.classList.remove('hidden');
+      } else if (mode === 'team') {
+        tabTeam.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-emerald-600 text-white shadow-lg shadow-emerald-600/30";
+        viewTeam.classList.remove('hidden');
+        loadTeamReport();
+      } else if (mode === 'github') {
+        tabGithub.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
+        viewGithub.classList.remove('hidden');
       }
     }
 
@@ -382,6 +501,8 @@
           throw new Error(errData.detail || `Erreur HTTP ${res.status}`);
         }
         const data = await res.json();
+        // Switch to profile view to render
+        switchMode('profiles');
         renderResults(data);
       } catch (err) {
         alert("Erreur d'analyse GitHub : " + err.message);
@@ -390,12 +511,98 @@
       }
     }
 
+    async function loadTeamReport() {
+      showLoading(true);
+      try {
+        const res = await fetch(`${API_BASE}/team`);
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        renderTeamReport(data);
+      } catch (err) {
+        alert("Erreur chargement équipe : " + err.message);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function renderTeamReport(data) {
+      document.getElementById('teamKpiSize').textContent = data.team_size;
+      document.getElementById('teamKpiAvgRank').textContent = `${data.average_rank} / 6`;
+      document.getElementById('teamKpiAvgLabel').textContent = `Niveau global moyen : ${data.average_level_label}`;
+      document.getElementById('teamKpiBottleneck').textContent = data.team_bottleneck_axis;
+
+      // Table Matrix
+      const tbody = document.getElementById('teamMatrixBody');
+      tbody.innerHTML = '';
+      data.members.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/40 transition";
+        tr.innerHTML = `
+          <td class="p-3.5 font-bold text-white capitalize">${m.profile_id}</td>
+          <td class="p-3.5 text-slate-400">${m.role || '-'}</td>
+          <td class="p-3.5"><span class="px-2.5 py-1 rounded text-xs font-bold border ${getLevelBadgeStyle(m.level.id)}">${m.level.label}</span></td>
+          <td class="p-3.5">${m.axes.taille.level} (${m.axes.taille.rank})</td>
+          <td class="p-3.5">${m.axes.harness.level} (${m.axes.harness.rank})</td>
+          <td class="p-3.5">${m.axes.intervention.level} (${m.axes.intervention.rank})</td>
+          <td class="p-3.5">${m.axes.parallele.level} (${m.axes.parallele.rank})</td>
+          <td class="p-3.5 font-bold text-amber-400 capitalize">${m.limiting_axis}</td>
+          <td class="p-3.5 text-emerald-400 font-bold">${m.progression.next_level ? m.progression.next_level.label : 'Max'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Recommendations
+      const recDiv = document.getElementById('teamRecsContainer');
+      recDiv.innerHTML = '';
+      data.team_recommendations.forEach((rec, idx) => {
+        const item = document.createElement('div');
+        item.className = "p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-slate-300 flex items-start space-x-3";
+        item.innerHTML = `<span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-[11px] shrink-0">${idx+1}</span><span>${rec}</span>`;
+        recDiv.appendChild(item);
+      });
+    }
+
+    async function analyzeContributors() {
+      const repoUrl = document.getElementById('contribRepoInput').value.trim();
+      if (!repoUrl) return;
+
+      const tbody = document.getElementById('contributorsTableBody');
+      tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Analyse des contributeurs en cours...</td></tr>`;
+
+      try {
+        const res = await fetch(`${API_BASE}/team/contributors?repo_url=${encodeURIComponent(repoUrl)}`);
+        if (!res.ok) throw new Error(await res.text());
+        const list = await res.json();
+
+        tbody.innerHTML = '';
+        if (list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">Aucun contributeur trouvé ou limite de requêtes atteinte.</td></tr>`;
+          return;
+        }
+
+        list.forEach(c => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-800/40 transition";
+          const ratioPercent = Math.round(c.ai_coauthored_ratio * 100);
+          tr.innerHTML = `
+            <td class="p-3 font-bold text-white">${c.author}</td>
+            <td class="p-3">${c.total_commits}</td>
+            <td class="p-3 text-indigo-400 font-bold">${c.ai_coauthored_commits}</td>
+            <td class="p-3 font-bold ${ratioPercent > 50 ? 'text-emerald-400' : (ratioPercent > 10 ? 'text-blue-400' : 'text-slate-400')}">${ratioPercent}%</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded text-xs border ${getLevelBadgeStyle(c.estimated_level.id)}">${c.estimated_level.label}</span></td>
+            <td class="p-3 text-[11px] text-slate-500 line-clamp-1 max-w-xs">${c.sample_messages[0] || '-'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-400">Erreur : ${err.message}</td></tr>`;
+      }
+    }
+
     function showLoading(isLoading) {
       const spinner = document.getElementById('loadingSpinner');
-      const results = document.getElementById('resultsSection');
       if (isLoading) {
         spinner.classList.remove('hidden');
-        results.classList.add('hidden');
       } else {
         spinner.classList.add('hidden');
       }

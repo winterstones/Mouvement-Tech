@@ -43,6 +43,34 @@ class EvaluationResult(BaseModel):
     data_sources: List[str] = Field(default_factory=list)
 
 
+class ContributorMetrics(BaseModel):
+    author: str
+    email: Optional[str] = None
+    total_commits: int
+    ai_coauthored_commits: int
+    ai_coauthored_ratio: float
+    estimated_level: AIDDLevel
+    sample_messages: List[str] = Field(default_factory=list)
+
+
+class TeamEvaluationResult(BaseModel):
+    team_name: str = "Équipe Technique"
+    team_size: int
+    average_rank: float
+    average_level_label: str
+    level_distribution: Dict[str, int]
+    members: List[EvaluationResult]
+    team_bottleneck_axis: str
+    team_recommendations: List[str] = Field(default_factory=list)
+    contributors_breakdown: Optional[List[ContributorMetrics]] = None
+
+
 class EvaluationRequest(BaseModel):
     profile_path: Optional[str] = None
+    repo_url: Optional[str] = None
+
+
+class TeamEvaluationRequest(BaseModel):
+    profile_paths: Optional[List[str]] = None
+    team_directory: Optional[str] = None
     repo_url: Optional[str] = None

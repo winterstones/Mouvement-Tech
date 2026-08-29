@@ -3,6 +3,8 @@ import re
 from typing import Dict, Any, Optional, List
 import statistics
 import httpx
+from api.models import ContributorMetrics
+from api.scorer.thresholds import RANK_TO_LEVEL
 
 
 class GitHubCollector:
@@ -24,72 +26,115 @@ class GitHubCollector:
         return None
 
     async def enrich_profile(self, repo_url: str) -> Dict[str, Any]:
-        """Fetches repository context, metadata, and activity from GitHub to enrich an existing profile."""
+        """Fetches repository context and PR activity from GitHub to enrich an existing profile."""
         parsed = self.parse_repo_url(repo_url)
         if not parsed:
-            return {
-                "platform": "github",
-                "error": f"Format d'URL GitHub invalide : {repo_url}",
-                "is_accessible": False,
-            }
+            return {"error": "Format d'URL GitHub invalide."}
 
         owner, repo = parsed
         base_url = f"https://api.github.com/repos/{owner}/{repo}"
 
         enrichment: Dict[str, Any] = {
             "platform": "github",
-            "owner": owner,
-            "repo": repo,
-            "is_accessible": False,
+            "repo": f"{owner}/{repo}",
             "context_files": {},
-            "pull_requests_count": 0,
-            "has_workflows": False,
+            "prs": [],
+            "workflows": [],
+            "is_accessible": False,
         }
 
-        async with httpx.AsyncClient(headers=self.headers, timeout=12.0) as client:
+        async with httpx.AsyncClient(headers=self.headers, timeout=10.0) as client:
             repo_res = await client.get(base_url)
             if repo_res.status_code != 200:
-                msg = f"Impossible d'accéder au dépôt GitHub '{owner}/{repo}' (HTTP {repo_res.status_code})."
-                if repo_res.status_code == 404:
-                    msg += " Le dépôt est introuvable ou privé."
-                elif repo_res.status_code == 403:
-                    msg += " Limite de requêtes GitHub atteinte. Configurez un GITHUB_TOKEN."
-                enrichment["error"] = msg
-                return enrichment
-
+                return {
+                    "error": f"Impossible d'accéder au dépôt ({repo_res.status_code}).",
+                    "status_code": repo_res.status_code,
+                }
             enrichment["is_accessible"] = True
-            repo_meta = repo_res.json()
-            enrichment["description"] = repo_meta.get("description") or ""
-            enrichment["language"] = repo_meta.get("language") or "Code"
-            enrichment["default_branch"] = repo_meta.get("default_branch", "main")
-            enrichment["stars"] = repo_meta.get("stargazers_count", 0)
 
-            # Check Root Files & Context Files
             contents_res = await client.get(f"{base_url}/contents")
             if contents_res.status_code == 200:
                 root_files = contents_res.json()
                 for item in root_files:
                     name = item.get("name", "")
                     if name.upper() in ["AGENTS.MD", "CLAUDE.MD", ".CURSORRULES", "PROMPT.MD"]:
-                        download_url = item.get("download_url")
-                        if download_url:
-                            try:
-                                f_res = await client.get(download_url)
-                                if f_res.status_code == 200:
-                                    enrichment["context_files"][name] = f_res.text[:3000]
-                            except Exception:
-                                enrichment["context_files"][name] = "Content available"
-
-            # Check PRs
-            pulls_res = await client.get(f"{base_url}/pulls?state=closed&per_page=10")
-            if pulls_res.status_code == 200:
-                enrichment["pull_requests_count"] = len(pulls_res.json())
-
-            # Check Workflows
-            wf_res = await client.get(f"{base_url}/contents/.github/workflows")
-            enrichment["has_workflows"] = (wf_res.status_code == 200 and len(wf_res.json()) > 0)
+                        enrichment["context_files"][name] = item.get("download_url")
 
         return enrichment
+
+    async def analyze_repo_contributors(self, repo_url: str) -> List[ContributorMetrics]:
+        """Analyzes individual developer contributions and calculates AI co-authorship ratios per contributor."""
+        parsed = self.parse_repo_url(repo_url)
+        if not parsed:
+            return []
+
+        owner, repo = parsed
+        base_url = f"https://api.github.com/repos/{owner}/{repo}"
+
+        async with httpx.AsyncClient(headers=self.headers, timeout=12.0) as client:
+            commits_res = await client.get(f"{base_url}/commits?per_page=100")
+            if commits_res.status_code != 200:
+                return []
+
+            commits_data = commits_res.json()
+            authors_data: Dict[str, Dict[str, Any]] = {}
+
+            for c in commits_data:
+                author_login = (c.get("author") or {}).get("login")
+                author_name = (c.get("commit", {}).get("author") or {}).get("name", "Anonyme")
+                email = (c.get("commit", {}).get("author") or {}).get("email")
+                key = author_login or author_name
+
+                if key not in authors_data:
+                    authors_data[key] = {
+                        "author": key,
+                        "email": email,
+                        "total_commits": 0,
+                        "ai_coauthored_commits": 0,
+                        "sample_messages": [],
+                    }
+
+                msg = c.get("commit", {}).get("message", "")
+                authors_data[key]["total_commits"] += 1
+                if len(authors_data[key]["sample_messages"]) < 3:
+                    authors_data[key]["sample_messages"].append(msg.split("\n")[0])
+
+                if any(x in msg.lower() for x in ["co-authored-by: claude", "co-authored-by: antigravity", "co-authored-by: copilot", "co-authored-by: ai"]):
+                    authors_data[key]["ai_coauthored_commits"] += 1
+
+            results: List[ContributorMetrics] = []
+            for k, val in authors_data.items():
+                total = val["total_commits"]
+                ai_cnt = val["ai_coauthored_commits"]
+                ratio = round(ai_cnt / total, 2) if total > 0 else 0.0
+
+                # Inferred level based on empirical AI collaboration
+                if ratio >= 0.85:
+                    est_level = RANK_TO_LEVEL[4]  # Copper / Green
+                elif ratio >= 0.50:
+                    est_level = RANK_TO_LEVEL[3]  # Green
+                elif ratio >= 0.20:
+                    est_level = RANK_TO_LEVEL[2]  # Blue
+                elif ratio > 0.0:
+                    est_level = RANK_TO_LEVEL[1]  # Red
+                else:
+                    est_level = RANK_TO_LEVEL[0]  # White
+
+                results.append(
+                    ContributorMetrics(
+                        author=val["author"],
+                        email=val["email"],
+                        total_commits=total,
+                        ai_coauthored_commits=ai_cnt,
+                        ai_coauthored_ratio=ratio,
+                        estimated_level=est_level,
+                        sample_messages=val["sample_messages"],
+                    )
+                )
+
+            # Sort by total commits descending
+            results.sort(key=lambda x: x.total_commits, reverse=True)
+            return results
 
     async def fetch_full_profile_from_repo(self, repo_url: str) -> Dict[str, Any]:
         """Queries GitHub API to synthesize a complete profile_data dict for direct scoring."""
@@ -115,7 +160,7 @@ class GitHubCollector:
             main_language = repo_meta.get("language") or "Code"
             description = repo_meta.get("description") or ""
 
-            # 2. Check Root Files & Context Files (AGENTS.md, CLAUDE.md, .cursorrules, .worktreeinclude, etc.)
+            # 2. Check Root Files & Context Files (AGENTS.md, CLAUDE.md, etc.)
             contents_res = await client.get(f"{base_url}/contents")
             root_files = contents_res.json() if contents_res.status_code == 200 else []
 
