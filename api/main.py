@@ -122,6 +122,20 @@ async def analyze_repo_contributors(
     return await gh.analyze_repo_contributors(repo_url)
 
 
+@app.get("/evaluate/developer", response_model=EvaluationResult)
+async def evaluate_developer_profile(
+    username: str = Query(..., description="Nom d'utilisateur ou URL de profil GitHub (ex: 'torvalds' ou 'https://github.com/username')"),
+):
+    """Audits a developer's cross-repository GitHub activity, measuring AI co-authorship and AIDD maturity level."""
+    try:
+        gh = GitHubCollector()
+        return await gh.fetch_developer_profile(username)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de l'analyse du développeur : {str(e)}")
+
+
 @app.get("/evaluate/live", response_model=EvaluationResult)
 async def evaluate_live_repo(
     repo_url: str = Query(..., description="URL publique d'un dépôt GitHub à évaluer en direct"),
