@@ -2,75 +2,91 @@
 
 Mouvement-Tech est un moteur d'évaluation et de recommandation AIDD (AI-Driven Development) pour situer le niveau d'un développeur et lui fournir un plan de progression.
 
-## Architecture
-- `api/` : FastAPI & architecture de scoring
-  - `collectors/` :
-    - `profile.py` : Analyseur de dossiers de profil locaux
-    - `github.py` : Collecteur via GitHub API
-    - `gitlab.py` : Collecteur via GitLab API
-  - `scorer/` :
-    - `thresholds.py` : Définition des niveaux, rangs et seuils minimaux par axe
-    - `algo.py` : Moteur de scoring quantitatif / algorithmique
-    - `llm.py` : Analyse qualitative des sessions et du déclaratif via LLM (Gemini Flash)
-    - `fusion.py` : Consolidation, calcul du goulot d'étranglement (MIN) et génération du plan de progression
-  - `models.py` : Schémas Pydantic typés
-  - `main.py` : Routes FastAPI et point d'entrée API
-- `web/` : Interface dashboard interactive (`index.html`)
-- `tests/` :
-  - `test_profiles.py` : Validation sur les 4 profils de référence (perceval=red, bohort=blue, leodagan=green, arthur=copper)
-  - `test_algo.py` : Tests unitaires du scoring
-  - `test_api.py` : Tests d'intégration des endpoints REST
+Ce fichier constitue le point d'entrée principal pour tout agent ou assistant IA (Antigravity, Cursor, Claude Code, Copilot) intervenant sur ce dépôt.
 
 ---
 
-## 🔒 Règles Fondamentales du Moteur
-1. **Règle du MIN** : Le niveau global est strictement le minimum des 4 axes (Taille, Harness, Intervention, Parallèle).
-2. **Priorité aux faits empiriques** : Les métriques Git, PR et commits correctifs priment sur le déclaratif.
-3. **Justification systématique** : Chaque axe inclut une `evidence` factuelle basée sur les données chiffrées.
-4. **Gestion des données minimales** : Refus explicite si `profile.json` ou `git-activity.json` est absent.
+## 📚 Base de Connaissances (`docs/knowledge/`)
+
+Toute la documentation de référence et les décisions d'architecture sont versionnées dans `docs/knowledge/` :
+- [`docs/knowledge/criteres-aidd.md`](./docs/knowledge/criteres-aidd.md) : Définition formelle des 7 niveaux, des 4 axes de mesure et des formules mathématiques d'inférence.
+- [`docs/knowledge/architecture.md`](./docs/knowledge/architecture.md) : Diagramme des composants, flux de données et rôles de chaque module (`collectors`, `scorer`, `api`, `web`).
+- [`docs/knowledge/decisions.md`](./docs/knowledge/decisions.md) : Registre des décisions d'architecture (ADRs) et arbitrages techniques.
+- [`levels/aidd.md`](./levels/aidd.md) : Référentiel officiel du hackathon Laivel Up.
+
+---
+
+## 🏛️ Structure du Codebase
+
+```text
+Mouvement-Tech/
+├── api/
+│   ├── collectors/          # Ingestion multi-sources
+│   │   ├── profile.py       # Validation & chargement des dossiers de profil locaux
+│   │   ├── github.py        # Connecteur GitHub API (/pulls, /contents, /workflows)
+│   │   └── gitlab.py        # Connecteur GitLab API (/tree, /merge_requests)
+│   ├── scorer/              # Moteur de calcul AIDD
+│   │   ├── thresholds.py    # Définition des niveaux, rangs et métadonnées d'axes
+│   │   ├── algo.py          # Scoring quantitatif déterministe (4 axes)
+│   │   ├── llm.py           # Juge qualitatif sémantique (Gemini Flash / Heuristique)
+│   │   └── fusion.py        # Agrégation (règle du MIN), détection d'incohérences et plan
+│   ├── models.py            # Schémas de données Pydantic typés
+│   └── main.py              # Application FastAPI REST & documentation Swagger
+├── docs/
+│   └── knowledge/           # Documentation technique et savoir métier
+├── tests/                   # Suite de tests automatisés (100% de réussite exigé)
+│   ├── test_profiles.py     # Validation des 4 profils de référence (Perceval, Bohort, Leodagan, Arthur)
+│   ├── test_algo.py         # Tests unitaires du scoring quantitatif
+│   └── test_api.py          # Tests d'intégration des routes REST
+├── web/                     # Dashboard web interactif (index.html)
+└── requirements.txt         # Dépendances Python du projet
+```
+
+---
+
+## 🔒 Principes d'Ingénierie & Règles d'Or
+
+1. **Règle Fondamentale du MIN :** Le niveau global est strictement égal au minimum des 4 axes. Aucun axe ne peut compenser la faiblesse d'un autre.
+2. **Primauté des Faits Empiriques :** Les métriques Git (PRs, commits correctifs, CI, harnais) prévalent toujours sur les affirmations des développeurs.
+3. **Traçabilité & Preuve (`evidence`) :** Chaque axe calculé doit comporter une justification textuelle précise mentionnant les chiffres clés.
+4. **Gestion Robuste des Données Manquantes :** Refus explicite (erreur 422) si les pièces indispensables (`profile.json`, `git-activity.json`) sont absentes.
+5. **Mise à Jour de la Connaissance :** Si un changement d'architecture ou de règle intervient, mettre à jour le document correspondant dans `docs/knowledge/`.
 
 ---
 
 ## 🚀 Protocole Git, Commit & Push avec Traçabilité IA
 
-Tous les agents et assistants travaillant sur ce dépôt doivent respecter le protocole de traçabilité Git suivant :
+Chaque intervention sur ce dépôt doit respecter le protocole de traçabilité suivant :
 
-### 1. Format des Messages de Commit (Conventional Commits)
-Chaque commit doit respecter la structure standard :
+### 1. Format Conventional Commits
 ```text
 <type>(<scope>): <description courte et impérative>
 
-[Corps optionnel expliquant le contexte et le pourquoi]
+[Corps explicatif optionnel détaillant le contexte et les choix techniques]
 
 Co-authored-by: Antigravity <antigravity@google.com>
 ```
+Types : `feat`, `fix`, `test`, `refactor`, `docs`, `chore`, `perf`, `ci`.
 
-Types autorisés : `feat`, `fix`, `test`, `refactor`, `docs`, `chore`, `perf`, `ci`.
-
-### 2. Traçabilité Obligatoire (Co-authored-by)
-Chaque commit généré ou assisté par l'IA **doit inclure** la mention de co-auteur en fin de message pour garantir un ratio de co-authorship traçable :
-- Pour Antigravity / Gemini : `Co-authored-by: Antigravity <antigravity@google.com>`
-- Pour Claude : `Co-authored-by: Claude <noreply@anthropic.com>`
-- Pour Copilot : `Co-authored-by: GitHub Copilot <copilot@github.com>`
+### 2. Signature de Co-Auteur Obligatoire
+Chaque commit assisté par l'IA **doit inclure** la mention de co-auteur en fin de message :
+- Antigravity / Gemini : `Co-authored-by: Antigravity <antigravity@google.com>`
+- Claude : `Co-authored-by: Claude <noreply@anthropic.com>`
+- GitHub Copilot : `Co-authored-by: GitHub Copilot <copilot@github.com>`
 
 ### 3. Pipeline Pré-Commit / Pré-Push
-Avant de commiter ou pousser des changements :
-1. **Exécuter les tests** : `pytest -v` (doit être à 100% vert, 0 échec).
-2. **Vérifier les secrets** : Ne jamais ajouter de fichier `.env` ou de clés API réelles.
-3. **Statut Git propre** : Vérifier avec `git status` que seuls les fichiers ciblés sont indexés.
-
-### 4. Automatisation des Commandes Git
-Pour réaliser une livraison propre :
+Avant tout commit ou push :
 ```powershell
-# 1. Validation de la suite de tests
+# 1. Vérifier que la suite de tests est à 100% verte
 pytest -v
 
-# 2. Indexation des fichiers modifiés
+# 2. Vérifier l'état des fichiers modifiés
+git status
+
+# 3. Indexer et commiter avec la signature
 git add <fichiers>
+git commit -m "docs(knowledge): ajouter la base de connaissances et actualiser AGENTS.md`n`nCo-authored-by: Antigravity <antigravity@google.com>"
 
-# 3. Commit avec signature de co-auteur
-git commit -m "feat(scorer): description du changement`n`nCo-authored-by: Antigravity <antigravity@google.com>"
-
-# 4. Push vers GitHub sur la branche active
-git push origin <nom-de-branche>
+# 4. Pousser vers la branche distante
+git push origin <branche>
 ```
