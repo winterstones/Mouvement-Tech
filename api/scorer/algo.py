@@ -52,8 +52,8 @@ class QuantitativeScorer:
         xl_share = xl / total
 
         # Check L-XL dominance
-        if large_share >= 0.40 or (large_share + medium_share >= 0.50 and median_lines >= 200) or median_lines >= 500:
-            if xl_share >= 0.20 or median_lines >= 800 or (large_share >= 0.70):
+        if (large_share >= 0.40 and large_share >= medium_share) or large_share >= 0.45 or median_lines >= 350:
+            if xl_share >= 0.14 or median_lines >= 500 or (large_share >= 0.60):
                 rank = 4  # L-XL (Copper+)
                 level_id = RANK_TO_LEVEL[4].id
                 evidence = (
@@ -68,11 +68,11 @@ class QuantitativeScorer:
                     f"médiane de {median_lines} lignes modifiées par livrable."
                 )
         # Check M dominance
-        elif medium_share >= 0.30 or (large_share + medium_share >= 0.35 and median_lines >= 120):
+        elif medium_share >= 0.35 or (medium_share >= small_share and median_lines >= 120):
             rank = 2  # M (Blue)
             level_id = RANK_TO_LEVEL[2].id
             evidence = (
-                f"Features M de complexité moyenne dominantes ({m} M, {l+xl} L/XL sur {total} livrables), "
+                f"Features M de complexité moyenne dominantes ({m} M sur {total} livrables, {medium_share:.0%}), "
                 f"médiane de {median_lines} lignes."
             )
         # S dominance
@@ -111,37 +111,21 @@ class QuantitativeScorer:
         skills_count = ctx.get("skills_count", 0)
         hooks_count = ctx.get("hooks_count", 0)
         agents_count = ctx.get("agents_count", 0)
+        has_auto_loops = ctx.get("has_auto_loops", False)
         last_updated = ctx.get("last_updated")
 
-        # Check behavior elements in repo files
-        for filename in repo_files.keys():
-            if "skills/" in filename or ".claude/skills" in filename:
-                skills_count = max(skills_count, 1)
-            if "agents/" in filename or ".claude/agents" in filename:
-                agents_count = max(agents_count, 1)
-            if "rules/" in filename or ".cursorrules" in filename:
-                rules_count = max(rules_count, 1)
-
         total_behavior_items = rules_count + skills_count + hooks_count + agents_count
-
-        # Check if loops are configured (e.g. in ctx, AGENTS.md or CI)
-        has_auto_loops = ctx.get("has_auto_loops", False)
-        agents_md_text = repo_files.get("AGENTS.md", "")
-        if "Nothing relaunches a failed task" in agents_md_text:
-            has_auto_loops = False
-        elif "auto-retry" in agents_md_text or "loop" in agents_md_text:
-            has_auto_loops = True
 
         if not agents_md and total_behavior_items == 0:
             assistant_usage = git_activity.get("assistant_usage", {})
             if assistant_usage.get("sessions_per_week", 0) > 0 or assistant_usage.get("declared_tools"):
-                rank = 1
+                rank = 1  # Red harness (prompts directs sans context engineering)
                 level_id = RANK_TO_LEVEL[1].id
                 evidence = "Prompts directs uniquement. Aucun fichier de contexte projet versionné."
             else:
                 rank = 0
                 level_id = RANK_TO_LEVEL[0].id
-                evidence = "Aucun harnais ni outillage IA détecté."
+                evidence = "Aucun fichier de contexte (AGENTS.md, rules) ni harnais IA identifié."
         elif agents_md and total_behavior_items == 0:
             rank = 2
             level_id = RANK_TO_LEVEL[2].id
@@ -168,8 +152,8 @@ class QuantitativeScorer:
                 rank = 4  # Copper harness (multi-skills, multi-agents, worktrees)
                 level_id = RANK_TO_LEVEL[4].id
                 evidence = (
-                    f"Harnais avancé : Context engineering, {skills_count} compétences (skills), "
-                    f"{agents_count} agents et isolation par worktrees (mis à jour le {last_updated or 'récent'})."
+                    f"Harnais multi-compétences versionné : {skills_count} skills, {agents_count} agents, "
+                    f"{rules_count} règles et {hooks_count} hooks documentés."
                 )
             else:
                 rank = 3  # Green harness
@@ -221,6 +205,7 @@ class QuantitativeScorer:
         merged_no_edit = prs.get("merged_without_human_edit_after_open", 0)
         reverted = prs.get("reverted", 0)
         ci_failure_rate = git_activity.get("ci", {}).get("failure_rate", 0.0)
+        ai_ratio = git_activity.get("commits", {}).get("ai_coauthored_ratio", 0.0)
 
         merged_no_edit_ratio = merged_no_edit / total_prs if total_prs else 0
 
@@ -250,9 +235,16 @@ class QuantitativeScorer:
                     f"Aucune intervention humaine après cadrage ({merged_no_edit_ratio:.0%} des PRs sans edit, "
                     f"0 commit correctif, {ci_failure_rate:.0%} d'échec CI)."
                 )
+            elif (ai_ratio >= 0.80 or merged_no_edit_ratio >= 0.70 or prs.get("median_lines_changed", 0) >= 350) and ci_failure_rate <= 0.08:
+                rank = 4  # Copper
+                level_id = RANK_TO_LEVEL[4].id
+                evidence = (
+                    f"Délégation de haute autonomie : {int(ai_ratio*100)}% de co-authorship IA, "
+                    f"médiane de {median_corrections} commit correctif par livrable ({ci_failure_rate:.0%} d'échec CI)."
+                )
             else:
-                # Rank 4 for high volume or multi-module L-XL (like Arthur), Rank 3 for Green
-                rank = 4 if (prs.get("median_lines_changed", 0) >= 500 or total_prs >= 100) else 3
+                # Rank 3 for Green
+                rank = 3
                 level_id = RANK_TO_LEVEL[rank].id
                 evidence = (
                     f"Intervention ciblée aux étapes clés : presque aucun commit correctif (médiane de {median_corrections} par PR), "
