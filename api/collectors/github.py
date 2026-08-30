@@ -307,9 +307,15 @@ class GitHubCollector:
                     has_auto_loops = True
                     hooks_count += 2
 
-                # Fetch user's commits in this repo
+                # Fetch user's commits in this repo with fallback if author filter doesn't match Git email
                 commits_res = await client.get(f"{base_r_url}/commits?author={username}&per_page=20")
-                commits = commits_res.json() if commits_res.status_code == 200 else []
+                commits = commits_res.json() if (commits_res.status_code == 200 and isinstance(commits_res.json(), list)) else []
+                
+                if not commits:
+                    fallback_c_res = await client.get(f"{base_r_url}/commits?per_page=20")
+                    if fallback_c_res.status_code == 200 and isinstance(fallback_c_res.json(), list):
+                        commits = fallback_c_res.json()
+
                 r_commits_cnt = len(commits)
                 r_ai_cnt = 0
 
