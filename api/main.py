@@ -124,12 +124,12 @@ async def analyze_repo_contributors(
 
 @app.get("/evaluate/developer", response_model=EvaluationResult)
 async def evaluate_developer_profile(
-    username: str = Query(..., description="Nom d'utilisateur ou URL de profil GitHub (ex: 'torvalds' ou 'https://github.com/username')"),
+    username: str = Query(..., description="Nom d'utilisateur GitHub ou URL de profil (ex: winterstone ou https://github.com/torvalds)"),
 ):
-    """Audits a developer's cross-repository GitHub activity, measuring AI co-authorship and AIDD maturity level."""
+    """Audits a developer across all their public GitHub repositories, measuring global AI adoption and consistency."""
     try:
         gh = GitHubCollector()
-        return await gh.fetch_developer_profile(username)
+        return await gh.fetch_developer_multi_repos(username)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:

@@ -33,6 +33,7 @@ class ProgressionPlan(BaseModel):
 class EvaluationResult(BaseModel):
     profile_id: str
     role: Optional[str] = None
+    avatar_url: Optional[str] = None
     stack: List[str] = Field(default_factory=list)
     level: AIDDLevel
     axes: AxesScores
@@ -41,6 +42,7 @@ class EvaluationResult(BaseModel):
     warnings: List[str] = Field(default_factory=list)
     progression: ProgressionPlan
     data_sources: List[str] = Field(default_factory=list)
+    audited_repos: Optional[List[Dict[str, Any]]] = None
 
 
 class ContributorMetrics(BaseModel):
