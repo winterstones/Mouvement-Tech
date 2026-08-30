@@ -126,8 +126,20 @@
       <p class="text-xs text-slate-400 mt-1">Extraction des métriques Git, calcul des 4 axes et application de la règle du MIN</p>
     </div>
 
+    <!-- Empty State (Shown before any analysis has succeeded) -->
+    <div id="emptyState" class="py-16 text-center bg-slate-900/40 border border-slate-800/80 rounded-3xl p-8 shadow-xl">
+      <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-2xl mx-auto mb-4">
+        <i class="fa-solid fa-chart-pie"></i>
+      </div>
+      <h3 class="text-base font-bold text-white mb-1">Prêt pour l'audit</h3>
+      <p class="text-xs text-slate-400 max-w-md mx-auto">
+        Sélectionnez un scénario, entrez une URL ou choisissez l'un des exemples ci-dessus, puis appuyez sur 
+        <strong class="text-indigo-400 font-semibold">"Lancer l'Audit"</strong> pour afficher les résultats.
+      </p>
+    </div>
+
     <!-- ==================== VIEW 1: TEAM & CTO DASHBOARD ==================== -->
-    <div id="viewTeam" class="space-y-8">
+    <div id="viewTeam" class="hidden space-y-8">
       
       <!-- Team / CTO KPI Summary Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -496,7 +508,7 @@
           <button onclick="setAndRun('https://github.com/ai-driven-dev/laivel-up')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700/60">Dépôt Hackathon</button>
           <button onclick="loadTeamDemo()" class="px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 text-[11px] border border-indigo-500/20 font-semibold">Équipe Test Démo</button>
         `;
-        showView('viewTeam');
+        resetViewsToEmpty();
       } else if (sc === 'developer') {
         tabDev.className = "scenario-tab p-4 rounded-2xl border text-left transition flex flex-col justify-between bg-emerald-600/10 border-emerald-500 text-white shadow-lg shadow-emerald-600/10 ring-1 ring-emerald-500";
         input.placeholder = "URL de profil GitHub ou nom d'utilisateur (ex: https://github.com/winterstone ou torvalds)";
@@ -507,7 +519,7 @@
           <button onclick="setAndRun('winterstones')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700/60">winterstones</button>
           <button onclick="setAndRun('torvalds')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700/60">torvalds</button>
         `;
-        showView('viewDeveloper');
+        resetViewsToEmpty();
       } else if (sc === 'project') {
         tabProj.className = "scenario-tab p-4 rounded-2xl border text-left transition flex flex-col justify-between bg-amber-600/10 border-amber-500 text-white shadow-lg shadow-amber-600/10 ring-1 ring-amber-500";
         input.placeholder = "URL GitHub du dépôt à auditer (ex: https://github.com/fastapi/fastapi)";
@@ -517,7 +529,7 @@
           <span class="text-slate-500 font-semibold">Exemples :</span>
           <button onclick="setAndRun('https://github.com/ai-driven-dev/laivel-up')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700/60">laivel-up</button>
         `;
-        showView('viewProject');
+        resetViewsToEmpty();
       } else if (sc === 'local') {
         tabLocal.className = "scenario-tab p-4 rounded-2xl border text-left transition flex flex-col justify-between bg-purple-600/10 border-purple-500 text-white shadow-lg shadow-purple-600/10 ring-1 ring-purple-500";
         input.placeholder = "Chemin absolu du dossier de profil ou dépôt local sur votre machine";
@@ -534,7 +546,19 @@
       }
     }
 
+    function resetViewsToEmpty() {
+      ['viewTeam', 'viewDeveloper', 'viewProject', 'viewLocal'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+      const empty = document.getElementById('emptyState');
+      if (empty) empty.classList.remove('hidden');
+    }
+
     function showView(viewId) {
+      const empty = document.getElementById('emptyState');
+      if (empty) empty.classList.add('hidden');
+
       ['viewTeam', 'viewDeveloper', 'viewProject', 'viewLocal'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
@@ -592,6 +616,7 @@
         }
       } catch (err) {
         alert("Erreur lors de l'audit : " + err.message);
+        resetViewsToEmpty();
       } finally {
         showLoading(false);
       }
@@ -905,10 +930,9 @@
       }
     }
 
-    // Auto-load team scenario on launch
+    // Initialize scenario tabs on launch
     window.addEventListener('DOMContentLoaded', () => {
       setScenario('team');
-      loadTeamDemo();
     });
   </script>
 </body>
