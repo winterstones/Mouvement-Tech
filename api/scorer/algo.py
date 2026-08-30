@@ -52,27 +52,27 @@ class QuantitativeScorer:
         xl_share = xl / total
 
         # Check L-XL dominance
-        if large_share >= 0.45 or median_lines >= 500:
-            if xl_share >= 0.20 or median_lines >= 800 or (l + xl) >= 0.70:
+        if large_share >= 0.40 or (large_share + medium_share >= 0.50 and median_lines >= 200) or median_lines >= 500:
+            if xl_share >= 0.20 or median_lines >= 800 or (large_share >= 0.70):
                 rank = 4  # L-XL (Copper+)
                 level_id = RANK_TO_LEVEL[4].id
                 evidence = (
-                    f"Features L et XL dominantes ({l} L, {xl} XL sur {total} PRs, {large_share:.0%}), "
-                    f"médiane de {median_lines} lignes modifiées par PR."
+                    f"Features L et XL dominantes ({l} L, {xl} XL sur {total} livrables, {large_share:.0%}), "
+                    f"médiane de {median_lines} lignes modifiées par livrable."
                 )
             else:
                 rank = 3  # L (Green)
                 level_id = RANK_TO_LEVEL[3].id
                 evidence = (
-                    f"Features L dominantes ({l} L, {xl} XL sur {total} PRs), "
-                    f"médiane de {median_lines} lignes modifiées par PR."
+                    f"Features L de complexité élevée dominantes ({l} L, {xl} XL sur {total} livrables, {large_share:.0%}), "
+                    f"médiane de {median_lines} lignes modifiées par livrable."
                 )
         # Check M dominance
-        elif medium_share >= 0.35 or (medium_share >= small_share and median_lines >= 150):
+        elif medium_share >= 0.30 or (large_share + medium_share >= 0.35 and median_lines >= 120):
             rank = 2  # M (Blue)
             level_id = RANK_TO_LEVEL[2].id
             evidence = (
-                f"Features M de complexité moyenne dominantes ({m}/{total} PRs M, {medium_share:.0%}), "
+                f"Features M de complexité moyenne dominantes ({m} M, {l+xl} L/XL sur {total} livrables), "
                 f"médiane de {median_lines} lignes."
             )
         # S dominance
@@ -80,7 +80,7 @@ class QuantitativeScorer:
             rank = 1  # S (Red)
             level_id = RANK_TO_LEVEL[1].id
             evidence = (
-                f"Features S ou XS dominantes ({xs + s}/{total} PRs S/XS, {small_share:.0%}), "
+                f"Features S ou XS dominantes ({xs + s}/{total} livrables S/XS, {small_share:.0%}), "
                 f"médiane de {median_lines} lignes."
             )
 
