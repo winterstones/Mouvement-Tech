@@ -373,9 +373,77 @@
         </div>
       </div>
 
+      <!-- Diagnostic & Explication Règle du MIN -->
+      <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6 shadow-xl" id="projDiagnosisBanner">
+        <div class="flex items-start space-x-4">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl shrink-0 mt-0.5">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center space-x-3 mb-1">
+              <h4 class="text-sm font-bold text-white">Pourquoi ce score ? — Explication de la Règle du MIN</h4>
+              <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono" id="projBottleneckBadge">Axe Limitant</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed" id="projDiagnosisText">
+              Le score global est bridé par l'axe le plus faible conformément à la règle stricte du référentiel AIDD.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <!-- 4 Axes of Project -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="projAxesCards">
         <!-- Injected dynamically -->
+      </div>
+
+      <!-- Metrics Breakdown & Distribution -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <!-- PR Size Distribution -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center">
+            <i class="fa-solid fa-chart-simple mr-2 text-indigo-400"></i> Distribution des Livrables
+          </h4>
+          <div class="space-y-2.5 text-xs font-mono" id="projSizeBars"></div>
+        </div>
+
+        <!-- Harness & Automation Summary -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center">
+            <i class="fa-solid fa-shield-halved mr-2 text-emerald-400"></i> Harnais & Mémoire Projet
+          </h4>
+          <div class="space-y-2 text-xs" id="projHarnessDetails"></div>
+        </div>
+
+        <!-- Parallelism & Autonomy -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center">
+            <i class="fa-solid fa-code-branch mr-2 text-purple-400"></i> Parallélisme & Flux
+          </h4>
+          <div class="space-y-2 text-xs" id="projParallelDetails"></div>
+        </div>
+      </div>
+
+      <!-- Progression Plan for Project -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-7 shadow-xl">
+        <div class="flex items-center space-x-3 mb-5">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Plan de Progression du Dépôt vers <span id="projNextLevel" class="text-emerald-400">Niveau suivant</span></h3>
+            <p class="text-xs text-slate-400">Actions concrètes pour débloquer l'axe limitant : <span id="projBottleneckName" class="text-amber-400 font-bold capitalize">axe</span></p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Actions Recommandées</h5>
+            <div id="projStepsList" class="space-y-2"></div>
+          </div>
+          <div>
+            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Bonnes Pratiques de Cadrage</h5>
+            <div id="projRecsList" class="space-y-2"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -821,6 +889,121 @@
         ${createAxisCardHtml('3. Intervention (CI)', data.axes.intervention, 'fa-hand-holding-hand')}
         ${createAxisCardHtml('4. Parallèle (Branches)', data.axes.parallele, 'fa-code-branch')}
       `;
+
+      // Diagnostic & Bottleneck explanation
+      const prog = data.progression;
+      const limitAxisKey = prog.limiting_axis;
+      const limitAxisData = data.axes[limitAxisKey] || data.axes.taille;
+      
+      document.getElementById('projBottleneckBadge').textContent = `Goulot : ${limitAxisKey.toUpperCase()}`;
+      
+      let higherAxes = [];
+      ['taille', 'harness', 'intervention', 'parallele'].forEach(k => {
+        if (k !== limitAxisKey && data.axes[k] && data.axes[k].rank > data.level.rank) {
+          higherAxes.push(`${k} (${data.axes[k].level.toUpperCase()} ${data.axes[k].rank})`);
+        }
+      });
+      
+      const higherText = higherAxes.length > 0 ? ` Malgré des paliers supérieurs sur <strong>${higherAxes.join(', ')}</strong>, ` : ' ';
+      
+      document.getElementById('projDiagnosisText').innerHTML = `
+        Ce dépôt est classé au niveau global <strong>${data.level.label} (Rang ${data.level.rank})</strong> car son axe limitant est <strong>${limitAxisKey.toUpperCase()}</strong> (${limitAxisData.level.toUpperCase()} ${limitAxisData.rank}).
+        ${higherText}la <strong>règle stricte du MIN (Référentiel AIDD)</strong> impose que le niveau final soit égal au maillon le plus faible.<br>
+        <span class="text-amber-300 font-semibold mt-1 block"><i class="fa-solid fa-magnifying-glass mr-1"></i> Preuve constatée sur le dépôt :</span> ${limitAxisData.evidence}
+      `;
+
+      // PR Size Distribution visual bars
+      const sizeBarsDiv = document.getElementById('projSizeBars');
+      sizeBarsDiv.innerHTML = '';
+      const dist = data.axes.taille.details?.distribution || {};
+      const totalPrs = data.axes.taille.details?.total_prs || 1;
+      const medLines = data.axes.taille.details?.median_lines || 0;
+
+      const sizeLabels = [
+        { key: 'xs', name: 'XS (<30 lig.)', color: 'bg-red-500' },
+        { key: 's', name: 'S (30-150 lig.)', color: 'bg-red-400' },
+        { key: 'm', name: 'M (150-500 lig.)', color: 'bg-blue-400' },
+        { key: 'l', name: 'L (500-1200 lig.)', color: 'bg-emerald-400' },
+        { key: 'xl', name: 'XL (>1200 lig.)', color: 'bg-amber-400' }
+      ];
+
+      sizeLabels.forEach(s => {
+        const count = dist[s.key] || 0;
+        const pct = Math.round((count / totalPrs) * 100) || 0;
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between";
+        row.innerHTML = `
+          <span class="text-[11px] text-slate-400 w-28 shrink-0">${s.name}</span>
+          <div class="flex-1 mx-2 bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+            <div class="${s.color} h-full rounded-full" style="width: ${pct}%"></div>
+          </div>
+          <span class="text-[11px] text-slate-300 w-12 text-right">${count} (${pct}%)</span>
+        `;
+        sizeBarsDiv.appendChild(row);
+      });
+      const medRow = document.createElement('div');
+      medRow.className = "pt-2 text-[11px] text-slate-400 border-t border-slate-800 flex justify-between";
+      medRow.innerHTML = `<span>Médiane : <strong>${medLines} lignes/livrable</strong></span><span>Total : <strong>${totalPrs} livrables</strong></span>`;
+      sizeBarsDiv.appendChild(medRow);
+
+      // Harness Details
+      const hDetails = document.getElementById('projHarnessDetails');
+      const hData = data.axes.harness.details || {};
+      hDetails.innerHTML = `
+        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
+          <span class="text-slate-400">Mémoire \`AGENTS.md\` / Règles</span>
+          <span class="font-bold ${hData.agents_md ? 'text-emerald-400' : 'text-slate-500'}">${hData.agents_md ? '✓ Présent' : '✗ Absent'}</span>
+        </div>
+        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
+          <span class="text-slate-400">Règles & Compétences versionnées</span>
+          <span class="font-bold text-indigo-300 font-mono">${(hData.rules_count || 0) + (hData.skills_count || 0)} modules</span>
+        </div>
+        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
+          <span class="text-slate-400">Boucles fermées CI & Workflows</span>
+          <span class="font-bold ${hData.has_auto_loops ? 'text-emerald-400' : 'text-amber-400'}">${hData.has_auto_loops ? '✓ Configuré' : 'Non détecté'}</span>
+        </div>
+      `;
+
+      // Parallelism Details
+      const pDetails = document.getElementById('projParallelDetails');
+      const pData = data.axes.parallele.details || {};
+      const intData = data.axes.intervention.details || {};
+      pDetails.innerHTML = `
+        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
+          <span class="text-slate-400">Branches simultanées (médiane)</span>
+          <span class="font-bold text-purple-400 font-mono">${pData.median_concurrent || 1} branches</span>
+        </div>
+        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
+          <span class="text-slate-400">Commits correctifs post-ouverture</span>
+          <span class="font-bold text-slate-300 font-mono">${intData.median_correction_commits || 0} par PR</span>
+        </div>
+        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
+          <span class="text-slate-400">Taux d'échec CI</span>
+          <span class="font-bold ${(intData.ci_failure_rate || 0) < 0.1 ? 'text-emerald-400' : 'text-amber-400'} font-mono">${Math.round((intData.ci_failure_rate || 0) * 100)}%</span>
+        </div>
+      `;
+
+      // Progression Steps & Recommendations
+      document.getElementById('projNextLevel').textContent = prog.next_level ? prog.next_level.label : 'Niveau maximal';
+      document.getElementById('projBottleneckName').textContent = prog.limiting_axis;
+
+      const stepsDiv = document.getElementById('projStepsList');
+      stepsDiv.innerHTML = '';
+      (prog.steps || []).forEach((st, idx) => {
+        const d = document.createElement('div');
+        d.className = "p-2.5 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-300 flex items-start space-x-2";
+        d.innerHTML = `<span class="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">${idx+1}</span><span>${st}</span>`;
+        stepsDiv.appendChild(d);
+      });
+
+      const recDiv = document.getElementById('projRecsList');
+      recDiv.innerHTML = '';
+      (prog.recommendations || []).forEach(rec => {
+        const d = document.createElement('div');
+        d.className = "p-2.5 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-400 flex items-start space-x-2";
+        d.innerHTML = `<i class="fa-solid fa-lightbulb text-amber-400/80 mt-0.5 shrink-0"></i><span>${rec}</span>`;
+        recDiv.appendChild(d);
+      });
     }
 
     function createAxisCardHtml(title, axisData, icon) {
