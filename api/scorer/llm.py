@@ -3,21 +3,20 @@ import json
 from typing import Dict, Any, Optional
 
 try:
-    import google.generativeai as genai
+    from google import genai
     HAS_GENAI = True
 except ImportError:
     HAS_GENAI = False
 
 
 class LLMQualitativeJudge:
-    """Uses Gemini Flash (or fallback heuristic) to analyze textual artifacts (session.md, declaratif.md)."""
+    """Uses the official Google GenAI SDK (Gemini Flash) or fallback heuristic to analyze textual artifacts (session.md, declaratif.md)."""
 
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
-        self.model = None
+        self.client = None
         if self.api_key and HAS_GENAI:
-            genai.configure(api_key=self.api_key)
-            self.model = genai.GenerativeModel("gemini-1.5-flash")
+            self.client = genai.Client(api_key=self.api_key)
 
     async def analyze(self, profile_data: Dict[str, Any]) -> Dict[str, Any]:
         """Analyzes qualitative textual artifacts."""
@@ -30,8 +29,8 @@ class LLMQualitativeJudge:
                 "reason": "Aucun document textuel qualitatif (session.md ou declaratif.md) fourni.",
             }
 
-        # If LLM model is available, use it
-        if self.model:
+        # If LLM client is available, use it
+        if self.client:
             try:
                 return await self._call_gemini(session_text, declaratif_text)
             except Exception as e:
@@ -66,7 +65,10 @@ Réponds uniquement en JSON valide avec le schéma suivant :
   "llm_recommendations": ["conseil 1", "conseil 2"]
 }}
 """
-        response = self.model.generate_content(prompt)
+        response = self.client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+        )
         text = response.text.strip()
         # Clean potential markdown fences
         if text.startswith("```json"):

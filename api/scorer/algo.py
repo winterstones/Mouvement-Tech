@@ -103,7 +103,10 @@ class QuantitativeScorer:
         ctx = git_activity.get("context_files", {})
         repo_files = repo_context_files or {}
 
-        agents_md = ctx.get("agents_md", False) or "AGENTS.md" in repo_files or "CLAUDE.md" in repo_files
+        agents_md = ctx.get("agents_md", False) or any(
+            k.upper() in ["AGENTS.MD", "CLAUDE.MD", ".CURSORRULES", "PROMPT.MD", "CONVENTIONS.MD", ".AIDER.CONF.YML", ".WORKTREEINCLUDE"] or k.startswith(".aider")
+            for k in repo_files.keys()
+        )
         rules_count = ctx.get("rules_count", 0)
         skills_count = ctx.get("skills_count", 0)
         hooks_count = ctx.get("hooks_count", 0)
@@ -143,17 +146,25 @@ class QuantitativeScorer:
             rank = 2
             level_id = RANK_TO_LEVEL[2].id
             evidence = (
-                f"Context engineering en place (AGENTS.md / CLAUDE.md présent et mis à jour le {last_updated or 'récemment'}), "
+                f"Context engineering en place (AGENTS.md / CLAUDE.md / configuration IA présente et mise à jour le {last_updated or 'récemment'}), "
                 "mais sans règles, agents ni compétences spécialisées versionnées."
             )
-        elif agents_md and total_behavior_items > 0:
-            if has_auto_loops:
-                rank = 5
+        elif (agents_md or total_behavior_items >= 2) and has_auto_loops:
+            if agents_md and (skills_count >= 2 or agents_count >= 2):
+                rank = 5  # Silver harness
                 level_id = RANK_TO_LEVEL[5].id
                 evidence = (
                     "Context engineering + Behavior (agents, rules) + Boucles automatiques de convergence en place."
                 )
-            elif skills_count >= 3 or agents_count >= 2:
+            else:
+                rank = 4  # Copper harness (auto-loops / validation suite / hooks)
+                level_id = RANK_TO_LEVEL[4].id
+                evidence = (
+                    f"Harnais avancé avec boucles automatiques : Convergence CI/tests, {skills_count} compétences "
+                    f"et {rules_count + hooks_count} règles/hooks en place."
+                )
+        elif agents_md and total_behavior_items > 0:
+            if skills_count >= 3 or agents_count >= 2:
                 rank = 4  # Copper harness (multi-skills, multi-agents, worktrees)
                 level_id = RANK_TO_LEVEL[4].id
                 evidence = (
@@ -167,6 +178,18 @@ class QuantitativeScorer:
                     f"Context engineering + Behavior : {rules_count} règles, {skills_count} compétences, "
                     f"{hooks_count} hooks et {agents_count} agents versionnés (mis à jour le {last_updated or 'récent'})."
                 )
+        elif not agents_md and total_behavior_items > 0:
+            if skills_count >= 2 or agents_count >= 1 or total_behavior_items >= 3 or has_auto_loops:
+                rank = 3  # Green harness
+                level_id = RANK_TO_LEVEL[3].id
+                evidence = (
+                    f"Outillage comportemental structuré : {total_behavior_items} éléments versionnés "
+                    f"(règles/skills/hooks CI) assurant le cadrage et l'automatisation."
+                )
+            else:
+                rank = 2  # Blue harness
+                level_id = RANK_TO_LEVEL[2].id
+                evidence = f"Harnais partiel : {total_behavior_items} règles/hooks versionnés sans mémoire globale formalisée."
         else:
             rank = 1
             level_id = RANK_TO_LEVEL[1].id
