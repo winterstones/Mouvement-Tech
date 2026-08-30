@@ -51,9 +51,9 @@ class QuantitativeScorer:
         large_share = (l + xl) / total
         xl_share = xl / total
 
-        # Check L-XL dominance
-        if (large_share >= 0.40 and large_share >= medium_share) or large_share >= 0.45 or median_lines >= 350:
-            if xl_share >= 0.14 or median_lines >= 500 or (large_share >= 0.60):
+        # Check L-XL dominance (L/XL is at least 35% and dominates M, or large_share >= 45%, or median >= 400)
+        if (large_share >= 0.35 and large_share > medium_share) or large_share >= 0.45 or median_lines >= 400:
+            if xl_share >= 0.10 or xl >= 2 or median_lines >= 400 or (large_share >= 0.50):
                 rank = 4  # L-XL (Copper+)
                 level_id = RANK_TO_LEVEL[4].id
                 evidence = (
@@ -67,7 +67,7 @@ class QuantitativeScorer:
                     f"Features L de complexité élevée dominantes ({l} L, {xl} XL sur {total} livrables, {large_share:.0%}), "
                     f"médiane de {median_lines} lignes modifiées par livrable."
                 )
-        # Check M dominance
+        # Check M dominance (M dominates or medium_share >= 35%)
         elif medium_share >= 0.35 or (medium_share >= small_share and median_lines >= 120):
             rank = 2  # M (Blue)
             level_id = RANK_TO_LEVEL[2].id
