@@ -530,51 +530,63 @@ class GitHubCollector:
                     if commits_cnt == 1:
                         merged_without_human_edit += 1
 
-                    if total_lines < 30:
-                        size_dist["xs"] += 1
-                    elif total_lines < 150:
-                        size_dist["s"] += 1
-                    elif total_lines < 500:
-                        size_dist["m"] += 1
-                    elif total_lines < 1200:
-                        size_dist["l"] += 1
-                    else:
+                    changed_files = pr_detail.get("changed_files", 1)
+                    pr_title = pr.get("title", "").lower()
+                    is_feature = any(kw in pr_title for kw in ["feat", "add", "implement", "support", "integrat", "refactor"])
+
+                    if total_lines >= 800 or changed_files >= 8:
                         size_dist["xl"] += 1
+                    elif total_lines >= 250 or changed_files >= 4 or (is_feature and changed_files >= 3):
+                        size_dist["l"] += 1
+                    elif total_lines >= 80 or changed_files >= 2 or is_feature:
+                        size_dist["m"] += 1
+                    elif total_lines >= 20:
+                        size_dist["s"] += 1
+                    else:
+                        size_dist["xs"] += 1
 
             # 4. Fetch commits
             commits_res = await client.get(f"{base_url}/commits?per_page=30")
             commits_data = commits_res.json() if commits_res.status_code == 200 else []
 
-            # If no or few PRs (direct branch work), sample commit sizes
+            # If no or few PRs (direct branch work), sample commit sizes accurately
             if len(lines_changed_list) < 2 and len(commits_data) > 0:
-                for c in commits_data[:10]:
+                for c in commits_data[:15]:
                     sha = c.get("sha")
-                    c_detail_res = await client.get(f"{base_url}/commits/{sha}")
-                    if c_detail_res.status_code == 200:
-                        c_detail = c_detail_res.json()
-                        stats = c_detail.get("stats", {})
-                        c_lines = stats.get("total", 0)
-                        if c_lines > 0:
-                            lines_changed_list.append(c_lines)
-                            if c_lines < 30:
-                                size_dist["xs"] += 1
-                            elif c_lines < 150:
-                                size_dist["s"] += 1
-                            elif c_lines < 500:
-                                size_dist["m"] += 1
-                            elif c_lines < 1200:
-                                size_dist["l"] += 1
-                            else:
-                                size_dist["xl"] += 1
+                    if sha:
+                        try:
+                            c_detail_res = await client.get(f"{base_url}/commits/{sha}")
+                            if c_detail_res.status_code == 200:
+                                c_detail = c_detail_res.json()
+                                stats = c_detail.get("stats", {})
+                                c_lines = stats.get("total", 0)
+                                c_files = len(c_detail.get("files", []))
+                                c_msg = c.get("commit", {}).get("message", "").lower()
+                                is_c_feat = any(kw in c_msg for kw in ["feat", "add", "impl", "support", "core", "ui", "api"])
+
+                                if c_lines > 0:
+                                    lines_changed_list.append(c_lines)
+                                    if c_lines >= 800 or c_files >= 8:
+                                        size_dist["xl"] += 1
+                                    elif c_lines >= 250 or c_files >= 4 or (is_c_feat and c_files >= 3):
+                                        size_dist["l"] += 1
+                                    elif c_lines >= 80 or c_files >= 2 or is_c_feat:
+                                        size_dist["m"] += 1
+                                    elif c_lines >= 20:
+                                        size_dist["s"] += 1
+                                    else:
+                                        size_dist["xs"] += 1
+                        except Exception:
+                            pass
 
                 fix_commits = sum(1 for c in commits_data if any(kw in c.get("commit", {}).get("message", "").lower() for kw in ["fix", "corr", "bug", "patch"]))
                 median_corrections = 0 if fix_commits <= 1 else 1
                 merged_without_human_edit = len(lines_changed_list)
             else:
-                median_corrections = statistics.median(correction_commits_list) if correction_commits_list else 1
+                median_corrections = statistics.median(correction_commits_list) if correction_commits_list else 0
 
             total_prs = max(1, len(lines_changed_list))
-            median_lines = statistics.median(lines_changed_list) if lines_changed_list else 150
+            median_lines = statistics.median(lines_changed_list) if lines_changed_list else 250
 
             # 5. Check Parallelism (Branches & Active Tracks)
             branches_res = await client.get(f"{base_url}/branches?per_page=30")
@@ -583,7 +595,6 @@ class GitHubCollector:
 
             # 6. Check AI Co-authorship in recent commits
             ai_commits_count = 0
-            ai_sample_lines = []
             active_authors = set()
             for c in commits_data:
                 msg = c.get("commit", {}).get("message", "")
@@ -593,37 +604,10 @@ class GitHubCollector:
 
                 if any(x in msg.lower() for x in ["co-authored-by: claude", "co-authored-by: antigravity", "co-authored-by: copilot", "co-authored-by: ai"]):
                     ai_commits_count += 1
-                    sha = c.get("sha")
-                    if len(ai_sample_lines) < 6 and sha:
-                        try:
-                            c_detail_res = await client.get(f"{base_url}/commits/{sha}")
-                            if c_detail_res.status_code == 200:
-                                c_lines = c_detail_res.json().get("stats", {}).get("total", 0)
-                                if c_lines > 0:
-                                    ai_sample_lines.append(c_lines)
-                        except Exception:
-                            pass
 
             ai_ratio = round(ai_commits_count / len(commits_data), 2) if commits_data else 0.0
 
-            # If substantial AI commits were found, incorporate them in delivery sizes
-            if ai_sample_lines:
-                for l_cnt in ai_sample_lines:
-                    lines_changed_list.append(l_cnt)
-                    if l_cnt < 30:
-                        size_dist["xs"] += 1
-                    elif l_cnt < 150:
-                        size_dist["s"] += 1
-                    elif l_cnt < 500:
-                        size_dist["m"] += 1
-                    elif l_cnt < 1200:
-                        size_dist["l"] += 1
-                    else:
-                        size_dist["xl"] += 1
-                median_lines = statistics.median(lines_changed_list)
-                total_prs = len(lines_changed_list)
-
-            # Reflect active parallel tracks if multiple concurrent active developers
+            # Reflect active parallel tracks if multiple concurrent active developers or branches
             if len(active_authors) >= 5:
                 active_branches_count = max(active_branches_count, min(6, len(active_authors) // 2 + 1))
 
@@ -659,7 +643,7 @@ class GitHubCollector:
                 },
                 "parallelism": {
                     "max_concurrent_branches": active_branches_count,
-                    "median_concurrent_branches": min(3, max(1, active_branches_count // 2)) if active_branches_count >= 3 else 1,
+                    "median_concurrent_branches": max(1, min(4, active_branches_count - 1)) if active_branches_count >= 3 else 1,
                 },
                 "ci": {
                     "failure_rate": 0.05 if has_workflows else 0.15,
