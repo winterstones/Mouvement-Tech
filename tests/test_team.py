@@ -26,13 +26,21 @@ def test_team_engine_evaluation():
 @pytest.mark.anyio
 async def test_team_api_endpoint():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        # 1. Test live / default team endpoint
         res = await client.get("/team")
         assert res.status_code == 200
         data = res.json()
-        assert data["team_size"] == 4
-        assert data["average_rank"] == 2.5
-        assert len(data["members"]) == 4
+        assert data["team_size"] >= 1
         assert "team_recommendations" in data
+        assert "evolution_timeline" in data
+
+        # 2. Test benchmark endpoint (4 reference profiles)
+        res_bench = await client.get("/team/benchmark")
+        assert res_bench.status_code == 200
+        bench_data = res_bench.json()
+        assert bench_data["team_size"] == 4
+        assert bench_data["average_rank"] == 2.5
+        assert len(bench_data["members"]) == 4
 
 
 @pytest.mark.anyio

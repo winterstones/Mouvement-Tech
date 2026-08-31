@@ -1,56 +1,59 @@
 # 📄 Notre Méthode en 1 Page — Mouvement-Tech
-> **Ce que nous mesurons, comment nous l'évaluons et pourquoi.**
+> **Plateforme d'Engineering Intelligence & Gouvernance AIDD (*AI-Driven Development*)**
 
 ---
 
-## 🎯 1. La Problématique & La Vision
+## 🎯 1. La Problématique & Le Piège du "Vibe Coding"
 
-Face à la demande d'un CTO (*« Il me faut le niveau AIDD de toute l'équipe et un plan de progression pour vendredi »*), le piège immédiat est de se fier aux déclarations d'intention ou au simple volume de lignes générées.
+Face à la demande d'un CTO (*« Il me faut le niveau AIDD de toute l'équipe et un plan de progression pour vendredi »*), deux écueils majeurs guettent le management technique :
+1. **L'illusion du déclaratif :** Se fier aux questionnaires d'auto-évaluation où chaque développeur se prétend "expert IA".
+2. **Le piège du "Vibe Coding" naïf :** Récompenser la génération aveugle de code par l'IA au détriment de l'architecture, ce qui génère une dette technique et des reprises massives.
 
-**Notre conviction :** L'efficacité d'un développeur avec l'IA ne se mesure pas au nombre de prompts envoyés, mais à la **robustesse de son harnais**, à son **autonomie de boucle (moindre reprise humaine)** et à sa **capacité de parallélisation**. 
+**Notre conviction :** Mouvement-Tech agit comme le **Swarmia / DORA de l'AI-Driven Development**. L'efficacité d'un ingénieur avec l'IA ne se mesure pas au nombre de prompts envoyés, mais à la **robustesse de son harnais**, à son **autonomie de boucle fermée (zéro reprise humaine)** et à sa **capacité de parallélisation d'environnements**.
 
-Les études industrielles confirment cette approche :
-- **Google DORA / State of DevOps :** Les équipes d'élite avec automatisation avancée déploient **208 fois plus souvent** et récupèrent des pannes **106 fois plus vite** grâce à des boucles de feedback serrées.
-- **McKinsey AI Survey :** La refonte des workflows agentiques et l'intégration de processus fermés génèrent le plus fort impact opérationnel et financier.
+```mermaid
+flowchart LR
+    A["Données Git Factuelles<br/>PRs, Commits, Workflows, Harnais"] --> B["Moteur Déterministe<br/>4 Axes AIDD + Règle du MIN"]
+    B --> C["CTO Dashboard<br/>Matrice d'équipe & Goulots"]
+    B --> D["Coaching Développeur<br/>Plan d'action N+1 par la preuve"]
+```
 
 ---
 
 ## 📊 2. Ce que nous mesurons (Les 4 Axes Empiriques)
 
-Nous ingérons les données brutes (activité Git, PRs, dépôts, sessions, déclaratif) pour positionner le profil sur les 4 axes fondamentaux du référentiel AIDD :
+Nous ingérons les données brutes objectives pour situer le profil sur les 4 axes fondamentaux du référentiel AIDD :
 
-| Axe | Métrique empirique extraite | Justification technique |
+| Axe | Métrique empirique extraite | Ce qu'elle garantit (Génie Logiciel) |
 |---|---|---|
-| **1. Taille** | Distribution des tailles de PR (xs, s, m, l, xl), médiane de lignes modifiées. | Mesure la granularité habituelle déléguée à l'IA (d'un simple snippet S à un module complet XL). |
-| **2. Harness** | Détection de fichiers structurés (CLAUDE.md, AGENTS.md, .cursorrules, skills, boucles CI). | **Le cœur de la maturité :** Passage de l'*IA sans mémoire* (One-shot) à la *Mémoire de contexte* (Blue/Green), puis aux *Boucles d'auto-correction* (Silver). |
-| **3. Intervention** | Nombre médian de commits correctifs post-ouverture de PR, ratio de PR sans edit. | Évalue l'efficacité du cadrage en amont : moins il y a de reprises après coup, plus l'IA a été guidée avec précision. |
-| **4. En Parallèle** | Médiane des branches concurrentes actives et menées jusqu'au merge. | Mesure la maîtrise des environnements isolés (git worktrees, contextes séparés) pour démultiplier la vélocité. |
+| **1. Taille** | Distribution des tailles de PR (`xs`, `s`, `m`, `l`, `xl`), médiane de lignes modifiées. | Mesure la granularité habituelle déléguée à l'IA (du simple snippet S au module complet XL). |
+| **2. Harness** | Détection de fichiers structurés (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, skills, boucles CI). | **Le cœur de la maturité :** Passage de l'*IA sans mémoire* (One-shot) au *Context Engineering* (Blue/Green), puis aux *Boucles d'auto-correction fermées* (Silver). |
+| **3. Intervention** | Nombre médian de commits correctifs post-ouverture de PR, ratio de PR sans edit. | Évalue l'efficacité du cadrage en amont : moins il y a de reprises après coup, plus l'IA a été guidée avec rigueur (anti-vibe coding). |
+| **4. En Parallèle** | Médiane des branches concurrentes actives et menées jusqu'au merge. | Mesure la maîtrise des environnements isolés (`git worktrees`, multi-sessions) pour démultiplier la vélocité. |
 
 ---
 
 ## ⚖️ 3. La Règle du Minimum Strict (MIN) & Détection des Biais
 
-`
-Niveau Global = MIN(Axe Taille, Axe Harness, Axe Intervention, Axe Parallèle)
-`
+$$\text{Niveau Global} = \min(\text{Axe Taille}, \text{Axe Harness}, \text{Axe Intervention}, \text{Axe Parallèle})$$
 
-1. **Aucune moyenne pondérée :** Un développeur produisant des modules XL mais sans aucun harnais et avec 4 commits correctifs par PR reste bloqué à **Red** (cas *Perceval*). Le maillon le plus faible dicte le niveau réel.
-2. **Priorité absolue aux faits sur le déclaratif :** Notre moteur compare ce que le développeur affirme et ce que Git prouve. Les divergences sont signalées sous forme d'alertes de cadrage (*warnings*).
+1. **Aucune moyenne pondérée permissive :** Un développeur produisant des modules XL mais sans aucun harnais et avec 4 commits correctifs par PR reste bloqué à **Red** (cas d'école *Perceval*). Le maillon le plus faible dicte le niveau réel pour prévenir la dette technique.
+2. **Primauté absolue des faits Git :** Notre moteur compare ce que le développeur affirme et ce que Git prouve. Les divergences sont signalées au CTO sous forme d'alertes de cadrage (*warnings*).
 
 ---
 
-## 🚀 4. Plan de Progression Actionnable (+1$)
+## 🚀 4. Plan de Progression Actionnable (+1) & Vue Équipe
 
-L'outil ne se contente pas de noter : il identifie l'**Axe Limitant (goulot d'étranglement)** et génère la feuille de route concrète pour débloquer le palier supérieur :
-* **Vers Blue :** Poser les bases du *Context Engineering* (mémoire d'architecture et conventions dans un AGENTS.md).
-* **Vers Green :** Cadrer les tâches en amont (spécifications préalables, tests d'abord) et versionner des règles de comportement.
-* **Vers Copper :** Structurer le travail en parallèle (isolation par git worktrees, multi-sessions).
-* **Vers Silver/Gold :** Fermer la boucle avec l'auto-correction (*Feedback Loops* CI/CD relançant l'IA sur échec de test).
+L'outil ne se contente pas d'attribuer un rang : il identifie le **Goulot d'Étranglement (Axe Limitant)** et prescrit les actions chirurgicales pour atteindre le niveau supérieur :
+* **Vers Blue :** Structurer le *Context Engineering* (mémoire d'architecture et conventions dans un `AGENTS.md`).
+* **Vers Green :** Cadrer les tâches en amont (spécifications préalables, tests d'abord) et versionner des règles comportementales.
+* **Vers Copper :** Systématiser le travail parallèle (isolation par `git worktrees`, multi-agents).
+* **Vers Silver/Gold :** Fermer la boucle avec l'auto-correction (*Feedback Loops* CI/CD relançant l'agent sur échec de test).
 
 ---
 
-## 🛠️ 5. Robustesse & Indépendance
+## 🛠️ 5. Robustesse, Autonomie & Intégration
 
-* **100% Autonome & Local :** Moteur déterministe en Python pur, ne nécessitant aucune clé d'API pour fonctionner.
+* **100% Autonome & Local :** Moteur déterministe en Python pur, fonctionnant sans aucune clé d'API distante pour le jury.
 * **Hybridation LLM :** Enrichissement sémantique optionnel via Gemini Flash pour qualifier les sessions et déclaratifs.
-* **Multi-Sources :** Compatible dossiers de profils locaux et analyse en direct de dépôts distants (GitHub/GitLab).
+* **Intégration Managériale :** API REST (`/evaluate`, `/team`), CLI rapide et Dashboard Web interactif (CTO & Dev).

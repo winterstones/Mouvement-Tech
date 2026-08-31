@@ -71,27 +71,46 @@ async def get_levels():
     }
 
 
-@app.get("/team", response_model=TeamEvaluationResult)
-async def evaluate_reference_team(
-    repo_url: Optional[str] = Query(None, description="URL d'un dépôt GitHub partagé pour extraire l'équipe réelle"),
-):
-    """Evaluates all developers of a project or the benchmark reference team, returning a complete CTO Team Report."""
-    if repo_url and "github.com" in repo_url:
-        gh = GitHubCollector()
-        try:
-            members_results = await gh.fetch_team_from_repo(repo_url)
-            contributors = await gh.analyze_repo_contributors(repo_url)
-            parsed = gh.parse_repo_url(repo_url)
-            team_title = f"Équipe Projet ({parsed[0]}/{parsed[1]})" if parsed else "Équipe Projet"
-            return TeamEngine.evaluate_team(
-                members=members_results,
-                team_name=team_title,
-                contributors_breakdown=contributors,
-            )
-        except Exception as e:
-            # If repo fails (e.g. rate limit), fallback gracefully
-            pass
+DEFAULT_PROJECT_REPO = "https://github.com/cline/cline"
 
+
+@app.get("/team", response_model=TeamEvaluationResult)
+async def evaluate_team_endpoint(
+    repo_url: Optional[str] = Query(None, description="URL d'un dépôt GitHub partagé (par défaut https://github.com/cline/cline)"),
+):
+    """Evaluates all real developers of the active project from its Git repository, returning a complete CTO Team Report & Evolution timeline."""
+    target_repo = repo_url or DEFAULT_PROJECT_REPO
+    gh = GitHubCollector()
+
+    try:
+        members_results = await gh.fetch_team_from_repo(target_repo)
+        contributors = await gh.analyze_repo_contributors(target_repo)
+        parsed = gh.parse_repo_url(target_repo)
+        team_title = f"Équipe Projet ({parsed[0]}/{parsed[1]})" if parsed else f"Équipe Projet ({target_repo})"
+        return TeamEngine.evaluate_team(
+            members=members_results,
+            team_name=team_title,
+            contributors_breakdown=contributors,
+        )
+    except Exception as e:
+        # Fallback if network or rate limit: evaluate the benchmark profiles as emergency fallback
+        member_ids = ["perceval", "bohort", "leodagan", "arthur"]
+        members_results: List[EvaluationResult] = []
+        for mid in member_ids:
+            path = SUJET_PROFILES_DIR / mid
+            if path.exists() and path.is_dir():
+                res = await _run_evaluation(path)
+                members_results.append(res)
+        return TeamEngine.evaluate_team(
+            members=members_results,
+            team_name="Équipe Projet (Mode Dégradé Local)",
+            contributors_breakdown=None,
+        )
+
+
+@app.get("/team/benchmark", response_model=TeamEvaluationResult)
+async def evaluate_benchmark_team():
+    """Evaluates the 4 synthetic benchmark profiles from the hackathon specification (Perceval, Bohort, Leodagan, Arthur)."""
     member_ids = ["perceval", "bohort", "leodagan", "arthur"]
     members_results: List[EvaluationResult] = []
 
@@ -103,7 +122,7 @@ async def evaluate_reference_team(
 
     return TeamEngine.evaluate_team(
         members=members_results,
-        team_name="Équipe Démonstration (4 Profils)",
+        team_name="Profils de Démonstration (Benchmark Sujet)",
         contributors_breakdown=None,
     )
 

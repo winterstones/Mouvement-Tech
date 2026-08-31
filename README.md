@@ -94,7 +94,8 @@ pip install -r requirements.txt
 
 ## 📚 Documentation & Livrables Stratégiques
 
-- 📄 **[Méthode en 1 Page (Livrable CTO)](docs/methode.md)** : Ce que nous mesurons, comment et pourquoi.
+- 📄 **[Méthode en 1 Page (Livrable CTO)](docs/methode.md)** : Ce que nous mesurons, comment et pourquoi (Engineering Intelligence & Anti-Vibe Coding).
+- 🎥 **[Trame & Script de Démo Vidéo (2 min)](docs/pitch-demo-video.md)** : Guide d'enregistrement vidéo pour le jury du concours.
 - 🎯 **[Vision, Cibles & Proposition de Valeur](docs/knowledge/vision-cibles.md)** : Personas cibles (CTO, Lead, Dev, ESN) et ROI.
 - 📖 **[Plan d'Utilisation & Scénarios Métiers](docs/knowledge/plan-utilisation.md)** : Parcours opérationnels pas-à-pas et matrice RACI.
 - 🌍 **[Analyse Stratégique PESTEL](docs/knowledge/pestel.md)** : Facteurs Politiques, Économiques, Sociaux, Technologiques, Écologiques et Légaux.

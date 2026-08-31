@@ -56,7 +56,10 @@ graph TD
 
 ## 3. Vision Long-Terme & But Final
 
-Mouvement-Tech ambitionne de devenir le **"SonarQube de l'AI-Driven Development"** :
-1. **Intégration continue (CI/CD Quality Gate) :** Bloquer la dégradation des pratiques et vérifier la présence de harnais à chaque commit.
+Mouvement-Tech ambitionne de devenir le **"Swarmia / LinearB & SonarQube de l'AI-Driven Development"** :
+1. **Engineering Intelligence pour CTOs :** Fournir une visibilité objective en temps réel sur la maturité IA et la qualité des pratiques, connectable à Jira, GitHub et GitLab.
+2. **Intégration continue (CI/CD Quality Gate) :** Bloquer la dégradation des pratiques et vérifier la présence de harnais à chaque commit.
+3. **Coaching Adaptatif :** Guider chaque développeur sans paternalisme, via des recommandations empiriques issues de l'analyse de son code.
+4. **Standard Industriel :** Établir une métrique standard d'audit pour les levées de fonds, acquisitions (M&A) et recrutements techniques.
 2. **Benchmarking sectoriel anonymisé :** Permettre aux entreprises de comparer leur maturité IA par rapport aux standards de l'industrie.
 3. **Passerelle vers les Agents Autonomes :** Préparer les équipes à l'orchestration des paliers Silver (boucles de validation) et Gold (spécification autonome).
