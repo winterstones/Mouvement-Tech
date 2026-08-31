@@ -249,22 +249,23 @@ class EvaluationEngine:
         elif current_rank == 1:  # Red -> Blue
             steps = [
                 "Créer un fichier `AGENTS.md` ou `CLAUDE.md` à la racine de chaque dépôt avec l'architecture, les conventions et la stack (Context Engineering / Mémoire projet).",
+                "Installer le framework officiel `ai-driven-dev/framework` (`/plugin marketplace add ai-driven-dev/framework`) pour déployer `aidd-context` et `aidd-refine`.",
                 "Cadrer explicitement le contexte avant de lancer la génération pour faire passer la taille des PRs de S à M.",
                 "Réduire les reprises post-génération en donnant les fichiers pertinents dès le premier prompt.",
             ]
             recommendations = [
                 "Mettre à jour le fichier de contexte dès qu'une erreur se produit deux fois sur la même convention.",
-                "Installer un plugin d'éditeur plutôt que de copier-coller dans une interface web afin de préserver l'historique et le contexte.",
+                "Installer le plugin `aidd-context` (`ai-driven-dev/framework`) plutôt que de copier-coller dans une interface web afin de préserver l'historique et le contexte.",
             ]
             tickets = [
                 ActionTicket(
                     ticket_id="AIDD-101",
-                    title="Rédiger le fichier AGENTS.md (Mémoire d'architecture & Conventions)",
+                    title="Rédiger le fichier AGENTS.md ou installer aidd-context (ai-driven-dev/framework)",
                     axis="harness",
                     priority="Critical",
                     estimated_effort="1 demi-journée",
                     target_level="Blue",
-                    definition_of_done="Un fichier AGENTS.md versionné détaille la stack, les règles de nommage et les commandes de test.",
+                    definition_of_done="Un fichier AGENTS.md ou le plugin aidd-context est actif et détaille l'architecture et les règles.",
                 ),
                 ActionTicket(
                     ticket_id="AIDD-102",
@@ -288,11 +289,12 @@ class EvaluationEngine:
         elif current_rank == 2:  # Blue -> Green
             steps = [
                 "Enrichir le harness avec des règles modulaires (`.cursorrules`, `.claude/rules/`) et des compétences (`skills`).",
+                "Adopter l'orchestrateur SDLC `aidd-orchestrator` (`ai-driven-dev/framework`) pour standardiser le workflow (frame -> plan -> implement -> review -> ship).",
                 "Systématiser la validation de la compréhension (spec review / prompt framing) avant d'écrire la moindre ligne de code.",
                 "Viser zéro commit correctif après ouverture des PRs en confiant des chantiers complets multi-étapes (taille L).",
             ]
             recommendations = [
-                "Créer des agents spécialisés pour les tâches récurrentes (migration, endpoints, refactoring).",
+                "Créer des agents spécialisés pour les tâches récurrentes (migration, endpoints, refactoring) avec `aidd-dev`.",
                 "Imposer l'écriture préalable des tests et vérifier qu'ils échouent avant implémentation (TDD guidé par l'IA).",
             ]
             tickets = [

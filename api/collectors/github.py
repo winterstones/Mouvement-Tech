@@ -634,22 +634,24 @@ class GitHubCollector:
                         except Exception:
                             repo_context_files[name] = "Content available"
 
-                if name_upper == ".CURSORRULES" or name.startswith(".aider"):
-                    rules_count += 2
-                    skills_count += 2
+                if name_upper in [".CURSORRULES", ".AIDD", "AIDD.JSON"] or name.startswith(".aider"):
+                    rules_count += 3
+                    skills_count += 3
+                    has_agents_md = True
                 if name_upper == ".WORKTREEINCLUDE":
                     skills_count += 1
 
-                if name in [".cursor", ".claude"]:
+                if name in [".cursor", ".claude", ".aidd"]:
                     sub_res = await client.get(f"{base_url}/contents/{name}")
                     if sub_res.status_code == 200:
                         sub_items = [si.get("name") for si in sub_res.json()]
-                        if "skills" in sub_items:
-                            skills_count += 3
+                        if "skills" in sub_items or any("aidd-" in str(s) for s in sub_items):
+                            skills_count += 4
                         if "rules" in sub_items:
                             rules_count += 3
-                        if "agents" in sub_items:
-                            agents_count += 2
+                        if "agents" in sub_items or "plugins" in sub_items:
+                            agents_count += 3
+                            has_agents_md = True
 
                 if name in ["benchmark", "benchmarks"]:
                     has_auto_loops = True
