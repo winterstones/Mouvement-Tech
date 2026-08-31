@@ -94,6 +94,9 @@ pip install -r requirements.txt
 
 ## 📚 Documentation & Livrables Stratégiques
 
+- 📽️ **[Pitch Deck Interactif (Slides Soutenance)](web/pitch.html)** : Présentation 16:9 interactive avec navigation clavier et notes orateur.
+- 📄 **[Pitch Deck au format PDF (Téléchargeable)](docs/pitch-deck-mouvement-tech.pdf)** : Version PDF vectorielle haute résolution pour le jury.
+- 🎙️ **[Guide de Soutenance & Q&A Jury](docs/knowledge/pitch-jury.md)** : Déroulé chronométré 3 min et réponses aux questions pièges.
 - 📄 **[Méthode en 1 Page (Livrable CTO)](docs/methode.md)** : Ce que nous mesurons, comment et pourquoi (Engineering Intelligence & Anti-Vibe Coding).
 - 🎥 **[Trame & Script de Démo Vidéo (2 min)](docs/pitch-demo-video.md)** : Guide d'enregistrement vidéo pour le jury du concours.
 - 🎯 **[Vision, Cibles & Proposition de Valeur](docs/knowledge/vision-cibles.md)** : Personas cibles (CTO, Lead, Dev, ESN) et ROI.
