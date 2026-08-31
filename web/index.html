@@ -3,1120 +3,1166 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mouvement-Tech — Plateforme d'Audit & Trajectoire AIDD</title>
+  <title>Mouvement-Tech — Jira AIDD Engineering Intelligence</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    code, pre { font-family: 'JetBrains Mono', monospace; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .jira-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .jira-scroll::-webkit-scrollbar-track { background: #EBECF0; }
+    .jira-scroll::-webkit-scrollbar-thumb { background: #C1C7D0; border-radius: 4px; }
+    .jira-scroll::-webkit-scrollbar-thumb:hover { background: #A5ADBA; }
+    @keyframes slideLeft {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    .animate-slide-left {
+      animation: slideLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white">
-  
-  <!-- Header -->
-  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-emerald-400 flex items-center justify-center font-black text-xl shadow-lg shadow-indigo-500/20">
-          M
+<body class="bg-[#F4F5F7] text-[#172B4D] min-h-screen selection:bg-blue-600 selection:text-white flex flex-col antialiased">
+
+  <!-- ==================== TOP JIRA-STYLE NAVIGATION BAR ==================== -->
+  <header class="border-b border-[#DFE1E6] bg-white sticky top-0 z-40 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      
+      <!-- Brand & Project Switcher -->
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-2.5 cursor-pointer" onclick="switchTab('kanban')">
+          <div class="w-8 h-8 rounded-lg bg-[#0052CC] flex items-center justify-center font-black text-white text-base shadow-sm">
+            M
+          </div>
+          <div>
+            <span class="font-bold text-sm tracking-tight text-[#172B4D]">Mouvement-Tech</span>
+            <span class="text-[10px] ml-1.5 px-1.5 py-0.5 rounded bg-blue-50 text-[#0052CC] border border-blue-200 font-mono font-bold">AIDD v2.0</span>
+          </div>
         </div>
-        <div>
-          <span class="font-bold text-lg text-white">Mouvement-Tech</span>
-          <span class="text-xs ml-2 px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium">AIDD Engine v2.0</span>
+
+        <div class="h-4 w-px bg-[#DFE1E6] hidden sm:block"></div>
+
+        <!-- Active Real Project Selector -->
+        <div class="flex items-center space-x-2 bg-[#FAFBFC] px-3 py-1.5 rounded-lg border border-[#DFE1E6] text-xs text-[#42526E]">
+          <i class="fa-brands fa-github text-slate-500 text-xs"></i>
+          <span class="text-slate-500 hidden sm:inline">Projet :</span>
+          <span id="activeProjectLabel" class="font-bold text-[#0052CC] font-mono text-xs">cline/cline</span>
+          <button onclick="promptChangeProject()" title="Changer de projet" class="ml-1 text-slate-400 hover:text-slate-600 transition">
+            <i class="fa-solid fa-pen-to-square text-[11px]"></i>
+          </button>
         </div>
       </div>
-      <div class="flex items-center space-x-4">
-        <span class="text-xs font-semibold text-slate-400 hidden sm:inline-flex items-center">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse"></span> Moteur Prêt
-        </span>
-        <a href="http://127.0.0.1:8000/docs" target="_blank" class="text-xs font-semibold text-slate-300 hover:text-white px-3.5 py-1.5 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-900 transition flex items-center shadow-sm">
-          <i class="fa-solid fa-code mr-1.5 text-indigo-400"></i> Swagger API
+
+      <!-- Navigation Tabs (Jira Style) -->
+      <nav class="flex items-center space-x-1 sm:space-x-2 text-xs font-semibold">
+        <button onclick="switchTab('kanban')" id="tabBtnKanban" class="jira-tab px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 bg-[#0052CC] text-white shadow-xs font-bold">
+          <i class="fa-solid fa-table-columns text-xs"></i>
+          <span>Kanban Board</span>
+        </button>
+        <button onclick="switchTab('evolution')" id="tabBtnEvolution" class="jira-tab px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 text-[#42526E] hover:text-[#172B4D] hover:bg-[#EBECF0]">
+          <i class="fa-solid fa-arrow-trend-up text-xs text-purple-600"></i>
+          <span>Suivi & Évolution</span>
+        </button>
+        <button onclick="switchTab('team')" id="tabBtnTeam" class="jira-tab px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 text-[#42526E] hover:text-[#172B4D] hover:bg-[#EBECF0]">
+          <i class="fa-solid fa-chart-line text-xs text-blue-600"></i>
+          <span>Matrice CTO</span>
+        </button>
+        <button onclick="switchTab('backlog')" id="tabBtnBacklog" class="jira-tab px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 text-[#42526E] hover:text-[#172B4D] hover:bg-[#EBECF0]">
+          <i class="fa-solid fa-list-check text-xs text-emerald-600"></i>
+          <span>Backlog N+1</span>
+          <span id="backlogBadgeCount" class="px-1.5 py-0.5 rounded-full bg-[#EBECF0] text-[10px] text-[#42526E] font-mono">0</span>
+        </button>
+        <button onclick="switchTab('scanner')" id="tabBtnScanner" class="jira-tab px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 text-[#42526E] hover:text-[#172B4D] hover:bg-[#EBECF0]">
+          <i class="fa-solid fa-bolt text-xs text-amber-600"></i>
+          <span>Audit Live</span>
+        </button>
+      </nav>
+
+      <!-- Right Action Tools -->
+      <div class="flex items-center space-x-2">
+        <button onclick="loadBenchmarkDemo()" title="Charger les 4 profils de test du sujet" class="hidden lg:inline-flex items-center text-[11px] font-bold text-amber-800 hover:text-amber-900 px-2.5 py-1.5 rounded-lg border border-amber-300 hover:bg-amber-100 bg-amber-50 transition">
+          <i class="fa-solid fa-vial mr-1.5 text-amber-600"></i> Benchmark Sujet
+        </button>
+        <button onclick="refreshAllData()" title="Actualiser" class="p-2 rounded-lg bg-white border border-[#DFE1E6] hover:bg-[#EBECF0] text-[#42526E] hover:text-[#172B4D] text-xs transition">
+          <i class="fa-solid fa-rotate text-xs"></i>
+        </button>
+        <a href="http://127.0.0.1:8000/docs" target="_blank" class="hidden md:inline-flex items-center text-xs font-semibold text-[#42526E] hover:text-[#172B4D] px-3 py-1.5 rounded-lg border border-[#DFE1E6] hover:bg-[#EBECF0] bg-white transition">
+          <i class="fa-solid fa-code mr-1.5 text-[#0052CC]"></i> API Swagger
         </a>
       </div>
+
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="max-w-7xl mx-auto px-6 py-8">
-    
-    <!-- Hero / Audit Center -->
-    <div class="bg-gradient-to-br from-slate-900 via-slate-900/90 to-indigo-950/40 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl mb-8 relative overflow-hidden">
-      <div class="max-w-3xl">
-        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-semibold mb-3">
-          <i class="fa-solid fa-shield-halved"></i>
-          <span>Plateforme d'Audit & Trajectoire AI-Driven Development (AIDD)</span>
-        </div>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-          Mesurez la maturité IA réelle de vos développeurs et projets.
-        </h1>
-        <p class="text-slate-400 mt-2 text-sm leading-relaxed">
-          Diagnostic empirique sans concession (règle du MIN sur 4 axes : Taille, Harnais, Intervention, Parallèle), détection des goulots d'étranglement et génération de plans d'action personnalisés.
-        </p>
-      </div>
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
 
-      <!-- Scenarios Selector Cards / Tabs -->
-      <div class="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <button onclick="setScenario('team')" id="btnScenarioTeam" class="scenario-tab p-4 rounded-2xl border text-left transition flex flex-col justify-between bg-indigo-600/10 border-indigo-500 text-white shadow-lg shadow-indigo-600/10 ring-1 ring-indigo-500">
-          <div class="flex items-center justify-between mb-2">
-            <i class="fa-solid fa-user-group text-lg text-indigo-400"></i>
-            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">CTO Brief</span>
-          </div>
-          <div>
-            <div class="font-bold text-xs sm:text-sm text-white">1. Équipe & Projet</div>
-            <div class="text-[11px] text-slate-400 mt-0.5 line-clamp-1">Matrice CTO & contributeurs</div>
-          </div>
-        </button>
-
-        <button onclick="setScenario('developer')" id="btnScenarioDev" class="scenario-tab p-4 rounded-2xl border border-slate-800 hover:border-slate-700 bg-slate-950/60 hover:bg-slate-900 text-left transition flex flex-col justify-between text-slate-300">
-          <div class="flex items-center justify-between mb-2">
-            <i class="fa-solid fa-user text-lg text-emerald-400"></i>
-            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400">Multi-Repos</span>
-          </div>
-          <div>
-            <div class="font-bold text-xs sm:text-sm text-white">2. Développeur (Profil)</div>
-            <div class="text-[11px] text-slate-400 mt-0.5 line-clamp-1">Score sur tous ses projets</div>
-          </div>
-        </button>
-
-        <button onclick="setScenario('project')" id="btnScenarioProj" class="scenario-tab p-4 rounded-2xl border border-slate-800 hover:border-slate-700 bg-slate-950/60 hover:bg-slate-900 text-left transition flex flex-col justify-between text-slate-300">
-          <div class="flex items-center justify-between mb-2">
-            <i class="fa-solid fa-box-archive text-lg text-amber-400"></i>
-            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400">Dépôt</span>
-          </div>
-          <div>
-            <div class="font-bold text-xs sm:text-sm text-white">3. Projet Seul</div>
-            <div class="text-[11px] text-slate-400 mt-0.5 line-clamp-1">AI-Readiness du dépôt</div>
-          </div>
-        </button>
-
-        <button onclick="setScenario('local')" id="btnScenarioLocal" class="scenario-tab p-4 rounded-2xl border border-slate-800 hover:border-slate-700 bg-slate-950/60 hover:bg-slate-900 text-left transition flex flex-col justify-between text-slate-300">
-          <div class="flex items-center justify-between mb-2">
-            <i class="fa-solid fa-laptop-code text-lg text-purple-400"></i>
-            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400">100% Local</span>
-          </div>
-          <div>
-            <div class="font-bold text-xs sm:text-sm text-white">4. Local & Démo</div>
-            <div class="text-[11px] text-slate-400 mt-0.5 line-clamp-1">Dossiers & benchmark</div>
-          </div>
-        </button>
-      </div>
-
-      <!-- Smart Input Bar -->
-      <div class="mt-6 flex flex-col sm:flex-row items-center gap-3">
-        <div class="relative flex-1 w-full">
-          <i id="inputIcon" class="fa-brands fa-github absolute left-4 top-3.5 text-slate-500 text-base"></i>
-          <input type="text" id="targetInput" value="https://github.com/ai-driven-dev/laivel-up" placeholder="Entrez une URL GitHub de dépôt (ex: https://github.com/org/repo)" class="w-full bg-slate-950 border border-slate-700/80 rounded-2xl pl-11 pr-4 py-3.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500 font-mono shadow-inner">
-        </div>
-        <button onclick="runScenarioAudit()" id="btnAudit" class="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold text-xs px-6 py-3.5 rounded-2xl transition shadow-lg shadow-indigo-600/30 flex items-center justify-center shrink-0">
-          <i class="fa-solid fa-bolt mr-2"></i> Lancer l'Audit
-        </button>
-      </div>
-
-      <!-- Quick Shortcuts (Dynamic per scenario) -->
-      <div id="scenarioShortcuts" class="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-400">
-        <!-- Injected dynamically -->
-      </div>
+    <!-- Loading State -->
+    <div id="globalLoader" class="hidden py-20 text-center">
+      <i class="fa-solid fa-circle-notch fa-spin text-4xl text-[#0052CC] mb-3"></i>
+      <p class="text-sm font-bold text-[#172B4D]" id="loaderText">Analyse empirique et audit AST en cours...</p>
+      <p class="text-xs text-slate-500 mt-1">Extraction des métriques Git, calcul de la complexité AST, détection de dette technique et évaluation des 4 axes</p>
     </div>
 
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="hidden py-16 text-center">
-      <i class="fa-solid fa-circle-notch fa-spin text-4xl text-indigo-500 mb-3"></i>
-      <p class="text-base font-bold text-slate-200" id="spinnerText">Analyse empirique et audit en cours...</p>
-      <p class="text-xs text-slate-400 mt-1">Extraction des métriques Git, calcul des 4 axes et application de la règle du MIN</p>
-    </div>
-
-    <!-- Empty State (Shown before any analysis has succeeded) -->
-    <div id="emptyState" class="py-16 text-center bg-slate-900/40 border border-slate-800/80 rounded-3xl p-8 shadow-xl">
-      <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-2xl mx-auto mb-4">
-        <i class="fa-solid fa-chart-pie"></i>
-      </div>
-      <h3 class="text-base font-bold text-white mb-1">Prêt pour l'audit</h3>
-      <p class="text-xs text-slate-400 max-w-md mx-auto">
-        Sélectionnez un scénario, entrez une URL ou choisissez l'un des exemples ci-dessus, puis appuyez sur 
-        <strong class="text-indigo-400 font-semibold">"Lancer l'Audit"</strong> pour afficher les résultats.
-      </p>
-    </div>
-
-    <!-- ==================== VIEW 1: TEAM & CTO DASHBOARD ==================== -->
-    <div id="viewTeam" class="hidden space-y-8">
+    <!-- ==================== TAB 1: JIRA KANBAN BOARD ==================== -->
+    <div id="tabViewKanban" class="space-y-6">
       
-      <!-- Team / CTO KPI Summary Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Membres Évalués</div>
-          <div class="text-3xl font-black text-white" id="kpiTeamSize">4</div>
-          <div class="text-xs text-slate-500 mt-1">Développeurs analysés</div>
+      <!-- Board Header & Quick Filters -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-[#DFE1E6] rounded-xl p-4 shadow-xs">
+        <div>
+          <h1 class="text-base font-bold text-[#172B4D] flex items-center space-x-2">
+            <i class="fa-solid fa-table-columns text-[#0052CC]"></i>
+            <span>Tableau Kanban d'Adoption AIDD & Santé de Code</span>
+          </h1>
+          <p class="text-xs text-slate-500 mt-0.5">Positionnement empirique des contributeurs selon la grille AIDD, la santé réelle du code et la maîtrise de la dette technique.</p>
         </div>
 
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Maturité Moyenne Équipe</div>
-          <div class="text-3xl font-black text-indigo-400" id="kpiAvgRank">2.5 / 6</div>
-          <div class="text-xs text-slate-400 mt-1" id="kpiAvgLabel">Niveau : Blue / Green</div>
+        <div class="flex items-center space-x-2 text-xs">
+          <span class="text-slate-500 text-xs hidden lg:inline font-medium">Filtres :</span>
+          <button onclick="filterKanban('all')" id="fltAll" class="px-2.5 py-1 rounded bg-[#0052CC] text-white font-bold">Tous</button>
+          <button onclick="filterKanban('high_risk')" id="fltHighRisk" class="px-2.5 py-1 rounded bg-white hover:bg-red-50 text-red-700 font-semibold border border-red-200">⚠️ Dette Vibe Coding</button>
+          <button onclick="filterKanban('clean')" id="fltClean" class="px-2.5 py-1 rounded bg-white hover:bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">🛡️ Code Sain</button>
         </div>
+      </div>
 
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Goulot d'Étranglement</div>
-          <div class="text-2xl font-black text-amber-400 capitalize" id="kpiBottleneck">Taille / Parallèle</div>
-          <div class="text-xs text-slate-500 mt-1">Axe prioritaire de formation</div>
-        </div>
-
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl flex items-center justify-between">
-          <div>
-            <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Règle de décision</div>
-            <div class="text-xs text-slate-300 font-semibold text-emerald-400">Règle du MIN (100%)</div>
-            <div class="text-[11px] text-slate-500 mt-1">4 axes obligatoires</div>
+      <!-- 7 Columns Kanban Board -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3.5 items-start jira-scroll overflow-x-auto pb-4">
+        
+        <!-- Col 0: White -->
+        <div class="bg-[#EBECF0]/70 border border-[#DFE1E6] rounded-xl p-3 flex flex-col min-h-[380px]">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-[#DFE1E6] text-xs font-bold text-slate-600">
+            <span class="flex items-center space-x-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+              <span>❖ White</span>
+            </span>
+            <span id="countColWhite" class="px-1.5 py-0.5 rounded bg-white text-[10px] text-slate-600 font-mono font-bold shadow-xs">0</span>
           </div>
-          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl font-bold">
-            MIN
+          <div id="cardsColWhite" class="space-y-2.5 flex-1"></div>
+        </div>
+
+        <!-- Col 1: Red -->
+        <div class="bg-[#EBECF0]/70 border border-[#DFE1E6] rounded-xl p-3 flex flex-col min-h-[380px]">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-[#DFE1E6] text-xs font-bold text-red-700">
+            <span class="flex items-center space-x-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+              <span>🔺 Red</span>
+            </span>
+            <span id="countColRed" class="px-1.5 py-0.5 rounded bg-red-100 text-[10px] text-red-800 font-mono font-bold border border-red-200">0</span>
+          </div>
+          <div id="cardsColRed" class="space-y-2.5 flex-1"></div>
+        </div>
+
+        <!-- Col 2: Blue -->
+        <div class="bg-[#EBECF0]/70 border border-[#DFE1E6] rounded-xl p-3 flex flex-col min-h-[380px]">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-[#DFE1E6] text-xs font-bold text-blue-700">
+            <span class="flex items-center space-x-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+              <span>🔹 Blue</span>
+            </span>
+            <span id="countColBlue" class="px-1.5 py-0.5 rounded bg-blue-100 text-[10px] text-blue-800 font-mono font-bold border border-blue-200">0</span>
+          </div>
+          <div id="cardsColBlue" class="space-y-2.5 flex-1"></div>
+        </div>
+
+        <!-- Col 3: Green -->
+        <div class="bg-[#EBECF0]/70 border border-[#DFE1E6] rounded-xl p-3 flex flex-col min-h-[380px]">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-[#DFE1E6] text-xs font-bold text-emerald-700">
+            <span class="flex items-center space-x-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <span>🟢 Green</span>
+            </span>
+            <span id="countColGreen" class="px-1.5 py-0.5 rounded bg-emerald-100 text-[10px] text-emerald-800 font-mono font-bold border border-emerald-200">0</span>
+          </div>
+          <div id="cardsColGreen" class="space-y-2.5 flex-1"></div>
+        </div>
+
+        <!-- Col 4: Copper -->
+        <div class="bg-[#EBECF0]/70 border border-[#DFE1E6] rounded-xl p-3 flex flex-col min-h-[380px]">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-[#DFE1E6] text-xs font-bold text-amber-800">
+            <span class="flex items-center space-x-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-600"></span>
+              <span>🥉 Copper</span>
+            </span>
+            <span id="countColCopper" class="px-1.5 py-0.5 rounded bg-amber-100 text-[10px] text-amber-800 font-mono font-bold border border-amber-300">0</span>
+          </div>
+          <div id="cardsColCopper" class="space-y-2.5 flex-1"></div>
+        </div>
+
+        <!-- Col 5: Silver -->
+        <div class="bg-[#EBECF0]/70 border border-[#DFE1E6] rounded-xl p-3 flex flex-col min-h-[380px]">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-[#DFE1E6] text-xs font-bold text-slate-700">
+            <span class="flex items-center space-x-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+              <span>🥈 Silver</span>
+            </span>
+            <span id="countColSilver" class="px-1.5 py-0.5 rounded bg-slate-200 text-[10px] text-slate-700 font-mono font-bold border border-slate-300">0</span>
+          </div>
+          <div id="cardsColSilver" class="space-y-2.5 flex-1"></div>
+        </div>
+
+        <!-- Col 6: Gold -->
+        <div class="bg-[#EBECF0]/70 border border-[#DFE1E6] rounded-xl p-3 flex flex-col min-h-[380px]">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-[#DFE1E6] text-xs font-bold text-yellow-800">
+            <span class="flex items-center space-x-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-yellow-500"></span>
+              <span>🥇 Gold</span>
+            </span>
+            <span id="countColGold" class="px-1.5 py-0.5 rounded bg-yellow-100 text-[10px] text-yellow-800 font-mono font-bold border border-yellow-300">0</span>
+          </div>
+          <div id="cardsColGold" class="space-y-2.5 flex-1"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== TAB 2: SUIVI & ÉVOLUTION TEMPORELLE ==================== -->
+    <div id="tabViewEvolution" class="hidden space-y-6">
+      
+      <!-- Evolution Header & Team Macro Trends -->
+      <div class="bg-white border border-[#DFE1E6] rounded-xl p-6 shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 text-xs font-bold mb-2">
+              <i class="fa-solid fa-arrow-trend-up"></i>
+              <span>Gouvernance & Trajectoire Temporelle</span>
+            </div>
+            <h2 class="text-lg font-bold text-[#172B4D]">Suivi de l'Évolution des Développeurs dans le Temps</h2>
+            <p class="text-xs text-slate-500 mt-1">Historique des commits, mesure de l'adoption IA et franchissement des paliers de la grille AIDD au fil des sprints.</p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <div class="bg-[#FAFBFC] border border-[#DFE1E6] rounded-xl p-3 text-center min-w-[120px]">
+              <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Gain Vélocité</div>
+              <div class="text-xl font-black text-emerald-600 font-mono" id="evoAvgVelocity">+58%</div>
+            </div>
+            <div class="bg-[#FAFBFC] border border-[#DFE1E6] rounded-xl p-3 text-center min-w-[120px]">
+              <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Baisse Rework</div>
+              <div class="text-xl font-black text-purple-600 font-mono">-65%</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Developers Competency Matrix Table -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+      <!-- Developer Evolution Timeline Cards -->
+      <div class="space-y-4" id="devEvolutionCardsContainer">
+        <!-- Dynamically rendered per developer -->
+      </div>
+
+    </div>
+
+    <!-- ==================== TAB 3: CTO DASHBOARD & TEAM MATRIX ==================== -->
+    <div id="tabViewTeam" class="hidden space-y-6">
+      
+      <!-- CTO Executive KPI Summary -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="bg-white border border-[#DFE1E6] rounded-xl p-5 shadow-xs">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Maturité AIDD Moyenne</div>
+          <div class="text-3xl font-black text-[#0052CC]" id="ctoAvgRank">0.0 / 6</div>
+          <div class="text-xs text-slate-600 mt-1 font-semibold" id="ctoAvgLabel">Palier : -</div>
+        </div>
+
+        <div class="bg-white border border-[#DFE1E6] rounded-xl p-5 shadow-xs">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Santé de Code (Maintenabilité)</div>
+          <div class="text-3xl font-black text-emerald-600" id="ctoMaintainabilityAvg">85%</div>
+          <div class="text-xs text-slate-500 mt-1">Évaluation AST & tests</div>
+        </div>
+
+        <div class="bg-white border border-[#DFE1E6] rounded-xl p-5 shadow-xs">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Dette Technique Globale</div>
+          <div class="text-3xl font-black text-amber-700" id="ctoDebtAvg">15%</div>
+          <div class="text-xs text-slate-500 mt-1">Complexité & God Functions</div>
+        </div>
+
+        <div class="bg-white border border-[#DFE1E6] rounded-xl p-5 shadow-xs">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Risque Vibe Coding Moyen</div>
+          <div class="text-3xl font-black text-purple-700" id="ctoAvgRisk">0%</div>
+          <div class="text-xs text-slate-500 mt-1">Exposition & reprises IA</div>
+        </div>
+
+      </div>
+
+      <!-- Competency Matrix Table -->
+      <div class="bg-white border border-[#DFE1E6] rounded-xl p-5 shadow-xs">
+        <div class="flex items-center justify-between mb-4">
           <div>
-            <h2 class="text-base font-bold text-white flex items-center">
-              <i class="fa-solid fa-users-gear mr-2 text-indigo-400"></i> Matrice des Développeurs de l'Équipe
+            <h2 class="text-base font-bold text-[#172B4D] flex items-center space-x-2">
+              <i class="fa-solid fa-users-gear text-[#0052CC]"></i>
+              <span>Matrice Détaillée : AIDD & Diagnostic de Dette Réelle</span>
             </h2>
-            <p class="text-xs text-slate-400">Cliquez sur un développeur pour afficher son diagnostic 4 axes et son plan de progression personnalisé.</p>
+            <p class="text-xs text-slate-500">Distingue clairement l'artisanat sain, la dette legacy manuelle, le vibe coding et l'AIDD certifié.</p>
           </div>
-          <span class="text-xs text-slate-500 font-mono" id="teamTableSubtitle">4 profils analysés</span>
         </div>
 
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs text-slate-300">
-            <thead class="bg-slate-950/90 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
+          <table class="w-full text-left text-xs text-[#172B4D]">
+            <thead class="bg-[#F4F5F7] text-slate-600 font-bold uppercase tracking-wider border-b border-[#DFE1E6]">
               <tr>
                 <th class="p-3.5">Développeur</th>
-                <th class="p-3.5">Rôle / Stack</th>
+                <th class="p-3.5">Rôle</th>
                 <th class="p-3.5">Niveau AIDD</th>
+                <th class="p-3.5">Santé & Archétype de Code</th>
                 <th class="p-3.5">1. Taille</th>
                 <th class="p-3.5">2. Harness</th>
-                <th class="p-3.5">3. Intervention</th>
-                <th class="p-3.5">4. Parallèle</th>
-                <th class="p-3.5">Axe Limitant</th>
+                <th class="p-3.5">3. Interv.</th>
+                <th class="p-3.5">4. Parall.</th>
+                <th class="p-3.5">Axe Limit.</th>
                 <th class="p-3.5">Action</th>
               </tr>
             </thead>
-            <tbody id="teamTableBody" class="divide-y divide-slate-800/60 font-mono">
-              <!-- Rows injected dynamically -->
-            </tbody>
+            <tbody id="ctoMatrixTableBody" class="divide-y divide-slate-100 font-mono"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- Strategic Recommendations for CTO -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-7 shadow-xl">
+      <!-- Strategic Actions for CTO for Friday -->
+      <div class="bg-white border border-[#DFE1E6] rounded-xl p-5 shadow-xs">
         <div class="flex items-center space-x-3 mb-4">
-          <div class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-            <i class="fa-solid fa-clipboard-check"></i>
+          <div class="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 text-sm font-bold">
+            <i class="fa-solid fa-bullseye"></i>
           </div>
           <div>
-            <h3 class="text-base font-bold text-white">Plan Stratégique & Actions CTO pour Vendredi</h3>
-            <p class="text-xs text-slate-400">Recommandations managériales et priorités d'accompagnement de l'équipe</p>
+            <h3 class="text-sm font-bold text-[#172B4D]">Plan Stratégique & Actions Recommandées pour le CTO (Vendredi)</h3>
+            <p class="text-xs text-slate-500">Recommandations managériales et priorités d'accompagnement pour monter au palier supérieur.</p>
           </div>
         </div>
-        <div id="teamRecsList" class="space-y-3 mt-4">
-          <!-- Injected dynamically -->
-        </div>
-      </div>
-
-      <!-- Live Repository Contributor Analysis -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-          <div>
-            <h3 class="text-base font-bold text-white flex items-center">
-              <i class="fa-solid fa-users-viewfinder mr-2 text-emerald-400"></i> Audit de Traçabilité IA des Contributeurs Git
-            </h3>
-            <p class="text-xs text-slate-400 mt-0.5">Scanne les commits du dépôt et calcule le ratio de co-authorship IA par développeur.</p>
-          </div>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs text-slate-300">
-            <thead class="bg-slate-950/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
-              <tr>
-                <th class="p-3">Contributeur / Auteur</th>
-                <th class="p-3">Total Commits</th>
-                <th class="p-3">Commits Signés IA</th>
-                <th class="p-3">Ratio Adoption IA</th>
-                <th class="p-3">Niveau AIDD Estimé</th>
-                <th class="p-3">Dernier Commit</th>
-              </tr>
-            </thead>
-            <tbody id="contribTableBody" class="divide-y divide-slate-800/60 font-mono">
-              <!-- Injected dynamically -->
-            </tbody>
-          </table>
-        </div>
+        <div id="ctoRecsContainer" class="space-y-2.5 mt-4"></div>
       </div>
 
     </div>
 
-    <!-- ==================== VIEW 2: DEVELOPER MULTI-REPO ==================== -->
-    <div id="viewDeveloper" class="hidden space-y-8">
+    <!-- ==================== TAB 4: JIRA ACTION BACKLOG ==================== -->
+    <div id="tabViewBacklog" class="hidden space-y-6">
       
-      <!-- Developer Profile Header Card -->
-      <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/50 border border-slate-800 rounded-3xl p-7 shadow-2xl relative">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div class="flex items-center space-x-5">
-            <div class="w-20 h-20 rounded-2xl bg-slate-800 border border-slate-700 overflow-hidden shrink-0 flex items-center justify-center text-3xl font-black text-indigo-400" id="devAvatarContainer">
-              <span id="devAvatarInitials">D</span>
-            </div>
-            <div>
-              <div class="flex items-center space-x-3">
-                <h2 class="text-2xl font-black text-white capitalize" id="devProfileName">Développeur</h2>
-                <span class="text-xs px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700" id="devProfileRole">Portfolio Multi-Projets</span>
-              </div>
-              <p class="text-xs text-slate-400 mt-1 max-w-xl" id="devProfileBio"></p>
-              <div class="flex flex-wrap gap-1.5 mt-2.5" id="devStackBadges"></div>
-            </div>
-          </div>
+      <!-- Backlog Header & Tools -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-[#DFE1E6] rounded-xl p-4 shadow-xs">
+        <div>
+          <h2 class="text-base font-bold text-[#172B4D] flex items-center space-x-2">
+            <i class="fa-solid fa-list-check text-emerald-600"></i>
+            <span>Backlog des Tickets d'Action AIDD (N+1)</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">Feuille de route actionnable découpée en tickets Jira pour chaque développeur.</p>
+        </div>
 
-          <div class="flex items-center space-x-6 bg-slate-950/80 px-6 py-4 rounded-2xl border border-slate-800 shrink-0">
-            <div class="text-right">
-              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Niveau AIDD Consolidé</div>
-              <div class="text-2xl font-black text-white mt-0.5" id="devLevelLabel">🔹 Blue</div>
-            </div>
-            <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-black shadow-inner" id="devLevelBadge">
-              2
-            </div>
-          </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="exportBacklogJira()" class="px-3 py-1.5 rounded-lg bg-[#0052CC] hover:bg-[#0747A6] text-white text-xs font-bold flex items-center space-x-1.5 transition shadow-xs">
+            <i class="fa-solid fa-copy"></i>
+            <span>Copier Backlog (Jira Format)</span>
+          </button>
         </div>
       </div>
 
-      <!-- Developer 4 Axes & Progression -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="devAxesCards">
-        <!-- Injected dynamically -->
-      </div>
-
-      <!-- Audited Repositories Portfolio Table -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-base font-bold text-white flex items-center">
-              <i class="fa-solid fa-diagram-project mr-2 text-indigo-400"></i> Dépôts Publics Audités & Pratiques IA
-            </h3>
-            <p class="text-xs text-slate-400">Analyse de la mémoire projet (`AGENTS.md`) et du ratio IA sur chaque dépôt du développeur.</p>
-          </div>
-          <span class="text-xs text-slate-500 font-mono" id="devReposCount">Dépôts analysés</span>
-        </div>
-
+      <!-- Backlog List Table / Cards -->
+      <div class="bg-white border border-[#DFE1E6] rounded-xl p-4 shadow-xs">
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs text-slate-300">
-            <thead class="bg-slate-950/90 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
+          <table class="w-full text-left text-xs text-[#172B4D]">
+            <thead class="bg-[#F4F5F7] text-slate-600 font-bold uppercase tracking-wider border-b border-[#DFE1E6]">
               <tr>
-                <th class="p-3.5">Nom du Dépôt</th>
-                <th class="p-3.5">Langage</th>
-                <th class="p-3.5">Étoiles (Stars)</th>
-                <th class="p-3.5">Commits Analysés</th>
-                <th class="p-3.5">Commits IA</th>
-                <th class="p-3.5">Ratio Adoption IA</th>
-                <th class="p-3.5">Harnais Détecté</th>
+                <th class="p-3">Clé Ticket</th>
+                <th class="p-3">Titre de l'Action</th>
+                <th class="p-3">Axe Cible</th>
+                <th class="p-3">Priorité</th>
+                <th class="p-3">Effort Estimé</th>
+                <th class="p-3">Palier Visé</th>
+                <th class="p-3">Definition of Done (DoD)</th>
               </tr>
             </thead>
-            <tbody id="devReposTableBody" class="divide-y divide-slate-800/60 font-mono">
-              <!-- Injected dynamically -->
-            </tbody>
+            <tbody id="backlogTableBody" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- Progression Plan for Developer -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-7 shadow-xl">
-        <div class="flex items-center space-x-3 mb-5">
-          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-            <i class="fa-solid fa-arrow-trend-up"></i>
-          </div>
-          <div>
-            <h3 class="text-base font-bold text-white">Plan de Progression vers <span id="devNextLevel" class="text-emerald-400">Niveau suivant</span></h3>
-            <p class="text-xs text-slate-400">Axe limitant identifié : <span id="devBottleneck" class="text-amber-400 font-bold capitalize">axe</span></p>
-          </div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Actions Prioritaires</h5>
-            <div id="devStepsList" class="space-y-2"></div>
-          </div>
-          <div>
-            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Bonnes Pratiques Conseillées</h5>
-            <div id="devRecsList" class="space-y-2"></div>
-          </div>
-        </div>
-      </div>
-
     </div>
 
-    <!-- ==================== VIEW 3: SINGLE PROJECT / REPO ==================== -->
-    <div id="viewProject" class="hidden space-y-8">
-      <!-- Project Summary Banner -->
-      <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/50 border border-slate-800 rounded-3xl p-7 shadow-2xl">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <div class="flex items-center space-x-3 mb-2">
-              <h2 class="text-2xl font-black text-white" id="projName">Dépôt GitHub</h2>
-              <span class="text-xs px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700" id="projLang">Language</span>
-            </div>
-            <p class="text-xs text-slate-400 max-w-xl" id="projDesc"></p>
+    <!-- ==================== TAB 5: LIVE REPO & PROFILE SCANNER ==================== -->
+    <div id="tabViewScanner" class="hidden space-y-6">
+      
+      <!-- Scanner Input Box -->
+      <div class="bg-white border border-[#DFE1E6] rounded-xl p-6 sm:p-8 shadow-xs">
+        <div class="max-w-2xl">
+          <div class="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0052CC] border border-blue-200 text-xs font-bold mb-3">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Pre-Merge Guard & Scanner AIDD</span>
           </div>
-          <div class="flex items-center space-x-6 bg-slate-950/80 px-6 py-4 rounded-2xl border border-slate-800 shrink-0">
-            <div class="text-right">
-              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Niveau AI-Readiness Dépôt</div>
-              <div class="text-2xl font-black text-white mt-0.5" id="projLevelLabel">🔹 Blue</div>
-            </div>
-            <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-black shadow-inner" id="projLevelBadge">
-              2
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Diagnostic & Explication Règle du MIN -->
-      <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6 shadow-xl" id="projDiagnosisBanner">
-        <div class="flex items-start space-x-4">
-          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl shrink-0 mt-0.5">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center space-x-3 mb-1">
-              <h4 class="text-sm font-bold text-white">Pourquoi ce score ? — Explication de la Règle du MIN</h4>
-              <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono" id="projBottleneckBadge">Axe Limitant</span>
-            </div>
-            <p class="text-xs text-slate-300 leading-relaxed" id="projDiagnosisText">
-              Le score global est bridé par l'axe le plus faible conformément à la règle stricte du référentiel AIDD.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 4 Axes of Project -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="projAxesCards">
-        <!-- Injected dynamically -->
-      </div>
-
-      <!-- Metrics Breakdown & Distribution -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <!-- PR Size Distribution -->
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center">
-            <i class="fa-solid fa-chart-simple mr-2 text-indigo-400"></i> Distribution des Livrables
-          </h4>
-          <div class="space-y-2.5 text-xs font-mono" id="projSizeBars"></div>
+          <h2 class="text-xl font-bold text-[#172B4D]">Auditez n'importe quel profil ou dépôt en temps réel</h2>
+          <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+            Ingestion instantanée de dépôts distants GitHub/GitLab ou analyse de profils locaux pour positionner les 4 axes et la santé réelle du code.
+          </p>
         </div>
 
-        <!-- Harness & Automation Summary -->
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center">
-            <i class="fa-solid fa-shield-halved mr-2 text-emerald-400"></i> Harnais & Mémoire Projet
-          </h4>
-          <div class="space-y-2 text-xs" id="projHarnessDetails"></div>
-        </div>
-
-        <!-- Parallelism & Autonomy -->
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center">
-            <i class="fa-solid fa-code-branch mr-2 text-purple-400"></i> Parallélisme & Flux
-          </h4>
-          <div class="space-y-2 text-xs" id="projParallelDetails"></div>
-        </div>
-      </div>
-
-      <!-- Progression Plan for Project -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-7 shadow-xl">
-        <div class="flex items-center space-x-3 mb-5">
-          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-            <i class="fa-solid fa-arrow-trend-up"></i>
+        <div class="mt-6 flex flex-col sm:flex-row items-center gap-3">
+          <div class="relative flex-1 w-full">
+            <i class="fa-brands fa-github absolute left-4 top-3.5 text-slate-400 text-base"></i>
+            <input type="text" id="scannerInput" value="https://github.com/cline/cline" placeholder="Entrez une URL de dépôt ou un nom de profil local (ex: perceval, bohort)" class="w-full bg-[#FAFBFC] border border-[#DFE1E6] rounded-xl pl-11 pr-4 py-3 text-xs text-[#172B4D] focus:outline-none focus:border-[#0052CC] focus:bg-white font-mono shadow-xs">
           </div>
-          <div>
-            <h3 class="text-base font-bold text-white">Plan de Progression du Dépôt vers <span id="projNextLevel" class="text-emerald-400">Niveau suivant</span></h3>
-            <p class="text-xs text-slate-400">Actions concrètes pour débloquer l'axe limitant : <span id="projBottleneckName" class="text-amber-400 font-bold capitalize">axe</span></p>
-          </div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Actions Recommandées</h5>
-            <div id="projStepsList" class="space-y-2"></div>
-          </div>
-          <div>
-            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Bonnes Pratiques de Cadrage</h5>
-            <div id="projRecsList" class="space-y-2"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== VIEW 4: LOCAL & BENCHMARK PROFILES ==================== -->
-    <div id="viewLocal" class="hidden space-y-6">
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-          Sélectionner un profil de référence du benchmark hackathon :
-        </label>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <button onclick="loadBenchmarkProfile('perceval')" class="p-3.5 rounded-xl border border-slate-800 hover:border-red-500/50 bg-slate-950 hover:bg-red-500/5 text-left transition">
-            <div class="flex items-center justify-between font-bold text-sm text-white">Perceval <span class="text-xs text-red-400">Red</span></div>
-            <span class="text-[11px] text-slate-500">Backend NestJS</span>
-          </button>
-          <button onclick="loadBenchmarkProfile('bohort')" class="p-3.5 rounded-xl border border-slate-800 hover:border-blue-500/50 bg-slate-950 hover:bg-blue-500/5 text-left transition">
-            <div class="flex items-center justify-between font-bold text-sm text-white">Bohort <span class="text-xs text-blue-400">Blue</span></div>
-            <span class="text-[11px] text-slate-500">Fullstack Next.js</span>
-          </button>
-          <button onclick="loadBenchmarkProfile('leodagan')" class="p-3.5 rounded-xl border border-slate-800 hover:border-emerald-500/50 bg-slate-950 hover:bg-emerald-500/5 text-left transition">
-            <div class="flex items-center justify-between font-bold text-sm text-white">Leodagan <span class="text-xs text-emerald-400">Green</span></div>
-            <span class="text-[11px] text-slate-500">Tech Lead Go/React</span>
-          </button>
-          <button onclick="loadBenchmarkProfile('arthur')" class="p-3.5 rounded-xl border border-slate-800 hover:border-amber-500/50 bg-slate-950 hover:bg-amber-500/5 text-left transition">
-            <div class="flex items-center justify-between font-bold text-sm text-white">Arthur <span class="text-xs text-amber-400">Copper</span></div>
-            <span class="text-[11px] text-slate-500">Solo Python/FastAPI</span>
+          <button onclick="runScannerAudit()" class="w-full sm:w-auto bg-[#0052CC] hover:bg-[#0747A6] text-white font-bold text-xs px-6 py-3 rounded-xl transition shadow-xs flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-magnifying-glass mr-2"></i> Lancer l'Audit
           </button>
         </div>
+
+        <!-- Shortcuts -->
+        <div class="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+          <span class="font-bold">Profils de test :</span>
+          <button onclick="setScannerAndRun('perceval')" class="px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 text-[11px] border border-red-200 font-semibold">Perceval (Red - Vibe Debt)</button>
+          <button onclick="setScannerAndRun('bohort')" class="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] border border-blue-200 font-semibold">Bohort (Blue - Modéré)</button>
+          <button onclick="setScannerAndRun('leodagan')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[11px] border border-emerald-200 font-semibold">Leodagan (Green - Sain)</button>
+          <button onclick="setScannerAndRun('arthur')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-[11px] border border-amber-300 font-semibold">Arthur (Copper - Multi-Track)</button>
+        </div>
       </div>
-    </div>
 
-    <!-- ==================== MODAL: INDIVIDUAL DIAGNOSTIC ==================== -->
-    <div id="devModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-7 shadow-2xl relative">
-        <button onclick="closeModal()" class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800 pr-10">
-          <div>
-            <div class="flex items-center space-x-3">
-              <h2 id="modalName" class="text-2xl font-extrabold text-white capitalize">Développeur</h2>
-              <span id="modalRole" class="text-xs px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">Rôle</span>
-            </div>
-            <div id="modalStack" class="flex flex-wrap gap-1.5 mt-2"></div>
-          </div>
-
-          <div class="flex items-center space-x-4 bg-slate-950 px-5 py-3 rounded-2xl border border-slate-800">
-            <div>
-              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Niveau AIDD</div>
-              <div id="modalLevelLabel" class="text-xl font-black text-white mt-0.5">🔹 Blue</div>
-            </div>
-            <div id="modalLevelBadge" class="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black">
-              2
-            </div>
-          </div>
-        </div>
-
-        <div id="modalWarning" class="mt-4 p-3.5 bg-amber-500/10 border border-amber-500/20 text-amber-300 rounded-xl text-xs flex items-center space-x-2 hidden"></div>
-
-        <div class="mt-6">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Diagnostic Détaillé sur les 4 Axes</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="modalAxesGrid"></div>
-        </div>
-
-        <div class="mt-6 pt-6 border-t border-slate-800">
-          <div class="flex items-center space-x-2 mb-4">
-            <i class="fa-solid fa-arrow-trend-up text-emerald-400"></i>
-            <h4 class="text-sm font-bold text-white">Plan de Progression Personnalisé vers <span id="modalNextLevel" class="text-emerald-400">Niveau suivant</span></h4>
-            <span class="text-xs text-slate-400">(Axe limitant : <span id="modalBottleneck" class="text-amber-400 font-bold capitalize">axe</span>)</span>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Actions Prioritaires</h5>
-              <div id="modalSteps" class="space-y-2"></div>
-            </div>
-            <div>
-              <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Bonnes Pratiques</h5>
-              <div id="modalRecommendations" class="space-y-2"></div>
-            </div>
-          </div>
-        </div>
-
-      </div>
     </div>
 
   </main>
 
+  <!-- ==================== JIRA ISSUE DETAIL DRAWER / MODAL ==================== -->
+  <div id="jiraIssueDrawer" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex justify-end transition-opacity duration-300">
+    <div class="w-full max-w-3xl bg-white h-full border-l border-[#DFE1E6] shadow-2xl flex flex-col overflow-hidden animate-slide-left">
+      
+      <!-- Drawer Top Bar (Jira Issue Header) -->
+      <div class="px-6 py-4 border-b border-[#DFE1E6] flex items-center justify-between bg-[#FAFBFC]">
+        <div class="flex items-center space-x-3">
+          <i class="fa-brands fa-jira text-[#0052CC] text-lg"></i>
+          <span class="text-xs font-mono font-bold text-slate-600" id="drawerIssueKey">PROJ-AIDD-01</span>
+          <span class="text-slate-400">/</span>
+          <span class="text-xs font-bold text-[#172B4D]">Fiche Diagnostic AIDD & Santé de Code</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="copyDevJiraReport()" class="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-[#DFE1E6] transition flex items-center space-x-1.5 shadow-xs">
+            <i class="fa-solid fa-copy"></i>
+            <span>Copier Rapport</span>
+          </button>
+          <button onclick="closeJiraDrawer()" class="w-8 h-8 rounded-lg bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-800 border border-[#DFE1E6] flex items-center justify-center transition">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Drawer Scrollable Body -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-6 jira-scroll bg-[#FAFBFC]">
+        
+        <!-- Profile Identity & Current Level -->
+        <div class="bg-white border border-[#DFE1E6] rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+          <div class="flex items-center space-x-4">
+            <div class="w-14 h-14 rounded-xl bg-blue-50 text-[#0052CC] border border-blue-200 flex items-center justify-center text-xl font-black shadow-xs" id="drawerAvatar">
+              P
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-[#172B4D] capitalize" id="drawerDevName">-</h2>
+              <div class="text-xs text-slate-500 mt-0.5" id="drawerDevRole">Développeur Projet</div>
+              <div class="flex flex-wrap gap-1.5 mt-2" id="drawerDevStack"></div>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-3 bg-[#F4F5F7] px-4 py-2.5 rounded-xl border border-[#DFE1E6] shrink-0">
+            <div class="text-right">
+              <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Palier AIDD</div>
+              <div class="text-sm font-bold text-[#172B4D]" id="drawerLevelLabel">-</div>
+            </div>
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center text-base font-black border" id="drawerLevelRank">
+              -
+            </div>
+          </div>
+        </div>
+
+        <!-- Real Code Health & Architecture Debt Box (AST Analysis) -->
+        <div class="bg-white border border-[#DFE1E6] rounded-xl p-5 shadow-xs space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center space-x-1.5">
+              <i class="fa-solid fa-code-merge text-[#0052CC]"></i>
+              <span>Diagnostic Architectural & Santé du Code (AST)</span>
+            </h3>
+            <span id="drawerCodeArchetypeBadge" class="text-xs font-bold px-2.5 py-0.5 rounded border">-</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+            <div class="bg-[#FAFBFC] border border-[#DFE1E6] rounded-lg p-2.5 text-center">
+              <div class="text-[10px] text-slate-500 font-semibold">Maintenabilité</div>
+              <div class="text-base font-bold text-[#172B4D] font-mono mt-0.5" id="drawerMaintainabilityScore">85%</div>
+            </div>
+            <div class="bg-[#FAFBFC] border border-[#DFE1E6] rounded-lg p-2.5 text-center">
+              <div class="text-[10px] text-slate-500 font-semibold">Dette Technique</div>
+              <div class="text-base font-bold font-mono mt-0.5" id="drawerDebtScore">15%</div>
+            </div>
+            <div class="bg-[#FAFBFC] border border-[#DFE1E6] rounded-lg p-2.5 text-center">
+              <div class="text-[10px] text-slate-500 font-semibold">God Functions (>50L)</div>
+              <div class="text-base font-bold text-slate-700 font-mono mt-0.5" id="drawerGodFunctions">0</div>
+            </div>
+            <div class="bg-[#FAFBFC] border border-[#DFE1E6] rounded-lg p-2.5 text-center">
+              <div class="text-[10px] text-slate-500 font-semibold">Densité de Tests</div>
+              <div class="text-base font-bold text-emerald-700 font-mono mt-0.5" id="drawerTestDensity">8.5%</div>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed pt-1" id="drawerCodeHealthExplanation"></p>
+        </div>
+
+        <!-- Vibe Coding Risk & AI Debt Alert Box -->
+        <div class="rounded-xl p-5 border" id="drawerVibeRiskBox">
+          <div class="flex items-start space-x-3.5">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 mt-0.5" id="drawerVibeRiskIcon">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-1">
+                <h4 class="text-sm font-bold flex items-center space-x-2">
+                  <span>Indice de Risque Vibe Coding & Dette IA :</span>
+                  <span id="drawerVibeRiskPercent" class="font-mono font-black text-base">0%</span>
+                </h4>
+                <span id="drawerVibeRiskLevelBadge" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded font-mono">Modéré</span>
+              </div>
+              <p class="text-xs leading-relaxed mt-1" id="drawerVibeRiskText"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Axes Empiriques Breakdown -->
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center justify-between">
+            <span>Évaluation des 4 Axes Fondamentaux</span>
+            <span class="text-[#0052CC] font-bold">Règle du MIN appliquée</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="drawerAxesGrid"></div>
+        </div>
+
+        <!-- Inconsistencies & Declarative Warnings -->
+        <div id="drawerWarningsSection" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider mb-2 flex items-center">
+            <i class="fa-solid fa-circle-exclamation mr-1.5 text-amber-600"></i> Divergence Déclaratif vs Réalité Git
+          </h4>
+          <div id="drawerWarningsList" class="space-y-1.5 text-xs text-amber-800"></div>
+        </div>
+
+        <!-- Jira Action Tickets for Level + 1 -->
+        <div class="bg-white border border-[#DFE1E6] rounded-xl p-5 shadow-xs">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-sm font-bold text-[#172B4D] flex items-center space-x-2">
+                <i class="fa-solid fa-ticket text-emerald-600"></i>
+                <span>Tickets d'Action Jira de Montée en Compétences (N+1)</span>
+              </h3>
+              <p class="text-xs text-slate-500 mt-0.5">Actions pour lever l'axe limitant : <span id="drawerLimitingAxis" class="text-amber-700 font-bold capitalize">Harness</span></p>
+            </div>
+          </div>
+          <div id="drawerTicketsList" class="space-y-2.5"></div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
   <script>
-    const API_BASE = "http://127.0.0.1:8000";
-    let currentScenario = "team";
-    let teamDataCache = null;
+    const API_BASE = 'http://127.0.0.1:8000';
+    let teamMembersCache = [];
+    let currentSelectedMember = null;
+    let activeFilter = 'all';
+    let currentRepoUrl = 'https://github.com/cline/cline';
 
-    function getLevelBadgeStyle(levelId) {
-      switch(levelId) {
-        case 'white': return 'bg-slate-500/10 text-slate-300 border-slate-500/20';
-        case 'red': return 'bg-red-500/10 text-red-400 border-red-500/20';
-        case 'blue': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-        case 'green': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
-        case 'copper': return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
-        case 'silver': return 'bg-slate-300/10 text-slate-200 border-slate-300/20';
-        case 'gold': return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
-        default: return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
-      }
-    }
+    // Startup Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      loadInitialTeamData();
+    });
 
-    function setScenario(sc) {
-      currentScenario = sc;
-      const tabTeam = document.getElementById('btnScenarioTeam');
-      const tabDev = document.getElementById('btnScenarioDev');
-      const tabProj = document.getElementById('btnScenarioProj');
-      const tabLocal = document.getElementById('btnScenarioLocal');
-
-      const tabs = [tabTeam, tabDev, tabProj, tabLocal];
+    function switchTab(tabId) {
+      const tabs = ['kanban', 'evolution', 'team', 'backlog', 'scanner'];
       tabs.forEach(t => {
-        t.className = "scenario-tab p-4 rounded-2xl border border-slate-800 hover:border-slate-700 bg-slate-950/60 hover:bg-slate-900 text-left transition flex flex-col justify-between text-slate-300";
+        const btn = document.getElementById(`tabBtn${capitalize(t)}`);
+        const view = document.getElementById(`tabView${capitalize(t)}`);
+        if (!btn || !view) return;
+        if (t === tabId) {
+          btn.className = "jira-tab px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 bg-[#0052CC] text-white shadow-xs font-bold";
+          view.classList.remove('hidden');
+        } else {
+          btn.className = "jira-tab px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5 text-[#42526E] hover:text-[#172B4D] hover:bg-[#EBECF0]";
+          view.classList.add('hidden');
+        }
       });
+    }
 
-      const input = document.getElementById('targetInput');
-      const icon = document.getElementById('inputIcon');
-      const shortcuts = document.getElementById('scenarioShortcuts');
+    function capitalize(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
 
-      if (sc === 'team') {
-        tabTeam.className = "scenario-tab p-4 rounded-2xl border text-left transition flex flex-col justify-between bg-indigo-600/10 border-indigo-500 text-white shadow-lg shadow-indigo-600/10 ring-1 ring-indigo-500";
-        input.placeholder = "URL GitHub du dépôt partagé de l'équipe (ex: https://github.com/ai-driven-dev/laivel-up)";
-        if (!input.value.includes('/')) input.value = "https://github.com/ai-driven-dev/laivel-up";
-        icon.className = "fa-solid fa-user-group absolute left-4 top-3.5 text-indigo-400 text-base";
-        shortcuts.innerHTML = `
-          <span class="text-slate-500 font-semibold">Exemples :</span>
-          <button onclick="setAndRun('https://github.com/ai-driven-dev/laivel-up')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700/60">Dépôt Hackathon</button>
-          <button onclick="loadTeamDemo()" class="px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 text-[11px] border border-indigo-500/20 font-semibold">Équipe Test Démo</button>
-        `;
-        resetViewsToEmpty();
-      } else if (sc === 'developer') {
-        tabDev.className = "scenario-tab p-4 rounded-2xl border text-left transition flex flex-col justify-between bg-emerald-600/10 border-emerald-500 text-white shadow-lg shadow-emerald-600/10 ring-1 ring-emerald-500";
-        input.placeholder = "URL de profil GitHub ou nom d'utilisateur (ex: https://github.com/winterstone ou torvalds)";
-        input.value = "winterstones";
-        icon.className = "fa-solid fa-user absolute left-4 top-3.5 text-emerald-400 text-base";
-        shortcuts.innerHTML = `
-          <span class="text-slate-500 font-semibold">Profils suggérés :</span>
-          <button onclick="setAndRun('winterstones')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700/60">winterstones</button>
-          <button onclick="setAndRun('torvalds')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700/60">torvalds</button>
-        `;
-        resetViewsToEmpty();
-      } else if (sc === 'project') {
-        tabProj.className = "scenario-tab p-4 rounded-2xl border text-left transition flex flex-col justify-between bg-amber-600/10 border-amber-500 text-white shadow-lg shadow-amber-600/10 ring-1 ring-amber-500";
-        input.placeholder = "URL GitHub du dépôt à auditer (ex: https://github.com/fastapi/fastapi)";
-        input.value = "https://github.com/ai-driven-dev/laivel-up";
-        icon.className = "fa-solid fa-box-archive absolute left-4 top-3.5 text-amber-400 text-base";
-        shortcuts.innerHTML = `
-          <span class="text-slate-500 font-semibold">Exemples :</span>
-          <button onclick="setAndRun('https://github.com/ai-driven-dev/laivel-up')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700/60">laivel-up</button>
-        `;
-        resetViewsToEmpty();
-      } else if (sc === 'local') {
-        tabLocal.className = "scenario-tab p-4 rounded-2xl border text-left transition flex flex-col justify-between bg-purple-600/10 border-purple-500 text-white shadow-lg shadow-purple-600/10 ring-1 ring-purple-500";
-        input.placeholder = "Chemin absolu du dossier de profil ou dépôt local sur votre machine";
-        input.value = "bohort";
-        icon.className = "fa-solid fa-laptop-code absolute left-4 top-3.5 text-purple-400 text-base";
-        shortcuts.innerHTML = `
-          <span class="text-slate-500 font-semibold">Profils Benchmark :</span>
-          <button onclick="loadBenchmarkProfile('perceval')" class="px-2.5 py-1 rounded-lg bg-red-500/10 text-red-300 text-[11px] border border-red-500/20">Perceval (Red)</button>
-          <button onclick="loadBenchmarkProfile('bohort')" class="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-300 text-[11px] border border-blue-500/20">Bohort (Blue)</button>
-          <button onclick="loadBenchmarkProfile('leodagan')" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-300 text-[11px] border border-emerald-500/20">Leodagan (Green)</button>
-          <button onclick="loadBenchmarkProfile('arthur')" class="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-300 text-[11px] border border-amber-500/20">Arthur (Copper)</button>
-        `;
-        showView('viewLocal');
+    function showLoading(show, text = 'Analyse empirique en cours...') {
+      const loader = document.getElementById('globalLoader');
+      const txt = document.getElementById('loaderText');
+      if (txt) txt.textContent = text;
+      if (show) {
+        loader.classList.remove('hidden');
+      } else {
+        loader.classList.add('hidden');
       }
     }
 
-    function resetViewsToEmpty() {
-      ['viewTeam', 'viewDeveloper', 'viewProject', 'viewLocal'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.add('hidden');
-      });
-      const empty = document.getElementById('emptyState');
-      if (empty) empty.classList.remove('hidden');
+    async function promptChangeProject() {
+      const newUrl = prompt('Entrez l\'URL GitHub du projet à auditer (ex: https://github.com/owner/repo) :', currentRepoUrl);
+      if (newUrl && newUrl.trim()) {
+        currentRepoUrl = newUrl.trim();
+        const label = document.getElementById('activeProjectLabel');
+        if (label) label.textContent = currentRepoUrl.replace('https://github.com/', '');
+        await loadInitialTeamData(currentRepoUrl);
+      }
     }
 
-    function showView(viewId) {
-      const empty = document.getElementById('emptyState');
-      if (empty) empty.classList.add('hidden');
-
-      ['viewTeam', 'viewDeveloper', 'viewProject', 'viewLocal'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.add('hidden');
-      });
-      const active = document.getElementById(viewId);
-      if (active) active.classList.remove('hidden');
+    async function loadInitialTeamData(repoUrl = null) {
+      const target = repoUrl || currentRepoUrl;
+      showLoading(true, `Audit du projet réel (${target})...`);
+      try {
+        const res = await fetch(`${API_BASE}/team?repo_url=${encodeURIComponent(target)}`);
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        teamMembersCache = data.members || [];
+        const label = document.getElementById('activeProjectLabel');
+        if (label) label.textContent = data.team_name.replace('Équipe Projet (', '').replace(')', '');
+        renderAllViews(data);
+      } catch (err) {
+        console.error('Erreur chargement équipe:', err);
+      } finally {
+        showLoading(false);
+      }
     }
 
-    function setAndRun(val) {
-      document.getElementById('targetInput').value = val;
-      runScenarioAudit();
+    async function loadBenchmarkDemo() {
+      showLoading(true, 'Chargement des 4 profils de référence du sujet (Benchmark)...');
+      try {
+        const res = await fetch(`${API_BASE}/team/benchmark`);
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        teamMembersCache = data.members || [];
+        const label = document.getElementById('activeProjectLabel');
+        if (label) label.textContent = 'Benchmark Sujet (4 Profils Fictifs)';
+        renderAllViews(data);
+        alert('Profils de benchmark chargés (Perceval, Bohort, Leodagan, Arthur).');
+      } catch (err) {
+        alert('Erreur chargement benchmark: ' + err.message);
+      } finally {
+        showLoading(false);
+      }
     }
 
-    async function runScenarioAudit() {
-      const val = document.getElementById('targetInput').value.trim();
-      if (!val) {
-        alert("Veuillez saisir une valeur d'audit.");
+    async function refreshAllData() {
+      await loadInitialTeamData();
+    }
+
+    function renderAllViews(data) {
+      renderKanbanBoard(data.members || []);
+      renderEvolutionTimeline(data.evolution_timeline || []);
+      renderCtoDashboard(data);
+      renderActionBacklog(data.team_action_backlog || [], data.members || []);
+    }
+
+    // ==================== EVOLUTION TIMELINE RENDER ====================
+    function renderEvolutionTimeline(timeline) {
+      const container = document.getElementById('devEvolutionCardsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!timeline || timeline.length === 0) {
+        container.innerHTML = '<div class="p-8 text-center text-xs text-slate-500 bg-white border border-[#DFE1E6] rounded-xl">Aucun historique d\'évolution disponible pour ce projet.</div>';
         return;
       }
 
-      showLoading(true);
+      timeline.forEach((dev, idx) => {
+        const card = document.createElement('div');
+        card.className = "bg-white border border-[#DFE1E6] rounded-xl p-5 shadow-xs space-y-4 hover:border-slate-300 transition";
 
-      try {
-        if (currentScenario === 'developer') {
-          const res = await fetch(`${API_BASE}/evaluate/developer?username=${encodeURIComponent(val)}`);
-          if (!res.ok) throw new Error(await res.text());
-          const devData = await res.json();
-          renderDeveloperMultiRepo(devData);
-          showView('viewDeveloper');
-        } else if (currentScenario === 'team') {
-          const res = await fetch(`${API_BASE}/team?repo_url=${encodeURIComponent(val)}`);
-          if (!res.ok) throw new Error(await res.text());
-          teamDataCache = await res.json();
-          renderTeamData(teamDataCache);
-          showView('viewTeam');
-        } else if (currentScenario === 'project') {
-          const res = await fetch(`${API_BASE}/evaluate/live?repo_url=${encodeURIComponent(val)}`);
-          if (!res.ok) throw new Error(await res.text());
-          const projData = await res.json();
-          renderProjectData(projData);
-          showView('viewProject');
-        } else if (currentScenario === 'local') {
-          if (['perceval', 'bohort', 'leodagan', 'arthur'].includes(val.toLowerCase())) {
-            loadBenchmarkProfile(val.toLowerCase());
-          } else {
-            const res = await fetch(`${API_BASE}/evaluate`, {
-              method: 'POST',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({ profile_path: val })
-            });
-            if (!res.ok) throw new Error(await res.text());
-            const data = await res.json();
-            renderModalDirect(data);
-          }
+        let stepsHtml = '';
+        (dev.history || []).forEach((pt, pIdx) => {
+          const isLast = pIdx === dev.history.length - 1;
+          const badgeClass = getLevelBadgeStyle(pt.level_label.toLowerCase());
+          stepsHtml += `
+            <div class="flex-1 bg-[#FAFBFC] border border-[#DFE1E6] rounded-xl p-3.5 relative ${isLast ? 'border-blue-300 bg-blue-50/40' : ''}">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[11px] font-bold text-[#172B4D]">${pt.sprint_label} <span class="text-[10px] text-slate-500 font-normal">(${pt.timestamp})</span></span>
+                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${badgeClass}">${pt.level_label} (${pt.level_rank})</span>
+              </div>
+              <div class="flex items-center space-x-3 text-xs mb-2">
+                <span class="text-[#0052CC] font-mono font-bold">${Math.round(pt.ai_ratio * 100)}% IA</span>
+                <span class="text-slate-300">•</span>
+                <span class="text-slate-600 font-mono text-[11px]">${pt.corrective_rate} fix/PR</span>
+              </div>
+              <p class="text-[11px] text-slate-600 leading-relaxed">${pt.summary || ''}</p>
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#DFE1E6]">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center justify-center text-sm font-black capitalize">
+                ${dev.developer_id.substring(0, 1).toUpperCase()}
+              </div>
+              <div>
+                <div class="text-sm font-bold text-[#172B4D] capitalize flex items-center space-x-2">
+                  <span>${dev.developer_id}</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-mono font-bold">${dev.progression_trend}</span>
+                </div>
+                <div class="text-xs text-slate-500">${dev.role || 'Développeur Projet'}</div>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-3 text-xs">
+              <div class="flex items-center space-x-2 bg-[#FAFBFC] px-3 py-1.5 rounded-lg border border-[#DFE1E6]">
+                <span class="text-slate-500 font-medium">Trajectoire :</span>
+                <span class="font-bold text-slate-700 font-mono">${dev.starting_level_label}</span>
+                <i class="fa-solid fa-arrow-right text-[10px] text-[#0052CC]"></i>
+                <span class="font-bold text-emerald-700 font-mono">${dev.current_level_label}</span>
+              </div>
+              <div class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1.5 rounded-lg font-bold font-mono text-xs">
+                +${dev.velocity_increase_percent}% vélocité
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            ${stepsHtml}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // ==================== KANBAN BOARD RENDER ====================
+    function renderKanbanBoard(members) {
+      const cols = {
+        white: document.getElementById('cardsColWhite'),
+        red: document.getElementById('cardsColRed'),
+        blue: document.getElementById('cardsColBlue'),
+        green: document.getElementById('cardsColGreen'),
+        copper: document.getElementById('cardsColCopper'),
+        silver: document.getElementById('cardsColSilver'),
+        gold: document.getElementById('cardsColGold'),
+      };
+
+      const counts = {
+        white: 0, red: 0, blue: 0, green: 0, copper: 0, silver: 0, gold: 0
+      };
+
+      Object.values(cols).forEach(c => c.innerHTML = '');
+
+      members.forEach((m, idx) => {
+        const lvlId = (m.level.id || 'white').toLowerCase();
+        
+        // Filter logic
+        if (activeFilter === 'high_risk' && (m.vibe_risk ? m.vibe_risk.risk_score < 60 : true)) return;
+        if (activeFilter === 'clean' && (m.vibe_risk ? m.vibe_risk.risk_score >= 40 : false)) return;
+
+        if (cols[lvlId]) {
+          counts[lvlId]++;
+          const card = createKanbanCard(m, idx);
+          cols[lvlId].appendChild(card);
         }
-      } catch (err) {
-        alert("Erreur lors de l'audit : " + err.message);
-        resetViewsToEmpty();
-      } finally {
-        showLoading(false);
-      }
+      });
+
+      // Update counters
+      Object.keys(counts).forEach(k => {
+        const counterEl = document.getElementById(`countCol${capitalize(k)}`);
+        if (counterEl) counterEl.textContent = counts[k];
+      });
     }
 
-    async function loadTeamDemo() {
-      showLoading(true);
-      try {
-        const res = await fetch(`${API_BASE}/team`);
-        if (!res.ok) throw new Error(await res.text());
-        teamDataCache = await res.json();
-        renderTeamData(teamDataCache);
-        showView('viewTeam');
-      } catch (err) {
-        alert("Erreur chargement équipe : " + err.message);
-      } finally {
-        showLoading(false);
+    function createKanbanCard(m, idx) {
+      const card = document.createElement('div');
+      card.className = "bg-white border border-[#DFE1E6] hover:border-[#0052CC] hover:shadow p-3.5 rounded-xl transition cursor-pointer shadow-xs group relative";
+      card.onclick = () => openJiraDrawerForMember(idx);
+
+      const riskScore = m.vibe_risk ? m.vibe_risk.risk_score : 30;
+      let riskBadge = '';
+      if (riskScore >= 70) {
+        riskBadge = `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-50 text-red-700 border border-red-200 flex items-center"><i class="fa-solid fa-triangle-exclamation mr-1 text-[9px]"></i>Vibe ${riskScore}%</span>`;
+      } else if (riskScore >= 35) {
+        riskBadge = `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-300">Risque ${riskScore}%</span>`;
+      } else {
+        riskBadge = `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center"><i class="fa-solid fa-shield-check mr-1 text-[9px]"></i>Sain (${riskScore}%)</span>`;
       }
+
+      const archetypeLabel = m.code_health ? m.code_health.archetype_label : 'Artisanat';
+      const archetypeColor = m.code_health ? m.code_health.archetype_badge_color : 'bg-slate-100 text-slate-700 border-slate-200';
+
+      card.innerHTML = `
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[10px] font-mono text-slate-500 font-bold uppercase">AIDD-${idx+101}</span>
+          ${riskBadge}
+        </div>
+        <div class="flex items-center space-x-2.5 mb-2">
+          <div class="w-7 h-7 rounded-lg bg-blue-50 text-[#0052CC] border border-blue-200 flex items-center justify-center text-xs font-black capitalize shrink-0">
+            ${m.profile_id.substring(0, 1).toUpperCase()}
+          </div>
+          <div class="overflow-hidden">
+            <div class="text-xs font-bold text-[#172B4D] capitalize truncate">${m.profile_id}</div>
+            <div class="text-[10px] text-slate-500 truncate">${m.role || 'Développeur Projet'}</div>
+          </div>
+        </div>
+
+        <div class="mt-2.5 pt-2 border-t border-[#DFE1E6] flex items-center justify-between text-[10px]">
+          <span class="px-1.5 py-0.5 rounded font-medium border truncate max-w-[120px] ${archetypeColor}">
+            ${archetypeLabel}
+          </span>
+          <span class="text-[10px] text-slate-400 group-hover:text-[#0052CC] font-bold transition">
+            Voir Fiche <i class="fa-solid fa-arrow-right text-[9px] ml-0.5"></i>
+          </span>
+        </div>
+      `;
+      return card;
     }
 
-    async function loadBenchmarkProfile(id) {
-      showLoading(true);
-      try {
-        const res = await fetch(`${API_BASE}/evaluate/${id}`);
-        if (!res.ok) throw new Error(await res.text());
-        const data = await res.json();
-        renderModalDirect(data);
-      } catch (err) {
-        alert("Erreur chargement profil : " + err.message);
-      } finally {
-        showLoading(false);
-      }
+    function filterKanban(type) {
+      activeFilter = type;
+      document.getElementById('fltAll').className = type === 'all' ? 'px-2.5 py-1 rounded bg-[#0052CC] text-white font-bold' : 'px-2.5 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 font-semibold border border-[#DFE1E6]';
+      document.getElementById('fltHighRisk').className = type === 'high_risk' ? 'px-2.5 py-1 rounded bg-red-600 text-white font-bold' : 'px-2.5 py-1 rounded bg-white hover:bg-red-50 text-red-700 font-semibold border border-red-200';
+      document.getElementById('fltClean').className = type === 'clean' ? 'px-2.5 py-1 rounded bg-emerald-600 text-white font-bold' : 'px-2.5 py-1 rounded bg-white hover:bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200';
+      renderKanbanBoard(teamMembersCache);
     }
 
-    function renderTeamData(data) {
-      document.getElementById('kpiTeamSize').textContent = data.team_size;
-      document.getElementById('kpiAvgRank').textContent = `${data.average_rank} / 6`;
-      document.getElementById('kpiAvgLabel').textContent = `Niveau : ${data.average_level_label}`;
-      document.getElementById('kpiBottleneck').textContent = data.team_bottleneck_axis;
-      document.getElementById('teamTableSubtitle').textContent = `${data.team_size} développeurs du projet analysés`;
+    // ==================== CTO DASHBOARD RENDER ====================
+    function renderCtoDashboard(data) {
+      document.getElementById('ctoAvgRank').textContent = `${data.average_rank || 0} / 6`;
+      document.getElementById('ctoAvgLabel').textContent = `Palier : ${data.average_level_label || 'White'}`;
+      document.getElementById('ctoMaintainabilityAvg').textContent = `${data.team_maintainability_avg || 85}%`;
+      document.getElementById('ctoDebtAvg').textContent = `${data.team_technical_debt_avg || 15}%`;
+      document.getElementById('ctoAvgRisk').textContent = `${data.team_vibe_risk_avg || 0}%`;
 
-      const tbody = document.getElementById('teamTableBody');
+      const tbody = document.getElementById('ctoMatrixTableBody');
       tbody.innerHTML = '';
-      data.members.forEach((m, idx) => {
+      (data.members || []).forEach((m, idx) => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-800/40 transition cursor-pointer";
-        tr.onclick = () => openDeveloperModal(idx);
+        tr.className = "hover:bg-blue-50/30 transition cursor-pointer";
+        tr.onclick = () => openJiraDrawerForMember(idx);
+        
+        const ch = m.code_health || { archetype_label: 'Artisanat', archetype_badge_color: 'bg-blue-50 text-blue-700 border-blue-200', maintainability_score: 85 };
+
         tr.innerHTML = `
-          <td class="p-3.5 font-bold text-white capitalize flex items-center space-x-2">
-            <span class="w-2 h-2 rounded-full ${m.level.rank >= 3 ? 'bg-emerald-400' : 'bg-blue-400'}"></span>
+          <td class="p-3.5 font-bold text-[#172B4D] capitalize flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full ${m.level.rank >= 3 ? 'bg-emerald-500' : 'bg-[#0052CC]'}"></span>
             <span>${m.profile_id}</span>
           </td>
-          <td class="p-3.5 text-slate-400">${m.role || '-'}</td>
-          <td class="p-3.5"><span class="px-2.5 py-1 rounded text-xs font-bold border ${getLevelBadgeStyle(m.level.id)}">${m.level.label}</span></td>
-          <td class="p-3.5">${m.axes.taille.level} (${m.axes.taille.rank})</td>
-          <td class="p-3.5">${m.axes.harness.level} (${m.axes.harness.rank})</td>
-          <td class="p-3.5">${m.axes.intervention.level} (${m.axes.intervention.rank})</td>
-          <td class="p-3.5">${m.axes.parallele.level} (${m.axes.parallele.rank})</td>
-          <td class="p-3.5 font-bold text-amber-400 capitalize">${m.limiting_axis}</td>
+          <td class="p-3.5 text-slate-600">${m.role || '-'}</td>
+          <td class="p-3.5"><span class="px-2 py-0.5 rounded text-xs font-bold border ${getLevelBadgeStyle(m.level.id)}">${m.level.label}</span></td>
           <td class="p-3.5">
-            <button class="px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[11px] font-semibold transition">
-              <i class="fa-solid fa-eye mr-1"></i> Fiche
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold border ${ch.archetype_badge_color}">
+              ${ch.archetype_label} (${ch.maintainability_score}%)
+            </span>
+          </td>
+          <td class="p-3.5 text-slate-700">${m.axes.taille.level} (${m.axes.taille.rank})</td>
+          <td class="p-3.5 text-slate-700">${m.axes.harness.level} (${m.axes.harness.rank})</td>
+          <td class="p-3.5 text-slate-700">${m.axes.intervention.level} (${m.axes.intervention.rank})</td>
+          <td class="p-3.5 text-slate-700">${m.axes.parallele.level} (${m.axes.parallele.rank})</td>
+          <td class="p-3.5 font-bold text-amber-800 capitalize">${m.limiting_axis}</td>
+          <td class="p-3.5">
+            <button class="px-2.5 py-1 rounded bg-blue-50 hover:bg-blue-100 text-[#0052CC] border border-blue-200 text-[11px] font-bold transition">
+              Fiche Jira
             </button>
           </td>
         `;
         tbody.appendChild(tr);
       });
 
-      const recDiv = document.getElementById('teamRecsList');
+      const recDiv = document.getElementById('ctoRecsContainer');
       recDiv.innerHTML = '';
-      data.team_recommendations.forEach((rec, idx) => {
+      (data.team_recommendations || []).forEach((rec, idx) => {
         const item = document.createElement('div');
-        item.className = "p-3.5 bg-slate-950/70 border border-slate-800 rounded-xl text-xs text-slate-300 flex items-start space-x-3";
-        item.innerHTML = `<span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-[11px] shrink-0">${idx+1}</span><span>${rec}</span>`;
+        item.className = "p-3 bg-[#FAFBFC] border border-[#DFE1E6] rounded-xl text-xs text-[#172B4D] flex items-start space-x-3";
+        item.innerHTML = `<span class="w-5 h-5 rounded-full bg-blue-50 text-[#0052CC] border border-blue-200 flex items-center justify-center font-bold text-[11px] shrink-0">${idx+1}</span><span>${rec}</span>`;
         recDiv.appendChild(item);
       });
-
-      if (data.contributors_breakdown) {
-        renderContributors(data.contributors_breakdown);
-      }
     }
 
-    function renderContributors(list) {
-      const tbody = document.getElementById('contribTableBody');
+    // ==================== JIRA ACTION BACKLOG RENDER ====================
+    function renderActionBacklog(backlog, members) {
+      const tbody = document.getElementById('backlogTableBody');
+      if (!tbody) return;
       tbody.innerHTML = '';
-      if (!list || list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">Aucun contributeur extrait du dépôt.</td></tr>`;
-        return;
-      }
+      
+      const badgeCount = document.getElementById('backlogBadgeCount');
+      if (badgeCount) badgeCount.textContent = backlog.length;
 
-      list.forEach(c => {
+      backlog.forEach((t, idx) => {
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-800/40 transition";
-        const ratioPercent = Math.round(c.ai_coauthored_ratio * 100);
+        tr.className = "hover:bg-slate-50 transition";
+        
+        let prioBadge = '';
+        if (t.priority === 'Critical') {
+          prioBadge = '<span class="px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 font-bold text-[10px]">Critical</span>';
+        } else if (t.priority === 'High') {
+          prioBadge = '<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300 font-bold text-[10px]">High</span>';
+        } else {
+          prioBadge = '<span class="px-2 py-0.5 rounded bg-blue-50 text-[#0052CC] border border-blue-200 font-bold text-[10px]">Medium</span>';
+        }
+
         tr.innerHTML = `
-          <td class="p-3 font-bold text-white">${c.author}</td>
-          <td class="p-3">${c.total_commits}</td>
-          <td class="p-3 text-indigo-400 font-bold">${c.ai_coauthored_commits}</td>
-          <td class="p-3 font-bold ${ratioPercent > 50 ? 'text-emerald-400' : (ratioPercent > 10 ? 'text-blue-400' : 'text-slate-400')}">${ratioPercent}%</td>
-          <td class="p-3"><span class="px-2 py-0.5 rounded text-xs border ${getLevelBadgeStyle(c.estimated_level.id)}">${c.estimated_level.label}</span></td>
-          <td class="p-3 text-[11px] text-slate-500 line-clamp-1 max-w-xs">${c.sample_messages[0] || '-'}</td>
+          <td class="p-3 font-mono font-bold text-[#0052CC]">${t.ticket_id}</td>
+          <td class="p-3 font-semibold text-[#172B4D]">${t.title}</td>
+          <td class="p-3 text-amber-800 font-mono font-bold capitalize">${t.axis}</td>
+          <td class="p-3">${prioBadge}</td>
+          <td class="p-3 text-slate-600 font-mono">${t.estimated_effort}</td>
+          <td class="p-3 font-bold text-emerald-700 font-mono">${t.target_level}</td>
+          <td class="p-3 text-slate-600 text-[11px]">${t.definition_of_done}</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function renderDeveloperMultiRepo(data) {
-      document.getElementById('devProfileName').textContent = data.profile_id;
-      document.getElementById('devProfileRole').textContent = data.role || 'Développeur';
-      document.getElementById('devProfileBio').textContent = data.declaratif || '';
-
-      const avatarCont = document.getElementById('devAvatarContainer');
-      if (data.avatar_url) {
-        avatarCont.innerHTML = `<img src="${data.avatar_url}" class="w-full h-full object-cover">`;
-      } else {
-        avatarCont.innerHTML = `<span>${data.profile_id.substring(0,2).toUpperCase()}</span>`;
-      }
-
-      const stackDiv = document.getElementById('devStackBadges');
-      stackDiv.innerHTML = '';
-      (data.stack || []).forEach(st => {
-        const s = document.createElement('span');
-        s.className = "text-[11px] px-2.5 py-0.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700";
-        s.textContent = st;
-        stackDiv.appendChild(s);
-      });
-
-      document.getElementById('devLevelLabel').textContent = data.level.label;
-      const b = document.getElementById('devLevelBadge');
-      b.textContent = data.level.rank;
-      b.className = `w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-black border ${getLevelBadgeStyle(data.level.id)}`;
-
-      // 4 Axes
-      const axesCards = document.getElementById('devAxesCards');
-      axesCards.innerHTML = `
-        ${createAxisCardHtml('1. Taille', data.axes.taille, 'fa-maximize')}
-        ${createAxisCardHtml('2. Harness', data.axes.harness, 'fa-shield-halved')}
-        ${createAxisCardHtml('3. Intervention', data.axes.intervention, 'fa-hand-holding-hand')}
-        ${createAxisCardHtml('4. Parallèle', data.axes.parallele, 'fa-code-branch')}
-      `;
-
-      // Repos table
-      const rTbody = document.getElementById('devReposTableBody');
-      rTbody.innerHTML = '';
-      const repos = data.audited_repos || [];
-      document.getElementById('devReposCount').textContent = `${repos.length} dépôts audités`;
-
-      repos.forEach(r => {
-        const rRatio = Math.round(r.ai_ratio * 100);
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-800/40 transition";
-        tr.innerHTML = `
-          <td class="p-3.5 font-bold text-white">${r.name}</td>
-          <td class="p-3.5 text-slate-400">${r.language}</td>
-          <td class="p-3.5"><i class="fa-solid fa-star text-amber-400 mr-1"></i>${r.stars}</td>
-          <td class="p-3.5">${r.commits_count}</td>
-          <td class="p-3.5 text-indigo-400 font-bold">${r.ai_commits}</td>
-          <td class="p-3.5 font-bold ${rRatio > 50 ? 'text-emerald-400' : 'text-slate-300'}">${rRatio}%</td>
-          <td class="p-3.5">${r.has_harness ? '<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">AGENTS.md</span>' : '<span class="text-slate-600">Non</span>'}</td>
-        `;
-        rTbody.appendChild(tr);
-      });
-
-      // Progression
-      const prog = data.progression;
-      document.getElementById('devNextLevel').textContent = prog.next_level ? prog.next_level.label : 'Niveau maximal';
-      document.getElementById('devBottleneck').textContent = prog.limiting_axis;
-
-      const stepsDiv = document.getElementById('devStepsList');
-      stepsDiv.innerHTML = '';
-      prog.steps.forEach((st, idx) => {
-        const d = document.createElement('div');
-        d.className = "p-2.5 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-300 flex items-start space-x-2";
-        d.innerHTML = `<span class="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">${idx+1}</span><span>${st}</span>`;
-        stepsDiv.appendChild(d);
-      });
-
-      const recDiv = document.getElementById('devRecsList');
-      recDiv.innerHTML = '';
-      prog.recommendations.forEach(rec => {
-        const d = document.createElement('div');
-        d.className = "p-2.5 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-400 flex items-start space-x-2";
-        d.innerHTML = `<i class="fa-solid fa-lightbulb text-amber-400/80 mt-0.5 shrink-0"></i><span>${rec}</span>`;
-        recDiv.appendChild(d);
-      });
-    }
-
-    function renderProjectData(data) {
-      document.getElementById('projName').textContent = data.profile_id;
-      document.getElementById('projLang').textContent = (data.stack || [])[0] || 'Projet';
-      document.getElementById('projDesc').textContent = data.declaratif || '';
-
-      document.getElementById('projLevelLabel').textContent = data.level.label;
-      const b = document.getElementById('projLevelBadge');
-      b.textContent = data.level.rank;
-      b.className = `w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-black border ${getLevelBadgeStyle(data.level.id)}`;
-
-      const axesCards = document.getElementById('projAxesCards');
-      axesCards.innerHTML = `
-        ${createAxisCardHtml('1. Taille (PRs)', data.axes.taille, 'fa-maximize')}
-        ${createAxisCardHtml('2. Harness & Mémoire', data.axes.harness, 'fa-shield-halved')}
-        ${createAxisCardHtml('3. Intervention (CI)', data.axes.intervention, 'fa-hand-holding-hand')}
-        ${createAxisCardHtml('4. Parallèle (Branches)', data.axes.parallele, 'fa-code-branch')}
-      `;
-
-      // Diagnostic & Bottleneck explanation
-      const prog = data.progression;
-      const limitAxisKey = prog.limiting_axis;
-      const limitAxisData = data.axes[limitAxisKey] || data.axes.taille;
-      
-      document.getElementById('projBottleneckBadge').textContent = `Goulot : ${limitAxisKey.toUpperCase()}`;
-      
-      let higherAxes = [];
-      ['taille', 'harness', 'intervention', 'parallele'].forEach(k => {
-        if (k !== limitAxisKey && data.axes[k] && data.axes[k].rank > data.level.rank) {
-          higherAxes.push(`${k} (${data.axes[k].level.toUpperCase()} ${data.axes[k].rank})`);
+    function exportBacklogJira() {
+      let md = "# 📋 Backlog Jira d'Actions AIDD\n\n| Clé | Titre | Axe | Priorité | Effort | Niveau Cible | Definition of Done |\n|---|---|---|---|---|---|---|\n";
+      const rows = document.querySelectorAll('#backlogTableBody tr');
+      rows.forEach(r => {
+        const cols = Array.from(r.querySelectorAll('td')).map(c => c.textContent.trim());
+        if (cols.length >= 7) {
+          md += `| ${cols[0]} | ${cols[1]} | ${cols[2]} | ${cols[3]} | ${cols[4]} | ${cols[5]} | ${cols[6]} |\n`;
         }
       });
+      navigator.clipboard.writeText(md);
+      alert('Backlog Jira copié dans le presse-papier au format Markdown !');
+    }
+
+    // ==================== JIRA ISSUE DETAIL DRAWER ====================
+    function openJiraDrawerForMember(idx) {
+      const m = teamMembersCache[idx];
+      if (!m) return;
+      currentSelectedMember = m;
+
+      document.getElementById('drawerIssueKey').textContent = `PROJ-AIDD-${idx+101}`;
+      document.getElementById('drawerDevName').textContent = m.profile_id;
+      document.getElementById('drawerDevRole').textContent = m.role || 'Développeur Projet';
       
-      const higherText = higherAxes.length > 0 ? ` Malgré des paliers supérieurs sur <strong>${higherAxes.join(', ')}</strong>, ` : ' ';
-      
-      document.getElementById('projDiagnosisText').innerHTML = `
-        Ce dépôt est classé au niveau global <strong>${data.level.label} (Rang ${data.level.rank})</strong> car son axe limitant est <strong>${limitAxisKey.toUpperCase()}</strong> (${limitAxisData.level.toUpperCase()} ${limitAxisData.rank}).
-        ${higherText}la <strong>règle stricte du MIN (Référentiel AIDD)</strong> impose que le niveau final soit égal au maillon le plus faible.<br>
-        <span class="text-amber-300 font-semibold mt-1 block"><i class="fa-solid fa-magnifying-glass mr-1"></i> Preuve constatée sur le dépôt :</span> ${limitAxisData.evidence}
-      `;
+      const av = document.getElementById('drawerAvatar');
+      av.textContent = m.profile_id.substring(0, 1).toUpperCase();
 
-      // PR Size Distribution visual bars
-      const sizeBarsDiv = document.getElementById('projSizeBars');
-      sizeBarsDiv.innerHTML = '';
-      const dist = data.axes.taille.details?.distribution || {};
-      const totalPrs = data.axes.taille.details?.total_prs || 1;
-      const medLines = data.axes.taille.details?.median_lines || 0;
-
-      const sizeLabels = [
-        { key: 'xs', name: 'XS (<30 lig.)', color: 'bg-red-500' },
-        { key: 's', name: 'S (30-150 lig.)', color: 'bg-red-400' },
-        { key: 'm', name: 'M (150-500 lig.)', color: 'bg-blue-400' },
-        { key: 'l', name: 'L (500-1200 lig.)', color: 'bg-emerald-400' },
-        { key: 'xl', name: 'XL (>1200 lig.)', color: 'bg-amber-400' }
-      ];
-
-      sizeLabels.forEach(s => {
-        const count = dist[s.key] || 0;
-        const pct = Math.round((count / totalPrs) * 100) || 0;
-        const row = document.createElement('div');
-        row.className = "flex items-center justify-between";
-        row.innerHTML = `
-          <span class="text-[11px] text-slate-400 w-28 shrink-0">${s.name}</span>
-          <div class="flex-1 mx-2 bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
-            <div class="${s.color} h-full rounded-full" style="width: ${pct}%"></div>
-          </div>
-          <span class="text-[11px] text-slate-300 w-12 text-right">${count} (${pct}%)</span>
-        `;
-        sizeBarsDiv.appendChild(row);
-      });
-      const medRow = document.createElement('div');
-      medRow.className = "pt-2 text-[11px] text-slate-400 border-t border-slate-800 flex justify-between";
-      medRow.innerHTML = `<span>Médiane : <strong>${medLines} lignes/livrable</strong></span><span>Total : <strong>${totalPrs} livrables</strong></span>`;
-      sizeBarsDiv.appendChild(medRow);
-
-      // Harness Details
-      const hDetails = document.getElementById('projHarnessDetails');
-      const hData = data.axes.harness.details || {};
-      hDetails.innerHTML = `
-        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
-          <span class="text-slate-400">Mémoire \`AGENTS.md\` / Règles</span>
-          <span class="font-bold ${hData.agents_md ? 'text-emerald-400' : 'text-slate-500'}">${hData.agents_md ? '✓ Présent' : '✗ Absent'}</span>
-        </div>
-        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
-          <span class="text-slate-400">Règles & Compétences versionnées</span>
-          <span class="font-bold text-indigo-300 font-mono">${(hData.rules_count || 0) + (hData.skills_count || 0)} modules</span>
-        </div>
-        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
-          <span class="text-slate-400">Boucles fermées CI & Workflows</span>
-          <span class="font-bold ${hData.has_auto_loops ? 'text-emerald-400' : 'text-amber-400'}">${hData.has_auto_loops ? '✓ Configuré' : 'Non détecté'}</span>
-        </div>
-      `;
-
-      // Parallelism Details
-      const pDetails = document.getElementById('projParallelDetails');
-      const pData = data.axes.parallele.details || {};
-      const intData = data.axes.intervention.details || {};
-      pDetails.innerHTML = `
-        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
-          <span class="text-slate-400">Branches simultanées (médiane)</span>
-          <span class="font-bold text-purple-400 font-mono">${pData.median_concurrent || 1} branches</span>
-        </div>
-        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
-          <span class="text-slate-400">Commits correctifs post-ouverture</span>
-          <span class="font-bold text-slate-300 font-mono">${intData.median_correction_commits || 0} par PR</span>
-        </div>
-        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-slate-800">
-          <span class="text-slate-400">Taux d'échec CI</span>
-          <span class="font-bold ${(intData.ci_failure_rate || 0) < 0.1 ? 'text-emerald-400' : 'text-amber-400'} font-mono">${Math.round((intData.ci_failure_rate || 0) * 100)}%</span>
-        </div>
-      `;
-
-      // Progression Steps & Recommendations
-      document.getElementById('projNextLevel').textContent = prog.next_level ? prog.next_level.label : 'Niveau maximal';
-      document.getElementById('projBottleneckName').textContent = prog.limiting_axis;
-
-      const stepsDiv = document.getElementById('projStepsList');
-      stepsDiv.innerHTML = '';
-      (prog.steps || []).forEach((st, idx) => {
-        const d = document.createElement('div');
-        d.className = "p-2.5 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-300 flex items-start space-x-2";
-        d.innerHTML = `<span class="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">${idx+1}</span><span>${st}</span>`;
-        stepsDiv.appendChild(d);
-      });
-
-      const recDiv = document.getElementById('projRecsList');
-      recDiv.innerHTML = '';
-      (prog.recommendations || []).forEach(rec => {
-        const d = document.createElement('div');
-        d.className = "p-2.5 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-400 flex items-start space-x-2";
-        d.innerHTML = `<i class="fa-solid fa-lightbulb text-amber-400/80 mt-0.5 shrink-0"></i><span>${rec}</span>`;
-        recDiv.appendChild(d);
-      });
-    }
-
-    function createAxisCardHtml(title, axisData, icon) {
-      return `
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-xs font-bold text-slate-300 flex items-center">
-                <i class="fa-solid ${icon} mr-2 text-indigo-400"></i> ${title}
-              </span>
-              <span class="text-[11px] font-bold px-2 py-0.5 rounded border ${getLevelBadgeStyle(axisData.level)}">
-                ${axisData.level} (${axisData.rank})
-              </span>
-            </div>
-            <p class="text-xs text-slate-400 leading-relaxed min-h-[50px]">${axisData.evidence}</p>
-          </div>
-        </div>
-      `;
-    }
-
-    function openDeveloperModal(index) {
-      if (!teamDataCache || !teamDataCache.members[index]) return;
-      renderModalDirect(teamDataCache.members[index]);
-    }
-
-    function renderModalDirect(m) {
-      document.getElementById('modalName').textContent = m.profile_id;
-      document.getElementById('modalRole').textContent = m.role || 'Développeur';
-
-      const stackDiv = document.getElementById('modalStack');
+      const stackDiv = document.getElementById('drawerDevStack');
       stackDiv.innerHTML = '';
       (m.stack || []).forEach(st => {
         const s = document.createElement('span');
-        s.className = "text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700";
+        s.className = "text-[10px] px-2 py-0.5 rounded bg-[#F4F5F7] text-slate-700 border border-[#DFE1E6] font-mono font-semibold";
         s.textContent = st;
         stackDiv.appendChild(s);
       });
 
-      document.getElementById('modalLevelLabel').textContent = m.level.label;
-      const badge = document.getElementById('modalLevelBadge');
-      badge.textContent = m.level.rank;
-      badge.className = `w-12 h-12 rounded-xl border flex items-center justify-center text-xl font-black ${getLevelBadgeStyle(m.level.id)}`;
+      document.getElementById('drawerLevelLabel').textContent = m.level.label;
+      const rankEl = document.getElementById('drawerLevelRank');
+      rankEl.textContent = m.level.rank;
+      rankEl.className = `w-9 h-9 rounded-lg flex items-center justify-center text-base font-black border ${getLevelBadgeStyle(m.level.id)}`;
 
-      const warnDiv = document.getElementById('modalWarning');
-      if (m.warnings && m.warnings.length > 0) {
-        warnDiv.classList.remove('hidden');
-        warnDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400 mr-2"></i><span>${m.warnings[0]}</span>`;
+      // Code Health & AST Architecture Box
+      const ch = m.code_health || {
+        maintainability_score: 85,
+        archetype_label: 'Artisanat Sain (Non-IA)',
+        archetype_badge_color: 'bg-blue-50 text-blue-700 border-blue-200',
+        technical_debt_index: 15,
+        god_functions_count: 0,
+        test_coverage_density: 8.5,
+        explanation: 'Code modulaire propre sans dette technique.'
+      };
+
+      const archBadge = document.getElementById('drawerCodeArchetypeBadge');
+      archBadge.textContent = ch.archetype_label;
+      archBadge.className = `text-xs font-bold px-2.5 py-0.5 rounded border ${ch.archetype_badge_color}`;
+      document.getElementById('drawerMaintainabilityScore').textContent = `${ch.maintainability_score}%`;
+      
+      const spaghEl = document.getElementById('drawerDebtScore');
+      spaghEl.textContent = `${ch.technical_debt_index}%`;
+      spaghEl.className = ch.technical_debt_index >= 50 ? 'text-base font-bold font-mono mt-0.5 text-red-700' : (ch.technical_debt_index >= 25 ? 'text-base font-bold font-mono mt-0.5 text-amber-800' : 'text-base font-bold font-mono mt-0.5 text-emerald-700');
+
+      document.getElementById('drawerGodFunctions').textContent = ch.god_functions_count;
+      document.getElementById('drawerTestDensity').textContent = `${ch.test_coverage_density}%`;
+      document.getElementById('drawerCodeHealthExplanation').textContent = ch.explanation;
+
+      // Vibe Risk Box
+      const risk = m.vibe_risk || { risk_score: 30, risk_level: 'Modéré', explanation: 'Évaluation nominale' };
+      const riskBox = document.getElementById('drawerVibeRiskBox');
+      const riskPercent = document.getElementById('drawerVibeRiskPercent');
+      const riskBadge = document.getElementById('drawerVibeRiskLevelBadge');
+      const riskText = document.getElementById('drawerVibeRiskText');
+      const riskIcon = document.getElementById('drawerVibeRiskIcon');
+
+      riskPercent.textContent = `${risk.risk_score}%`;
+      riskText.textContent = risk.explanation;
+
+      if (risk.risk_score >= 70) {
+        riskBox.className = "rounded-xl p-5 border bg-red-50 border-red-200 text-red-900";
+        riskPercent.className = "font-mono font-black text-base text-red-700";
+        riskBadge.className = "text-[10px] uppercase font-bold px-2 py-0.5 rounded font-mono bg-red-100 text-red-800 border border-red-200";
+        riskBadge.textContent = 'Risque Élevé';
+        riskIcon.className = "w-10 h-10 rounded-xl bg-red-100 text-red-700 flex items-center justify-center text-lg shrink-0 mt-0.5";
+      } else if (risk.risk_score >= 35) {
+        riskBox.className = "rounded-xl p-5 border bg-amber-50 border-amber-300 text-amber-900";
+        riskPercent.className = "font-mono font-black text-base text-amber-800";
+        riskBadge.className = "text-[10px] uppercase font-bold px-2 py-0.5 rounded font-mono bg-amber-100 text-amber-800 border border-amber-300";
+        riskBadge.textContent = 'Risque Modéré';
+        riskIcon.className = "w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-lg shrink-0 mt-0.5";
       } else {
-        warnDiv.classList.add('hidden');
+        riskBox.className = "rounded-xl p-5 border bg-emerald-50 border-emerald-200 text-emerald-900";
+        riskPercent.className = "font-mono font-black text-base text-emerald-700";
+        riskBadge.className = "text-[10px] uppercase font-bold px-2 py-0.5 rounded font-mono bg-emerald-100 text-emerald-800 border border-emerald-200";
+        riskBadge.textContent = 'Ingénierie Saine';
+        riskIcon.className = "w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg shrink-0 mt-0.5";
       }
 
-      const grid = document.getElementById('modalAxesGrid');
-      grid.innerHTML = `
-        ${createModalAxisHtml('1. Taille', m.axes.taille, 'fa-maximize')}
-        ${createModalAxisHtml('2. Harness', m.axes.harness, 'fa-shield-halved')}
-        ${createModalAxisHtml('3. Intervention', m.axes.intervention, 'fa-hand-holding-hand')}
-        ${createModalAxisHtml('4. Parallèle', m.axes.parallele, 'fa-code-branch')}
+      // 4 Axes Grid
+      const axesGrid = document.getElementById('drawerAxesGrid');
+      axesGrid.innerHTML = `
+        ${createDrawerAxisHtml('1. Axe Taille', m.axes.taille, 'fa-maximize')}
+        ${createDrawerAxisHtml('2. Axe Harness', m.axes.harness, 'fa-shield-halved')}
+        ${createDrawerAxisHtml('3. Axe Intervention', m.axes.intervention, 'fa-hand-holding-hand')}
+        ${createDrawerAxisHtml('4. Axe Parallèle', m.axes.parallele, 'fa-code-branch')}
       `;
 
-      const prog = m.progression;
-      document.getElementById('modalNextLevel').textContent = prog.next_level ? prog.next_level.label : 'Niveau maximal';
-      document.getElementById('modalBottleneck').textContent = prog.limiting_axis;
+      // Warnings
+      const warnSec = document.getElementById('drawerWarningsSection');
+      const warnList = document.getElementById('drawerWarningsList');
+      warnList.innerHTML = '';
+      if (m.warnings && m.warnings.length > 0) {
+        warnSec.classList.remove('hidden');
+        m.warnings.forEach(w => {
+          const div = document.createElement('div');
+          div.className = "flex items-start space-x-2";
+          div.innerHTML = `<span class="text-amber-600 font-bold">•</span><span>${w}</span>`;
+          warnList.appendChild(div);
+        });
+      } else {
+        warnSec.classList.add('hidden');
+      }
 
-      const stepsDiv = document.getElementById('modalSteps');
-      stepsDiv.innerHTML = '';
-      prog.steps.forEach((st, idx) => {
-        const d = document.createElement('div');
-        d.className = "p-2.5 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-300 flex items-start space-x-2";
-        d.innerHTML = `<span class="w-4 h-4 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">${idx+1}</span><span>${st}</span>`;
-        stepsDiv.appendChild(d);
+      // Tickets N+1 fallback to steps if action_tickets is empty
+      document.getElementById('drawerLimitingAxis').textContent = m.limiting_axis;
+      const tList = document.getElementById('drawerTicketsList');
+      tList.innerHTML = '';
+      
+      let tickets = (m.progression && m.progression.action_tickets && m.progression.action_tickets.length > 0) 
+        ? m.progression.action_tickets 
+        : [];
+
+      if (tickets.length === 0 && m.progression && m.progression.steps) {
+        tickets = m.progression.steps.map((st, i) => ({
+          ticket_id: `ACT-${i+1}`,
+          title: st,
+          estimated_effort: '1 jour',
+          definition_of_done: 'Validation continue par merge de PR sans reprise.'
+        }));
+      }
+
+      tickets.forEach(t => {
+        const item = document.createElement('div');
+        item.className = "p-3 bg-[#FAFBFC] border border-[#DFE1E6] rounded-xl flex flex-col space-y-1.5";
+        item.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-[#0052CC] font-mono">${t.ticket_id}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-white text-slate-700 border border-[#DFE1E6]">Effort : ${t.estimated_effort}</span>
+          </div>
+          <div class="text-xs font-semibold text-[#172B4D]">${t.title}</div>
+          <div class="text-[11px] text-slate-600"><span class="text-slate-500 font-bold">DoD :</span> ${t.definition_of_done}</div>
+        `;
+        tList.appendChild(item);
       });
 
-      const recDiv = document.getElementById('modalRecommendations');
-      recDiv.innerHTML = '';
-      prog.recommendations.forEach(rec => {
-        const d = document.createElement('div');
-        d.className = "p-2.5 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-400 flex items-start space-x-2";
-        d.innerHTML = `<i class="fa-solid fa-lightbulb text-amber-400/80 mt-0.5 shrink-0"></i><span>${rec}</span>`;
-        recDiv.appendChild(d);
-      });
-
-      document.getElementById('devModal').classList.remove('hidden');
+      document.getElementById('jiraIssueDrawer').classList.remove('hidden');
     }
 
-    function createModalAxisHtml(name, axisData, icon) {
+    function createDrawerAxisHtml(title, axis, icon) {
+      if (!axis) return '';
       return `
-        <div class="p-4 bg-slate-950/70 border border-slate-800 rounded-2xl">
+        <div class="bg-white border border-[#DFE1E6] rounded-xl p-3.5 flex flex-col justify-between shadow-xs">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-slate-300 flex items-center"><i class="fa-solid ${icon} mr-1.5 text-indigo-400"></i> ${name}</span>
-            <span class="text-[11px] font-bold px-2 py-0.5 rounded border ${getLevelBadgeStyle(axisData.level)}">${axisData.level} (${axisData.rank})</span>
+            <span class="text-xs font-bold text-[#172B4D] flex items-center space-x-1.5">
+              <i class="fa-solid ${icon} text-[#0052CC] text-xs"></i>
+              <span>${title}</span>
+            </span>
+            <span class="text-xs font-bold font-mono px-2 py-0.5 rounded border ${getLevelBadgeStyle(axis.level.toLowerCase())}">
+              ${axis.level} (${axis.rank})
+            </span>
           </div>
-          <p class="text-xs text-slate-400 leading-relaxed">${axisData.evidence}</p>
+          <p class="text-[11px] text-slate-600 line-clamp-2 leading-relaxed">${axis.evidence || '-'}</p>
         </div>
       `;
     }
 
-    function closeModal() {
-      document.getElementById('devModal').classList.add('hidden');
+    function closeJiraDrawer() {
+      document.getElementById('jiraIssueDrawer').classList.add('hidden');
     }
 
-    function showLoading(isLoading) {
-      const spinner = document.getElementById('loadingSpinner');
-      if (isLoading) {
-        spinner.classList.remove('hidden');
-      } else {
-        spinner.classList.add('hidden');
+    // Close drawer on backdrop click or Escape key
+    document.addEventListener('DOMContentLoaded', () => {
+      const drawer = document.getElementById('jiraIssueDrawer');
+      if (drawer) {
+        drawer.addEventListener('click', (e) => {
+          if (e.target.id === 'jiraIssueDrawer') {
+            closeJiraDrawer();
+          }
+        });
+      }
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeJiraDrawer();
+        }
+      });
+    });
+
+    function copyDevJiraReport() {
+      if (!currentSelectedMember) return;
+      const m = currentSelectedMember;
+      const ch = m.code_health || { archetype_label: 'Artisanat', maintainability_score: 85 };
+      const axes = m.axes || {};
+      const t = axes.taille || { level: 'white', evidence: 'N/A' };
+      const h = axes.harness || { level: 'white', evidence: 'N/A' };
+      const it = axes.intervention || { level: 'white', evidence: 'N/A' };
+      const p = axes.parallele || { level: 'white', evidence: 'N/A' };
+      const lvlLabel = m.level ? m.level.label : 'White';
+      const lvlRank = m.level ? m.level.rank : 0;
+      const report = `h2. Rapport AIDD & Santé de Code : ${m.profile_id} (${lvlLabel})\n\n* *Niveau AIDD* : ${lvlLabel} (Rang ${lvlRank})\n* *Archétype de Code* : ${ch.archetype_label} (Maintenabilité ${ch.maintainability_score}%)\n* *Axe Limitant* : ${m.limiting_axis || 'taille'}\n* *Risque Vibe Coding* : ${m.vibe_risk ? m.vibe_risk.risk_score : 0}% (${m.vibe_risk ? m.vibe_risk.risk_level : 'Modéré'})\n\nh3. Preuves par Axe :\n* *Taille* : ${t.level} - ${t.evidence}\n* *Harness* : ${h.level} - ${h.evidence}\n* *Intervention* : ${it.level} - ${it.evidence}\n* *Parallèle* : ${p.level} - ${p.evidence}`;
+      navigator.clipboard.writeText(report);
+      alert('Rapport de diagnostic copié au format Jira !');
+    }
+
+    // ==================== LIVE SCANNER ====================
+    function setScannerAndRun(val) {
+      document.getElementById('scannerInput').value = val;
+      runScannerAudit();
+    }
+
+    async function runScannerAudit() {
+      const val = document.getElementById('scannerInput').value.trim();
+      if (!val) return;
+
+      showLoading(true, `Audit en cours de : ${val}...`);
+      try {
+        let res;
+        if (['perceval', 'bohort', 'leodagan', 'arthur'].includes(val.toLowerCase())) {
+          res = await fetch(`${API_BASE}/evaluate/${val.toLowerCase()}`);
+        } else if (val.startsWith('http') || val.includes('github.com')) {
+          res = await fetch(`${API_BASE}/evaluate/live?repo_url=${encodeURIComponent(val)}`);
+        } else {
+          res = await fetch(`${API_BASE}/evaluate`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ profile_path: val })
+          });
+        }
+        
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        
+        // Add or select in drawer
+        currentSelectedMember = data;
+        teamMembersCache = [data, ...teamMembersCache.filter(x => x.profile_id !== data.profile_id)];
+        renderKanbanBoard(teamMembersCache);
+        openJiraDrawerForMember(0);
+      } catch (err) {
+        alert('Erreur lors de l\'audit : ' + err.message);
+      } finally {
+        showLoading(false);
       }
     }
 
-    // Initialize scenario tabs on launch
-    window.addEventListener('DOMContentLoaded', () => {
-      setScenario('team');
-    });
+    function getLevelBadgeStyle(lvlId) {
+      const s = (lvlId || '').toLowerCase();
+      if (s.includes('gold')) return 'bg-yellow-100 text-yellow-900 border-yellow-300 font-bold';
+      if (s.includes('silver')) return 'bg-slate-200 text-slate-800 border-slate-300 font-bold';
+      if (s.includes('copper')) return 'bg-amber-100 text-amber-900 border-amber-300 font-bold';
+      if (s.includes('green')) return 'bg-emerald-100 text-emerald-900 border-emerald-200 font-bold';
+      if (s.includes('blue')) return 'bg-blue-100 text-blue-900 border-blue-200 font-bold';
+      if (s.includes('red')) return 'bg-red-100 text-red-900 border-red-200 font-bold';
+      return 'bg-slate-100 text-slate-700 border-slate-300 font-bold';
+    }
   </script>
 </body>
 </html>
