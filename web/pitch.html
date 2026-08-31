@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mouvement-Tech — Pitch Deck Soutenance Jury</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .slide-active { display: flex !important; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fade-in { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  </style>
+</head>
+<body class="bg-[#0B0F19] text-slate-100 min-h-screen flex flex-col justify-between select-none overflow-hidden antialiased">
+
+  <!-- Top Status Bar -->
+  <header class="border-b border-slate-800 bg-[#0F172A]/80 backdrop-blur px-6 py-3 flex items-center justify-between z-30">
+    <div class="flex items-center space-x-3">
+      <div class="w-7 h-7 rounded-lg bg-[#0052CC] flex items-center justify-center font-black text-white text-sm shadow">
+        M
+      </div>
+      <span class="font-bold text-sm text-white tracking-tight">Mouvement-Tech</span>
+      <span class="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono font-bold">Pitch Soutenance Jury</span>
+    </div>
+
+    <!-- Slide Indicators & Controls -->
+    <div class="flex items-center space-x-4">
+      <div class="text-xs font-mono text-slate-400">
+        Slide <span id="currentSlideNum" class="text-blue-400 font-bold">1</span> / <span id="totalSlidesNum">7</span>
+      </div>
+      <div class="h-4 w-px bg-slate-800"></div>
+      <button onclick="toggleNotes()" class="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center space-x-1.5" title="Afficher/Masquer les notes de l'orateur (N)">
+        <i class="fa-solid fa-note-sticky text-amber-400"></i>
+        <span>Notes (N)</span>
+      </button>
+      <a href="index.html" class="text-xs px-3 py-1 rounded bg-[#0052CC] hover:bg-blue-600 text-white font-bold transition flex items-center space-x-1.5 shadow">
+        <i class="fa-solid fa-play text-[10px]"></i>
+        <span>Démo Live</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Slide Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-6 py-8 flex flex-col justify-center relative">
+    
+    <!-- ==================== SLIDE 1: LE PROBLÈME ==================== -->
+    <div class="slide slide-active hidden flex-col justify-center space-y-6 animate-fade-in" data-slide="1">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold w-fit">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>01. Le Constat de Défaillance</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-white leading-tight tracking-tight">
+        90% des développeurs utilisent l'IA.<br>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-amber-400 to-amber-200">Combien font de la vraie ingénierie ?</span>
+      </h1>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center text-xl font-bold">1</div>
+          <h3 class="text-lg font-bold text-white">L'Illusion du Déclaratif</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Les auto-évaluations et questionnaires RH sont biaisés : tout le monde prétend être "expert IA", mais les CTO n'ont aucune visibilité factuelle sur la maturité réelle.
+          </p>
+        </div>
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl font-bold">2</div>
+          <h3 class="text-lg font-bold text-white">Le Piège du "Vibe Coding"</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Génération massive de code sans mémoire projet, sans harnais et sans tests, provoquant jusqu'à <strong>80% de reprise humaine après coup</strong> et une dette technique explosive.
+          </p>
+        </div>
+      </div>
+      <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl text-center text-sm font-semibold text-slate-300">
+        💡 <strong class="text-white">Le problème :</strong> Générer du code ne fait pas de vous un ingénieur augmenté. <em>Piloter l'IA avec rigueur, oui.</em>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 2: LA SOLUTION & LES 4 AXES ==================== -->
+    <div class="slide hidden flex-col justify-center space-y-6 animate-fade-in" data-slide="2">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold w-fit">
+        <i class="fa-solid fa-gem"></i>
+        <span>02. La Solution Déterministe</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
+        Mouvement-Tech : Mesurer ce qui est <span class="text-[#0052CC] bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/30">fait</span>, pas ce qui est dit.
+      </h2>
+      <p class="text-sm text-slate-400 max-w-3xl">
+        Une évaluation 100% empirique, sans questionnaire, basée exclusivement sur les <strong>traces vérifiables dans Git</strong> et gouvernée par le référentiel officiel <strong>AIDD</strong>.
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2">
+          <div class="text-indigo-400 font-bold text-xs flex items-center space-x-1.5">
+            <i class="fa-solid fa-maximize"></i>
+            <span>1. Taille des Livrables</span>
+          </div>
+          <p class="text-xs text-slate-400">Amplitude fonctionnelle (, M, L, XL$) par périmètre multi-fichiers et impact sémantique.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2">
+          <div class="text-emerald-400 font-bold text-xs flex items-center space-x-1.5">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>2. Harness & Mémoire</span>
+          </div>
+          <p class="text-xs text-slate-400">Context engineering (AGENTS.md), règles, skills versionnés et boucles fermées CI.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2">
+          <div class="text-amber-400 font-bold text-xs flex items-center space-x-1.5">
+            <i class="fa-solid fa-hand-holding-hand"></i>
+            <span>3. Cadrage & Délégation</span>
+          </div>
+          <p class="text-xs text-slate-400">Mesure du moment d'intervention : zéro reprise après coup vs corrections massives.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2">
+          <div class="text-purple-400 font-bold text-xs flex items-center space-x-1.5">
+            <i class="fa-solid fa-code-branch"></i>
+            <span>4. Flux Parallèles</span>
+          </div>
+          <p class="text-xs text-slate-400">Orchestration simultanée de plusieurs chantiers menés de front (branches, Git Worktrees).</p>
+        </div>
+      </div>
+      <div class="p-3.5 bg-blue-950/40 border border-blue-500/30 rounded-xl text-xs text-blue-200 flex items-center justify-between">
+        <span>⚖️ <strong>Règle d'Or AIDD :</strong> Règle stricte du <code>MIN</code> (votre niveau global est celui de votre axe le plus faible).</span>
+        <span class="font-mono font-bold text-white bg-blue-600 px-2 py-0.5 rounded text-[11px]">Niveau = MIN(T, H, I, P)</span>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 3: LE DOUBLE MOTEUR AST & VIBE RISK ==================== -->
+    <div class="slide hidden flex-col justify-center space-y-6 animate-fade-in" data-slide="3">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 text-xs font-bold w-fit">
+        <i class="fa-solid fa-code-merge"></i>
+        <span>03. Innovation Moteur AST & Dette</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
+        Distinguer l'Ingénierie Saine du <span class="text-purple-400">Vibe Coding</span>
+      </h2>
+      <p class="text-sm text-slate-400">
+        Notre analyse syntaxique AST calcule l'indice de maintenabilité, la complexité cyclomatique, les <em>God Functions</em> (>50 lignes) et classifie le code en <strong>4 archétypes</strong> :
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 border-l-4 border-l-blue-500 space-y-1">
+          <div class="font-bold text-white text-xs flex items-center justify-between">
+            <span>🛡️ Artisanat Sain (Non-IA)</span>
+            <span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded font-mono">0% IA · 0% Risque</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Code propre, modulaire et testé manuellement. Aucun risque de dette IA.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 border-l-4 border-l-red-500 space-y-1">
+          <div class="font-bold text-white text-xs flex items-center justify-between">
+            <span>🚨 Vibe Coding Debt (Alerte)</span>
+            <span class="text-[10px] bg-red-500/10 text-red-400 px-2 py-0.5 rounded font-mono">>60% IA · Risque 85%</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Génération massive non cadrée, sans harnais, 80% de reprises et complexité non maîtrisée.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 border-l-4 border-l-amber-500 space-y-1">
+          <div class="font-bold text-white text-xs flex items-center justify-between">
+            <span>⚠️ Dette Legacy Manuelle</span>
+            <span class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded font-mono">0% IA · Dette 60%</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Code historique non refactorisé, fonctions géantes créées avant l'ère de l'IA.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 border-l-4 border-l-emerald-500 space-y-1">
+          <div class="font-bold text-white text-xs flex items-center justify-between">
+            <span>🏆 AIDD Certifié (Augmenté)</span>
+            <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-mono">80% IA · 0% Dette</span>
+          </div>
+          <p class="text-[11px] text-slate-400">Excellence opérationnelle : mémoire complète, boucles de validation automatique, zéro reprise.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 4: DÉMONSTRATION DU PRODUIT ==================== -->
+    <div class="slide hidden flex-col justify-center space-y-6 animate-fade-in" data-slide="4">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold w-fit">
+        <i class="fa-solid fa-desktop"></i>
+        <span>04. Démonstration Live</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
+        L'Interface Jira-Ready pour l'Équipe & le CTO
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 shadow-lg">
+          <div class="text-[#0052CC] font-black text-xl"><i class="fa-solid fa-table-columns mr-2"></i>1. Kanban Board</div>
+          <h4 class="text-sm font-bold text-white">Positionnement Visuel</h4>
+          <p class="text-xs text-slate-400">7 colonnes (White à Gold) avec badges de risque Vibe Coding et fiches détaillées par développeur.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 shadow-lg">
+          <div class="text-blue-400 font-black text-xl"><i class="fa-solid fa-chart-line mr-2"></i>2. Matrice CTO</div>
+          <h4 class="text-sm font-bold text-white">Gouvernance Vendredi</h4>
+          <p class="text-xs text-slate-400">Score moyen d'équipe, diagnostic du goulot d'étranglement et plan d'action stratégique.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 shadow-lg">
+          <div class="text-emerald-400 font-black text-xl"><i class="fa-solid fa-list-check mr-2"></i>3. Backlog N+1</div>
+          <h4 class="text-sm font-bold text-white">Tickets Actionnables</h4>
+          <p class="text-xs text-slate-400">Feuille de route découpée en tickets Jira prêts à copier pour faire monter chaque développeur de niveau.</p>
+        </div>
+      </div>
+      <div class="text-center pt-2">
+        <a href="index.html" target="_blank" class="inline-flex items-center space-x-2 bg-[#0052CC] hover:bg-blue-600 text-white font-bold text-sm px-6 py-3 rounded-xl transition shadow-lg">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <span>Ouvrir l'Application en Direct</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 5: MARCHÉ & BUSINESS MODEL ==================== -->
+    <div class="slide hidden flex-col justify-center space-y-6 animate-fade-in" data-slide="5">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-bold w-fit">
+        <i class="fa-solid fa-briefcase"></i>
+        <span>05. Marché & Modèle Économique</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
+        3 Cibles Clés & Monétisation B2B
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-base">🏢</div>
+          <h4 class="text-sm font-bold text-white">1. Le CTO / VP Eng.</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            <strong>B2B SaaS (19€ / dev / mois) :</strong> Pilotage de la montée en compétences, audit de dette IA et justification des licences Claude/Copilot.
+          </p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-base">🎯</div>
+          <h4 class="text-sm font-bold text-white">2. Recrutement & ESN</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            <strong>Audit Pre-Hire (49€ / scan) :</strong> Évaluation objective du GitHub d'un candidat sans questionnaire biaisé ni test technique chronophage.
+          </p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+          <div class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-base">🚀</div>
+          <h4 class="text-sm font-bold text-white">3. Le Développeur</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            <strong>Freemium Auto-piloté :</strong> Diagnostic gratuit de son profil et roadmap personnalisée pour franchir les paliers AIDD.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 6: FIABILITÉ & RÉSULTATS DU PROJET ==================== -->
+    <div class="slide hidden flex-col justify-center space-y-6 animate-fade-in" data-slide="6">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-bold w-fit">
+        <i class="fa-solid fa-code"></i>
+        <span>06. Rigueur & Validation Technique</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
+        Qualité d'Ingénierie & Preuve par l'Exemple
+      </h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+          <div class="text-3xl font-black text-emerald-400 font-mono">27 / 27</div>
+          <div class="text-xs text-slate-400 mt-1">Tests Automatisés Verts</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+          <div class="text-3xl font-black text-amber-400 font-mono">🥉 Copper 4</div>
+          <div class="text-xs text-slate-400 mt-1">Niveau Mouvement-Tech</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+          <div class="text-3xl font-black text-blue-400 font-mono">🥈 Silver 5</div>
+          <div class="text-xs text-slate-400 mt-1">Harness & Boucles CI</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+          <div class="text-3xl font-black text-purple-400 font-mono">100%</div>
+          <div class="text-xs text-slate-400 mt-1">Conventional Commits</div>
+        </div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 text-xs text-slate-300 space-y-2">
+        <div class="font-bold text-white flex items-center space-x-2">
+          <i class="fa-solid fa-circle-check text-emerald-400"></i>
+          <span>Auto-évaluation du projet Mouvement-Tech sur GitHub (Preuve de concept vécue) :</span>
+        </div>
+        <p class="leading-relaxed text-slate-400">
+          Le projet a lui-même été développé avec 4 branches de chantiers simultanés (Axe 4 = Copper 4), un outillage complet avec <code>AGENTS.md</code>, 7 règles et 9 skills (Axe 2 = Silver 5), et 95% de commits co-signés sans régression.
+        </p>
+      </div>
+    </div>
+
+    <!-- ==================== SLIDE 7: CONCLUSION & PUNCHLINE ==================== -->
+    <div class="slide hidden flex-col justify-center space-y-6 animate-fade-in text-center" data-slide="7">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold mx-auto">
+        <i class="fa-solid fa-flag-checkered"></i>
+        <span>07. Conclusion & Vision</span>
+      </div>
+      <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight max-w-4xl mx-auto leading-tight">
+        L'avenir du développement logiciel n'est pas de coder plus vite.<br>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-emerald-400 to-teal-200">C'est de piloter mieux.</span>
+      </h2>
+      <div class="max-w-2xl mx-auto bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl text-slate-300 text-sm leading-relaxed">
+        <p class="italic">
+          « Avec <strong>Mouvement-Tech</strong>, transformez l'engouement passager du Vibe Coding en une discipline d'ingénierie augmentée, mesurable et certifiée pour vos équipes. »
+        </p>
+      </div>
+      <div class="pt-4 flex items-center justify-center space-x-4">
+        <a href="index.html" class="px-6 py-3 rounded-xl bg-[#0052CC] hover:bg-blue-600 text-white font-bold text-sm shadow-xl transition flex items-center space-x-2">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Lancer la Démo Live</span>
+        </a>
+        <a href="http://127.0.0.1:8000/docs" target="_blank" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm transition flex items-center space-x-2 border border-slate-700">
+          <i class="fa-solid fa-code"></i>
+          <span>Swagger API</span>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Speaker Notes Drawer (Bottom) -->
+  <div id="speakerNotesDrawer" class="hidden bg-[#0F172A] border-t border-slate-800 p-4 text-xs text-slate-300 max-w-6xl mx-auto w-full z-20">
+    <div class="flex items-center justify-between mb-2">
+      <span class="font-bold text-amber-400 flex items-center space-x-1.5">
+        <i class="fa-solid fa-microphone-lines"></i>
+        <span>Notes de l'Orateur (Slide <span id="notesSlideNum">1</span>) :</span>
+      </span>
+      <button onclick="toggleNotes()" class="text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <p id="speakerNotesText" class="leading-relaxed text-slate-400 font-mono text-[11px]"></p>
+  </div>
+
+  <!-- Bottom Navigation Bar & Progress -->
+  <footer class="border-t border-slate-800 bg-[#0F172A]/80 backdrop-blur px-6 py-3 flex items-center justify-between z-30">
+    <div class="flex items-center space-x-2">
+      <button onclick="prevSlide()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center space-x-1.5">
+        <i class="fa-solid fa-chevron-left text-[10px]"></i>
+        <span>Précédent</span>
+      </button>
+      <button onclick="nextSlide()" class="px-3 py-1.5 rounded-lg bg-[#0052CC] hover:bg-blue-600 text-white text-xs font-bold transition flex items-center space-x-1.5 shadow">
+        <span>Suivant</span>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+      </button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="flex-1 max-w-md mx-6 bg-slate-800 h-1.5 rounded-full overflow-hidden">
+      <div id="slideProgressBar" class="bg-blue-500 h-full rounded-full transition-all duration-300" style="width: 14.28%"></div>
+    </div>
+
+    <div class="text-[11px] text-slate-500 font-mono hidden sm:block">
+      Touches : [← / →] Navigation · [N] Notes · [F] Plein écran
+    </div>
+  </footer>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 7;
+
+    const speakerNotes = {
+      1: "Accroche forte : Rappeler au jury que 90% des développeurs ont Copilot ou Claude, mais que 80% du code généré sans cadrage finit en rework. Poser le diagnostic : le déclaratif ne fonctionne pas, la dette vibe coding est le danger #1.",
+      2: "Présenter le cœur de Mouvement-Tech : 0 questionnaire, analyse 100% basée sur les traces Git. Expliquer les 4 axes AIDD (Taille, Harnais, Intervention, Parallèle) et insister sur la règle d'or du MIN qui garantit la non-triche.",
+      3: "Innovation AST : Expliquer comment notre analyse syntaxique distingue le code propre sans IA, la dette manuelle, le vibe coding et l'AIDD certifié. Montrer que la santé du code est notre garde-fou.",
+      4: "Transition Démo : Basculer sur l'app (index.html). Montrer le Kanban Board, ouvrir la fiche d'un développeur (ex: Perceval ou Arthur), et montrer la matrice CTO et le backlog de tickets Jira N+1.",
+      5: "Business & Marché : Expliquer la monétisation B2B pour les CTO (19€/dev/mois), les audits de recrutement (49€/scan) et le freemium pour les développeurs.",
+      6: "Preuve de robustesse : 27/27 tests verts. Mentionner que Mouvement-Tech s'est auto-évalué en direct au niveau Copper 4 avec un harnais Silver 5.",
+      7: "Punchline finale : Conclure avec conviction sur la vision d'une ingénierie logicielle augmentée et responsable. Ouvrir pour les questions du jury."
+    };
+
+    function showSlide(num) {
+      if (num < 1 || num > totalSlides) return;
+      currentSlide = num;
+      
+      document.querySelectorAll('.slide').forEach(s => {
+        s.classList.remove('slide-active');
+        s.classList.add('hidden');
+      });
+
+      const active = document.querySelector(.slide[data-slide=""]);
+      if (active) {
+        active.classList.add('slide-active');
+        active.classList.remove('hidden');
+      }
+
+      document.getElementById('currentSlideNum').textContent = num;
+      document.getElementById('notesSlideNum').textContent = num;
+      document.getElementById('slideProgressBar').style.width = ${(num / totalSlides) * 100}%;
+      document.getElementById('speakerNotesText').textContent = speakerNotes[num] || '';
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) showSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) showSlide(currentSlide - 1);
+    }
+
+    function toggleNotes() {
+      const drawer = document.getElementById('speakerNotesDrawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key.toLowerCase() === 'n') {
+        toggleNotes();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      }
+    });
+
+    // Init
+    showSlide(1);
+  </script>
+</body>
+</html>
