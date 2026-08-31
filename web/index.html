@@ -105,6 +105,39 @@
       <p class="text-xs text-slate-500 mt-1">Extraction des métriques Git, calcul de la complexité AST, détection de dette technique et évaluation des 4 axes</p>
     </div>
 
+    <!-- Backend Connection Alert Banner -->
+    <div id="backendOfflineBanner" class="hidden mb-6 bg-red-50 border-2 border-red-300 rounded-2xl p-5 shadow-md">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex items-start space-x-3.5">
+          <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 border border-red-200 flex items-center justify-center text-lg shrink-0 mt-0.5">
+            <i class="fa-solid fa-server"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-red-950 flex items-center space-x-2">
+              <span>Serveur Backend FastAPI Injoignable</span>
+              <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-red-200 text-red-900">http://127.0.0.1:8000</span>
+            </h3>
+            <p class="text-xs text-red-800 mt-1 leading-relaxed">
+              L'API locale n'est pas démarrée ou n'a pas répondu. Pour activer l'analyse en temps réel, lancez la commande suivante dans votre terminal :
+            </p>
+            <div class="mt-2 inline-flex items-center space-x-2 bg-slate-900 text-slate-100 px-3 py-1.5 rounded-lg text-xs font-mono shadow-xs">
+              <span class="text-indigo-400">$</span>
+              <span>uvicorn api.main:app --port 8000</span>
+              <button onclick="navigator.clipboard.writeText('uvicorn api.main:app --port 8000'); alert('Commande copiée dans le presse-papier !');" title="Copier la commande" class="text-slate-400 hover:text-white ml-1">
+                <i class="fa-solid fa-copy"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2.5 shrink-0 w-full sm:w-auto justify-end">
+          <button onclick="loadInitialTeamData()" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition shadow flex items-center space-x-1.5">
+            <i class="fa-solid fa-rotate"></i>
+            <span>Réessayer la connexion</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- ==================== TAB 1: JIRA KANBAN BOARD ==================== -->
     <div id="tabViewKanban" class="space-y-6">
       
@@ -595,6 +628,16 @@
       }
     }
 
+    function showBackendOffline(isOffline) {
+      const banner = document.getElementById('backendOfflineBanner');
+      if (!banner) return;
+      if (isOffline) {
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
     async function promptChangeProject() {
       const newUrl = prompt('Entrez l\'URL GitHub du projet à auditer (ex: https://github.com/owner/repo) :', currentRepoUrl);
       if (newUrl && newUrl.trim()) {
@@ -612,12 +655,14 @@
         const res = await fetch(`${API_BASE}/team?repo_url=${encodeURIComponent(target)}`);
         if (!res.ok) throw new Error(await res.text());
         const data = await res.json();
+        showBackendOffline(false);
         teamMembersCache = data.members || [];
         const label = document.getElementById('activeProjectLabel');
         if (label) label.textContent = data.team_name.replace('Équipe Projet (', '').replace(')', '');
         renderAllViews(data);
       } catch (err) {
         console.error('Erreur chargement équipe:', err);
+        showBackendOffline(true);
       } finally {
         showLoading(false);
       }
@@ -629,13 +674,16 @@
         const res = await fetch(`${API_BASE}/team/benchmark`);
         if (!res.ok) throw new Error(await res.text());
         const data = await res.json();
+        showBackendOffline(false);
         teamMembersCache = data.members || [];
         const label = document.getElementById('activeProjectLabel');
         if (label) label.textContent = 'Benchmark Sujet (4 Profils Fictifs)';
         renderAllViews(data);
         alert('Profils de benchmark chargés (Perceval, Bohort, Leodagan, Arthur).');
       } catch (err) {
-        alert('Erreur chargement benchmark: ' + err.message);
+        console.error('Erreur benchmark:', err);
+        showBackendOffline(true);
+        alert('Impossible de joindre le backend FastAPI. Veuillez démarrer le serveur : uvicorn api.main:app --port 8000');
       } finally {
         showLoading(false);
       }
@@ -1140,6 +1188,7 @@
         
         if (!res.ok) throw new Error(await res.text());
         const data = await res.json();
+        showBackendOffline(false);
         
         // Add or select in drawer
         currentSelectedMember = data;
@@ -1147,6 +1196,7 @@
         renderKanbanBoard(teamMembersCache);
         openJiraDrawerForMember(0);
       } catch (err) {
+        showBackendOffline(true);
         alert('Erreur lors de l\'audit : ' + err.message);
       } finally {
         showLoading(false);
